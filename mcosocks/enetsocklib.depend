@@ -1,0 +1,72 @@
+# depslib dependency file v1.0
+1409076932 source:/home/marius/CPP/GOOGLE/pizubuf/socklib/sock.cpp
+	<assert.h>
+	<fcntl.h>
+	<errno.h>
+	<unistd.h>
+	<stdlib.h>
+	<iostream>
+	<time.h>
+	"sock.h"
+	<ifaddrs.h>
+
+1409239383 /home/marius/CPP/GOOGLE/pizubuf/socklib/sock.h
+	<os.h>
+	<sys/socket.h>
+	<resolv.h>
+	<sys/select.h>
+	<arpa/inet.h>
+	<sys/ioctl.h>
+	<sys/time.h>
+	<netdb.h>
+	<string.h>
+	<string>
+	<fstream>
+	<math.h>
+
+1378931121 /home/marius/CPP/GOOGLE/pizubuf/include/os.h
+	<errno.h>
+	<unistd.h>
+	<assert.h>
+	<pthread.h>
+	<semaphore.h>
+	<stdio.h>
+	<inttypes.h>
+	<wchar.h>
+
+1421776171 source:/home/marius/CPP/GUGLE/src/pizubuf/mcosocks/sock.cpp
+	<assert.h>
+	<fcntl.h>
+	<errno.h>
+	<unistd.h>
+	<stdlib.h>
+	<iostream>
+	<time.h>
+	"sock.h"
+	<ifaddrs.h>
+
+1421776593 /home/marius/CPP/GUGLE/src/pizubuf/mcosocks/sock.h
+	<os.h>
+	<sys/socket.h>
+	<resolv.h>
+	<sys/select.h>
+	<arpa/inet.h>
+	<sys/ioctl.h>
+	<sys/time.h>
+	<netdb.h>
+	<stdlib.h>
+	<string.h>
+	<string>
+	<fstream>
+	<math.h>
+
+1421556356 /home/marius/CPP/GUGLE/src/pizubuf/mcoinclude/os.h
+	<errno.h>
+	<unistd.h>
+	<assert.h>
+	<pthread.h>
+	<semaphore.h>
+	<stdio.h>
+	<inttypes.h>
+	<wchar.h>
+

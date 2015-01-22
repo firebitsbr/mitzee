@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="sqrat" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="libsqrat" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="obj/Debug/" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="libsqrat" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="obj/Release/" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add directory="include" />
+			<Add directory="../include" />
+		</Compiler>
+		<Unit filename="include/sqrat.h" />
+		<Unit filename="include/sqrat/sqratAllocator.h" />
+		<Unit filename="include/sqrat/sqratArray.h" />
+		<Unit filename="include/sqrat/sqratClass.h" />
+		<Unit filename="include/sqrat/sqratClassType.h" />
+		<Unit filename="include/sqrat/sqratConst.h" />
+		<Unit filename="include/sqrat/sqratFunction.h" />
+		<Unit filename="include/sqrat/sqratFunction.h.rej" />
+		<Unit filename="include/sqrat/sqratGlobalMethods.h" />
+		<Unit filename="include/sqrat/sqratMemberMethods.h" />
+		<Unit filename="include/sqrat/sqratMemberMethods.h.rej" />
+		<Unit filename="include/sqrat/sqratObject.h" />
+		<Unit filename="include/sqrat/sqratOverloadMethods.h" />
+		<Unit filename="include/sqrat/sqratScript.h" />
+		<Unit filename="include/sqrat/sqratTable.h" />
+		<Unit filename="include/sqrat/sqratTypes.h" />
+		<Unit filename="include/sqrat/sqratUtil.h" />
+		<Unit filename="include/sqrat/sqratVM.h" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

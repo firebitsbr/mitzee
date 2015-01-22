@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="pizu" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="../../../bin/pizu/pizu" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="../../../bin/pizu" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-std=c++0x" />
+					<Add option="-pg" />
+					<Add option="-g" />
+				</Compiler>
+				<Linker>
+					<Add option="-pg" />
+				</Linker>
+			</Target>
+			<Target title="Release">
+				<Option output="../../../bin/pizu/pizu" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="../../../bin/pizu" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-std=c++0x" />
+			<Add option="-fexceptions" />
+			<Add option="-fpermissive" />
+			<Add directory="../mcoinclude" />
+			<Add directory="../mcosocks" />
+		</Compiler>
+		<Linker>
+			<Add library="pthread" />
+			<Add library="dl" />
+			<Add library="../lib/libmcosock.a" />
+		</Linker>
+		<Unit filename="../../../bin/pizu/pizu.conf" />
+		<Unit filename="../../../bin/pizu/www/index.html" />
+		<Unit filename="../../../bin/pizu/www/index.sqs" />
+		<Unit filename="../../../bin/pizu/www/login.sqs" />
+		<Unit filename="../include/consts.h" />
+		<Unit filename="../include/matypes.h" />
+		<Unit filename="../include/modiface.h" />
+		<Unit filename="../include/os.h" />
+		<Unit filename="../include/strutils.h" />
+		<Unit filename="CMakeLists.txt" />
+		<Unit filename="config.cpp" />
+		<Unit filename="config.h" />
+		<Unit filename="context.cpp" />
+		<Unit filename="context.h" />
+		<Unit filename="ctxqueue.cpp" />
+		<Unit filename="ctxqueue.h" />
+		<Unit filename="ctxthread.cpp" />
+		<Unit filename="ctxthread.h" />
+		<Unit filename="httprequest.cpp" />
+		<Unit filename="httprequest.h" />
+		<Unit filename="listeners.cpp" />
+		<Unit filename="listeners.h" />
+		<Unit filename="main.cpp" />
+		<Unit filename="main.h" />
+		<Unit filename="modiface.cpp" />
+		<Unit filename="modules.cpp" />
+		<Unit filename="modules.h" />
+		<Unit filename="prxctx.h" />
+		<Unit filename="prxthread.h" />
+		<Unit filename="sslcrypt.cpp" />
+		<Unit filename="sslcrypt.h" />
+		<Unit filename="threadpool.cpp" />
+		<Unit filename="threadpool.h" />
+		<Unit filename="tinyclasses.cpp" />
+		<Unit filename="tinyclasses.h" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

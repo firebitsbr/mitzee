@@ -1,0 +1,3 @@
+qmake qupidisc.pro
+make
+

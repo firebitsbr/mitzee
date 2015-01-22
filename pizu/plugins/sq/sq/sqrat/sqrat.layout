@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_layout_file>
+	<ActiveTarget name="Debug" />
+	<File name="include/sqrat/sqratFunction.h" open="0" top="0" tabpos="0">
+		<Cursor position="333" topLine="0" />
+	</File>
+	<File name="include/sqrat/sqratScript.h" open="1" top="1" tabpos="7">
+		<Cursor position="1246" topLine="34" />
+	</File>
+	<File name="include/sqrat/sqratTypes.h" open="0" top="0" tabpos="0">
+		<Cursor position="7811" topLine="298" />
+	</File>
+	<File name="include/sqrat/sqratUtil.h" open="0" top="0" tabpos="0">
+		<Cursor position="1365" topLine="33" />
+	</File>
+</CodeBlocks_layout_file>

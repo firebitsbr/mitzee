@@ -1,0 +1,88 @@
+# depslib dependency file v1.0
+1204706172 source:/home/marius/C++/GOOGLE/webhop/pizu/plugins/sq/sq/sqstdlib/sqstdaux.cpp
+	<squirrel.h>
+	<sqstdaux.h>
+	<assert.h>
+
+1332800894 /home/marius/C++/GOOGLE/webhop/pizu/plugins/sq/sq/include/squirrel.h
+
+1093158248 /home/marius/C++/GOOGLE/webhop/pizu/plugins/sq/sq/include/sqstdaux.h
+
+1330153226 source:/home/marius/C++/GOOGLE/webhop/pizu/plugins/sq/sq/sqstdlib/sqstdblob.cpp
+	<new>
+	<squirrel.h>
+	<sqstdio.h>
+	<string.h>
+	<sqstdblob.h>
+	"sqstdstream.h"
+	"sqstdblobimpl.h"
+
+1300543292 /home/marius/C++/GOOGLE/webhop/pizu/plugins/sq/sq/include/sqstdio.h
+
+1121275890 /home/marius/C++/GOOGLE/webhop/pizu/plugins/sq/sq/include/sqstdblob.h
+
+1267006434 /home/marius/C++/GOOGLE/webhop/pizu/plugins/sq/sq/sqstdlib/sqstdstream.h
+
+1141572656 /home/marius/C++/GOOGLE/webhop/pizu/plugins/sq/sq/sqstdlib/sqstdblobimpl.h
+
+1347937972 source:/home/marius/C++/GOOGLE/webhop/pizu/plugins/sq/sq/sqstdlib/sqstdio.cpp
+	<new>
+	<stdio.h>
+	<squirrel.h>
+	<sqstdio.h>
+	"sqstdstream.h"
+	<string.h>
+
+1311793322 source:/home/marius/C++/GOOGLE/webhop/pizu/plugins/sq/sq/sqstdlib/sqstdmath.cpp
+	<squirrel.h>
+	<math.h>
+	<stdlib.h>
+	<sqstdmath.h>
+
+1085300162 /home/marius/C++/GOOGLE/webhop/pizu/plugins/sq/sq/include/sqstdmath.h
+
+1315409384 source:/home/marius/C++/GOOGLE/webhop/pizu/plugins/sq/sq/sqstdlib/sqstdrex.cpp
+	<squirrel.h>
+	<string.h>
+	<ctype.h>
+	<setjmp.h>
+	<sqstdstring.h>
+	<stdio.h>
+
+1245699190 /home/marius/C++/GOOGLE/webhop/pizu/plugins/sq/sq/include/sqstdstring.h
+
+1302374240 source:/home/marius/C++/GOOGLE/webhop/pizu/plugins/sq/sq/sqstdlib/sqstdstream.cpp
+	<new>
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<squirrel.h>
+	<sqstdio.h>
+	<sqstdblob.h>
+	"sqstdstream.h"
+	"sqstdblobimpl.h"
+
+1311793322 source:/home/marius/C++/GOOGLE/webhop/pizu/plugins/sq/sq/sqstdlib/sqstdstring.cpp
+	<squirrel.h>
+	<sqstdstring.h>
+	<string.h>
+	<stdlib.h>
+	<stdio.h>
+	<ctype.h>
+	<assert.h>
+
+1333336936 source:/home/marius/C++/GOOGLE/webhop/pizu/plugins/sq/sq/sqstdlib/sqstdsystem.cpp
+	<squirrel.h>
+	<time.h>
+	<sys/dir.h>
+	<sys/stat.h>
+	<fcntl.h>
+	<unistd.h>
+	<string.h>
+	<stdlib.h>
+	<stdio.h>
+	<sqstdsystem.h>
+	<wchar.h>
+
+1121275890 /home/marius/C++/GOOGLE/webhop/pizu/plugins/sq/sq/include/sqstdsystem.h
+

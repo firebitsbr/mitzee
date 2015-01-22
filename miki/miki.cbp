@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="miki" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="../../../bin/miki/miki" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="../../../bin/miki" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+					<Add option="-DDEBUG" />
+					<Add option="-D_DEBUG" />
+					<Add directory="src/pizubuf/miki" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="../../../bin/miki/miki" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="../../../bin/miki" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add directory="src/pizubuf/miki" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-std=c++11" />
+			<Add option="-Wall" />
+			<Add option="-fexceptions" />
+			<Add directory="../mcosocks" />
+			<Add directory="../mcoinclude" />
+		</Compiler>
+		<Linker>
+			<Add library="../lib/libmcosock.a" />
+			<Add library="pthread" />
+		</Linker>
+		<Unit filename="../../../bin/miki/miki.conf" />
+		<Unit filename="../mcoinclude/consts.h" />
+		<Unit filename="../mcoinclude/errorstrings.h" />
+		<Unit filename="../mcoinclude/matypes.h" />
+		<Unit filename="../mcoinclude/minidb.cpp" />
+		<Unit filename="../mcoinclude/minidb.h" />
+		<Unit filename="../mcoinclude/modiface.h" />
+		<Unit filename="../mcoinclude/os.h" />
+		<Unit filename="../mcoinclude/strutils.h" />
+		<Unit filename="CMakeLists.txt" />
+		<Unit filename="config.cpp" />
+		<Unit filename="config.h" />
+		<Unit filename="main.cpp" />
+		<Unit filename="message.cpp" />
+		<Unit filename="message.h" />
+		<Unit filename="theapp.cpp" />
+		<Unit filename="theapp.h" />
+		<Unit filename="udpsock.cpp" />
+		<Unit filename="udpsock.h" />
+		<Unit filename="watcher.cpp" />
+		<Unit filename="watcher.h" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

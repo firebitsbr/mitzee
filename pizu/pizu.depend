@@ -1,0 +1,1054 @@
+# depslib dependency file v1.0
+1350362839 source:/home/marius/C++/GOOGLE/webhop/pizu/config.cpp
+	<assert.h>
+	<stdarg.h>
+	<limits.h>
+	<iostream>
+	"config.h"
+	<strutils.h>
+
+1350363492 /home/marius/C++/GOOGLE/webhop/pizu/config.h
+	"os.h"
+	<sys/types.h>
+	<sys/stat.h>
+	<unistd.h>
+	<stdio.h>
+	<string>
+	<sstream>
+	<map>
+	<set>
+	<vector>
+	<strutils.h>
+
+1347996372 /home/marius/C++/GOOGLE/webhop/include/os.h
+	<errno.h>
+	<unistd.h>
+	<assert.h>
+	<pthread.h>
+	<semaphore.h>
+	<stdio.h>
+	<inttypes.h>
+	<wchar.h>
+
+1361475964 /home/marius/C++/GOOGLE/webhop/include/strutils.h
+	<matypes.h>
+	<stdarg.h>
+	<stdio.h>
+	<ctype.h>
+	<string.h>
+	<fstream>
+	<sstream>
+	<consts.h>
+
+1349745262 /home/marius/C++/GOOGLE/webhop/include/matypes.h
+	<stddef.h>
+	<os.h>
+	<sock.h>
+
+1361509243 /home/marius/C++/GOOGLE/webhop/socklib/sock.h
+	<os.h>
+	<sys/socket.h>
+	<resolv.h>
+	<sys/select.h>
+	<arpa/inet.h>
+	<sys/ioctl.h>
+	<sys/time.h>
+	<netdb.h>
+	<string.h>
+	<string>
+	<fstream>
+	<math.h>
+
+1348102372 /home/marius/C++/GOOGLE/webhop/include/consts.h
+	<os.h>
+	<matypes.h>
+	<string.h>
+
+1350363077 source:/home/marius/C++/GOOGLE/webhop/pizu/context.cpp
+	<assert.h>
+	<iostream>
+	<sstream>
+	<sock.h>
+	"main.h"
+	"config.h"
+	"context.h"
+	"threadpool.h"
+	"ctxthread.h"
+	"listeners.h"
+	"modules.h"
+	<strutils.h>
+	<consts.h>
+
+1347996372 /home/marius/C++/GOOGLE/webhop/pizu/main.h
+	<dlfcn.h>
+	<os.h>
+	<modiface.h>
+
+1350345228 /home/marius/C++/GOOGLE/webhop/include/modiface.h
+	<matypes.h>
+	<iostream>
+	<string.h>
+	<stdio.h>
+	<stddef.h>
+	<sys/time.h>
+
+1347996372 /home/marius/C++/GOOGLE/webhop/pizu/context.h
+	<string>
+	<map>
+	<vector>
+	<sock.h>
+	"main.h"
+	"httprequest.h"
+	"config.h"
+	"modules.h"
+	<modiface.h>
+	"sslcrypt.h"
+
+1347996372 /home/marius/C++/GOOGLE/webhop/pizu/httprequest.h
+	"os.h"
+	<modiface.h>
+	"config.h"
+	<string>
+	<map>
+
+1347996372 /home/marius/C++/GOOGLE/webhop/pizu/modules.h
+	<modiface.h>
+	"config.h"
+
+1347996372 /home/marius/C++/GOOGLE/webhop/pizu/sslcrypt.h
+
+1350362423 /home/marius/C++/GOOGLE/webhop/pizu/threadpool.h
+	"os.h"
+	<pthread.h>
+	<sys/types.h>
+	<unistd.h>
+	<vector>
+	<list>
+	<algorithm>
+	"ctxqueue.h"
+
+1347996372 /home/marius/C++/GOOGLE/webhop/pizu/ctxqueue.h
+	<deque>
+	"os.h"
+	"context.h"
+
+1350359877 /home/marius/C++/GOOGLE/webhop/pizu/ctxthread.h
+	<sys/types.h>
+	<unistd.h>
+	<vector>
+	<list>
+	<algorithm>
+	"tinyclasses.h"
+	"ctxqueue.h"
+
+1347996372 /home/marius/C++/GOOGLE/webhop/pizu/tinyclasses.h
+	<os.h>
+	<stdlib.h>
+	<vector>
+
+1350341050 /home/marius/C++/GOOGLE/webhop/pizu/listeners.h
+	<string>
+	<vector>
+	"os.h"
+	"config.h"
+	<sock.h>
+
+1347996372 source:/home/marius/C++/GOOGLE/webhop/pizu/ctxqueue.cpp
+	"os.h"
+	"ctxqueue.h"
+	"context.h"
+
+1350365496 source:/home/marius/C++/GOOGLE/webhop/pizu/ctxthread.cpp
+	<assert.h>
+	<algorithm>
+	"tinyclasses.h"
+	"ctxthread.h"
+	"threadpool.h"
+	"config.h"
+	"ctxqueue.h"
+	"context.h"
+	<strutils.h>
+
+1350360185 source:/home/marius/C++/GOOGLE/webhop/pizu/httprequest.cpp
+	<assert.h>
+	<sstream>
+	<libgen.h>
+	"main.h"
+	<strutils.h>
+	<stdlib.h>
+	<fcntl.h>
+	"threadpool.h"
+	"httprequest.h"
+	"context.h"
+
+1350362839 source:/home/marius/C++/GOOGLE/webhop/pizu/listeners.cpp
+	<map>
+	<regex>
+	<iostream>
+	<sstream>
+	<tr1/regex>
+	<signal.h>
+	<consts.h>
+	<stdlib.h>
+	<fcntl.h>
+	"main.h"
+	"config.h"
+	"listeners.h"
+	"context.h"
+	"ctxqueue.h"
+	"threadpool.h"
+	"sslcrypt.h"
+
+1347996372 source:/home/marius/C++/GOOGLE/webhop/pizu/main.cpp
+	<errno.h>
+	<termios.h>
+	<unistd.h>
+	<fcntl.h>
+	<iostream>
+	<signal.h>
+	"os.h"
+	"main.h"
+	"config.h"
+	"listeners.h"
+	"ctxqueue.h"
+	"context.h"
+	"threadpool.h"
+	"modules.h"
+	<strutils.h>
+	"sslcrypt.h"
+
+1347996372 source:/home/marius/C++/GOOGLE/webhop/pizu/modiface.cpp
+	"listeners.h"
+	"ctxthread.h"
+	<modiface.h>
+	"context.h"
+
+1347996372 source:/home/marius/C++/GOOGLE/webhop/pizu/modules.cpp
+	<dlfcn.h>
+	"tinyclasses.h"
+	<strutils.h>
+	"modules.h"
+
+1347996372 source:/home/marius/C++/GOOGLE/webhop/pizu/sslcrypt.cpp
+	<dlfcn.h>
+	"config.h"
+	"sslcrypt.h"
+
+1350362400 source:/home/marius/C++/GOOGLE/webhop/pizu/threadpool.cpp
+	<iostream>
+	<sstream>
+	"main.h"
+	"threadpool.h"
+	"ctxthread.h"
+	"context.h"
+	"ctxqueue.h"
+	"listeners.h"
+	<sock.h>
+	<string>
+
+1347996372 source:/home/marius/C++/GOOGLE/webhop/pizu/tinyclasses.cpp
+	"tinyclasses.h"
+
+1350362839 source:/home/marius/C++/GOOGLE/pizubuf/pizu/config.cpp
+	<assert.h>
+	<stdarg.h>
+	<limits.h>
+	<iostream>
+	"config.h"
+	<strutils.h>
+
+1350363492 /home/marius/C++/GOOGLE/pizubuf/pizu/config.h
+	"os.h"
+	<sys/types.h>
+	<sys/stat.h>
+	<unistd.h>
+	<stdio.h>
+	<string>
+	<sstream>
+	<map>
+	<set>
+	<vector>
+	<strutils.h>
+
+1347996372 /home/marius/C++/GOOGLE/pizubuf/include/os.h
+	<errno.h>
+	<unistd.h>
+	<assert.h>
+	<pthread.h>
+	<semaphore.h>
+	<stdio.h>
+	<inttypes.h>
+	<wchar.h>
+
+1361475964 /home/marius/C++/GOOGLE/pizubuf/include/strutils.h
+	<matypes.h>
+	<stdarg.h>
+	<stdio.h>
+	<ctype.h>
+	<string.h>
+	<fstream>
+	<sstream>
+	<consts.h>
+
+1349745262 /home/marius/C++/GOOGLE/pizubuf/include/matypes.h
+	<stddef.h>
+	<os.h>
+	<sock.h>
+
+1365479328 /home/marius/C++/GOOGLE/pizubuf/socklib/sock.h
+	<os.h>
+	<sys/socket.h>
+	<resolv.h>
+	<sys/select.h>
+	<arpa/inet.h>
+	<sys/ioctl.h>
+	<sys/time.h>
+	<netdb.h>
+	<string.h>
+	<string>
+	<fstream>
+	<math.h>
+
+1348102372 /home/marius/C++/GOOGLE/pizubuf/include/consts.h
+	<os.h>
+	<matypes.h>
+	<string.h>
+
+1350363077 source:/home/marius/C++/GOOGLE/pizubuf/pizu/context.cpp
+	<assert.h>
+	<iostream>
+	<sstream>
+	<sock.h>
+	"main.h"
+	"config.h"
+	"context.h"
+	"threadpool.h"
+	"ctxthread.h"
+	"listeners.h"
+	"modules.h"
+	<strutils.h>
+	<consts.h>
+
+1347996372 /home/marius/C++/GOOGLE/pizubuf/pizu/main.h
+	<dlfcn.h>
+	<os.h>
+	<modiface.h>
+
+1350345228 /home/marius/C++/GOOGLE/pizubuf/include/modiface.h
+	<matypes.h>
+	<iostream>
+	<string.h>
+	<stdio.h>
+	<stddef.h>
+	<sys/time.h>
+
+1347996372 /home/marius/C++/GOOGLE/pizubuf/pizu/context.h
+	<string>
+	<map>
+	<vector>
+	<sock.h>
+	"main.h"
+	"httprequest.h"
+	"config.h"
+	"modules.h"
+	<modiface.h>
+	"sslcrypt.h"
+
+1347996372 /home/marius/C++/GOOGLE/pizubuf/pizu/httprequest.h
+	"os.h"
+	<modiface.h>
+	"config.h"
+	<string>
+	<map>
+
+1347996372 /home/marius/C++/GOOGLE/pizubuf/pizu/modules.h
+	<modiface.h>
+	"config.h"
+
+1368549142 /home/marius/C++/GOOGLE/pizubuf/pizu/sslcrypt.h
+
+1350362423 /home/marius/C++/GOOGLE/pizubuf/pizu/threadpool.h
+	"os.h"
+	<pthread.h>
+	<sys/types.h>
+	<unistd.h>
+	<vector>
+	<list>
+	<algorithm>
+	"ctxqueue.h"
+
+1347996372 /home/marius/C++/GOOGLE/pizubuf/pizu/ctxqueue.h
+	<deque>
+	"os.h"
+	"context.h"
+
+1350359877 /home/marius/C++/GOOGLE/pizubuf/pizu/ctxthread.h
+	<sys/types.h>
+	<unistd.h>
+	<vector>
+	<list>
+	<algorithm>
+	"tinyclasses.h"
+	"ctxqueue.h"
+
+1347996372 /home/marius/C++/GOOGLE/pizubuf/pizu/tinyclasses.h
+	<os.h>
+	<stdlib.h>
+	<vector>
+
+1350341050 /home/marius/C++/GOOGLE/pizubuf/pizu/listeners.h
+	<string>
+	<vector>
+	"os.h"
+	"config.h"
+	<sock.h>
+
+1347996372 source:/home/marius/C++/GOOGLE/pizubuf/pizu/ctxqueue.cpp
+	"os.h"
+	"ctxqueue.h"
+	"context.h"
+
+1350365496 source:/home/marius/C++/GOOGLE/pizubuf/pizu/ctxthread.cpp
+	<assert.h>
+	<algorithm>
+	"tinyclasses.h"
+	"ctxthread.h"
+	"threadpool.h"
+	"config.h"
+	"ctxqueue.h"
+	"context.h"
+	<strutils.h>
+
+1350360185 source:/home/marius/C++/GOOGLE/pizubuf/pizu/httprequest.cpp
+	<assert.h>
+	<sstream>
+	<libgen.h>
+	"main.h"
+	<strutils.h>
+	<stdlib.h>
+	<fcntl.h>
+	"threadpool.h"
+	"httprequest.h"
+	"context.h"
+
+1350362839 source:/home/marius/C++/GOOGLE/pizubuf/pizu/listeners.cpp
+	<map>
+	<regex>
+	<iostream>
+	<sstream>
+	<tr1/regex>
+	<signal.h>
+	<consts.h>
+	<stdlib.h>
+	<fcntl.h>
+	"main.h"
+	"config.h"
+	"listeners.h"
+	"context.h"
+	"ctxqueue.h"
+	"threadpool.h"
+	"sslcrypt.h"
+
+1368549051 source:/home/marius/C++/GOOGLE/pizubuf/pizu/main.cpp
+	<errno.h>
+	<termios.h>
+	<unistd.h>
+	<fcntl.h>
+	<iostream>
+	<signal.h>
+	"os.h"
+	"main.h"
+	"config.h"
+	"listeners.h"
+	"ctxqueue.h"
+	"context.h"
+	"threadpool.h"
+	"modules.h"
+	<strutils.h>
+	"sslcrypt.h"
+
+1347996372 source:/home/marius/C++/GOOGLE/pizubuf/pizu/modiface.cpp
+	"listeners.h"
+	"ctxthread.h"
+	<modiface.h>
+	"context.h"
+
+1347996372 source:/home/marius/C++/GOOGLE/pizubuf/pizu/modules.cpp
+	<dlfcn.h>
+	"tinyclasses.h"
+	<strutils.h>
+	"modules.h"
+
+1368549160 source:/home/marius/C++/GOOGLE/pizubuf/pizu/sslcrypt.cpp
+	<dlfcn.h>
+	"config.h"
+	"sslcrypt.h"
+
+1350362400 source:/home/marius/C++/GOOGLE/pizubuf/pizu/threadpool.cpp
+	<iostream>
+	<sstream>
+	"main.h"
+	"threadpool.h"
+	"ctxthread.h"
+	"context.h"
+	"ctxqueue.h"
+	"listeners.h"
+	<sock.h>
+	<string>
+
+1347996372 source:/home/marius/C++/GOOGLE/pizubuf/pizu/tinyclasses.cpp
+	"tinyclasses.h"
+
+1378931121 source:/home/marius/CPP/GOOGLE/pizubuf/pizu/config.cpp
+	<assert.h>
+	<stdarg.h>
+	<limits.h>
+	<iostream>
+	"config.h"
+	<strutils.h>
+
+1378931121 /home/marius/CPP/GOOGLE/pizubuf/pizu/config.h
+	"os.h"
+	<sys/types.h>
+	<sys/stat.h>
+	<unistd.h>
+	<stdio.h>
+	<string>
+	<sstream>
+	<map>
+	<set>
+	<vector>
+	<strutils.h>
+
+1378931121 /home/marius/CPP/GOOGLE/pizubuf/include/os.h
+	<errno.h>
+	<unistd.h>
+	<assert.h>
+	<pthread.h>
+	<semaphore.h>
+	<stdio.h>
+	<inttypes.h>
+	<wchar.h>
+
+1378931121 /home/marius/CPP/GOOGLE/pizubuf/include/strutils.h
+	<matypes.h>
+	<stdarg.h>
+	<stdio.h>
+	<ctype.h>
+	<string.h>
+	<fstream>
+	<sstream>
+	<consts.h>
+
+1378931121 /home/marius/CPP/GOOGLE/pizubuf/include/matypes.h
+	<stddef.h>
+	<os.h>
+	<sock.h>
+
+1409239383 /home/marius/CPP/GOOGLE/pizubuf/socklib/sock.h
+	<os.h>
+	<sys/socket.h>
+	<resolv.h>
+	<sys/select.h>
+	<arpa/inet.h>
+	<sys/ioctl.h>
+	<sys/time.h>
+	<netdb.h>
+	<string.h>
+	<string>
+	<fstream>
+	<math.h>
+
+1378931121 /home/marius/CPP/GOOGLE/pizubuf/include/consts.h
+	<os.h>
+	<matypes.h>
+	<string.h>
+
+1378931121 source:/home/marius/CPP/GOOGLE/pizubuf/pizu/context.cpp
+	<assert.h>
+	<iostream>
+	<sstream>
+	<sock.h>
+	"main.h"
+	"config.h"
+	"context.h"
+	"threadpool.h"
+	"ctxthread.h"
+	"listeners.h"
+	"modules.h"
+	<strutils.h>
+	<consts.h>
+
+1378931121 /home/marius/CPP/GOOGLE/pizubuf/pizu/main.h
+	<dlfcn.h>
+	<os.h>
+	<modiface.h>
+
+1378931121 /home/marius/CPP/GOOGLE/pizubuf/include/modiface.h
+	<matypes.h>
+	<iostream>
+	<string.h>
+	<stdio.h>
+	<stddef.h>
+	<sys/time.h>
+
+1378931121 /home/marius/CPP/GOOGLE/pizubuf/pizu/context.h
+	<string>
+	<map>
+	<vector>
+	<sock.h>
+	"main.h"
+	"httprequest.h"
+	"config.h"
+	"modules.h"
+	<modiface.h>
+	"sslcrypt.h"
+
+1378931121 /home/marius/CPP/GOOGLE/pizubuf/pizu/httprequest.h
+	"os.h"
+	<modiface.h>
+	"config.h"
+	<string>
+	<map>
+
+1378931121 /home/marius/CPP/GOOGLE/pizubuf/pizu/modules.h
+	<modiface.h>
+	"config.h"
+
+1378931121 /home/marius/CPP/GOOGLE/pizubuf/pizu/sslcrypt.h
+
+1378931121 /home/marius/CPP/GOOGLE/pizubuf/pizu/threadpool.h
+	"os.h"
+	<pthread.h>
+	<sys/types.h>
+	<unistd.h>
+	<vector>
+	<list>
+	<algorithm>
+	"ctxqueue.h"
+
+1378931121 /home/marius/CPP/GOOGLE/pizubuf/pizu/ctxqueue.h
+	<deque>
+	"os.h"
+	"context.h"
+
+1378931121 /home/marius/CPP/GOOGLE/pizubuf/pizu/ctxthread.h
+	<sys/types.h>
+	<unistd.h>
+	<vector>
+	<list>
+	<algorithm>
+	"tinyclasses.h"
+	"ctxqueue.h"
+
+1378931121 /home/marius/CPP/GOOGLE/pizubuf/pizu/tinyclasses.h
+	<os.h>
+	<stdlib.h>
+	<vector>
+
+1378931121 /home/marius/CPP/GOOGLE/pizubuf/pizu/listeners.h
+	<string>
+	<vector>
+	"os.h"
+	"config.h"
+	<sock.h>
+
+1378931121 source:/home/marius/CPP/GOOGLE/pizubuf/pizu/ctxqueue.cpp
+	"os.h"
+	"ctxqueue.h"
+	"context.h"
+
+1378931121 source:/home/marius/CPP/GOOGLE/pizubuf/pizu/ctxthread.cpp
+	<assert.h>
+	<algorithm>
+	"tinyclasses.h"
+	"ctxthread.h"
+	"threadpool.h"
+	"config.h"
+	"ctxqueue.h"
+	"context.h"
+	<strutils.h>
+
+1378931121 source:/home/marius/CPP/GOOGLE/pizubuf/pizu/httprequest.cpp
+	<assert.h>
+	<sstream>
+	<libgen.h>
+	"main.h"
+	<strutils.h>
+	<stdlib.h>
+	<fcntl.h>
+	"threadpool.h"
+	"httprequest.h"
+	"context.h"
+
+1378931121 source:/home/marius/CPP/GOOGLE/pizubuf/pizu/listeners.cpp
+	<map>
+	<regex>
+	<iostream>
+	<sstream>
+	<tr1/regex>
+	<signal.h>
+	<consts.h>
+	<stdlib.h>
+	<fcntl.h>
+	"main.h"
+	"config.h"
+	"listeners.h"
+	"context.h"
+	"ctxqueue.h"
+	"threadpool.h"
+	"sslcrypt.h"
+
+1378931121 source:/home/marius/CPP/GOOGLE/pizubuf/pizu/main.cpp
+	<errno.h>
+	<termios.h>
+	<unistd.h>
+	<fcntl.h>
+	<iostream>
+	<signal.h>
+	"os.h"
+	"main.h"
+	"config.h"
+	"listeners.h"
+	"ctxqueue.h"
+	"context.h"
+	"threadpool.h"
+	"modules.h"
+	<strutils.h>
+	"sslcrypt.h"
+
+1378931121 source:/home/marius/CPP/GOOGLE/pizubuf/pizu/modiface.cpp
+	"listeners.h"
+	"ctxthread.h"
+	<modiface.h>
+	"context.h"
+
+1378931121 source:/home/marius/CPP/GOOGLE/pizubuf/pizu/modules.cpp
+	<dlfcn.h>
+	"tinyclasses.h"
+	<strutils.h>
+	"modules.h"
+
+1378931121 source:/home/marius/CPP/GOOGLE/pizubuf/pizu/sslcrypt.cpp
+	<dlfcn.h>
+	"config.h"
+	"sslcrypt.h"
+
+1378931121 source:/home/marius/CPP/GOOGLE/pizubuf/pizu/threadpool.cpp
+	<iostream>
+	<sstream>
+	"main.h"
+	"threadpool.h"
+	"ctxthread.h"
+	"context.h"
+	"ctxqueue.h"
+	"listeners.h"
+	<sock.h>
+	<string>
+
+1378931121 source:/home/marius/CPP/GOOGLE/pizubuf/pizu/tinyclasses.cpp
+	"tinyclasses.h"
+
+1412011217 source:/home/marius/CPP/GUGLE/src/pizubuf/pizu/config.cpp
+	<assert.h>
+	<stdarg.h>
+	<limits.h>
+	<iostream>
+	"config.h"
+	<strutils.h>
+
+1412011860 /home/marius/CPP/GUGLE/src/pizubuf/pizu/config.h
+	<os.h>
+	<sys/types.h>
+	<sys/stat.h>
+	<unistd.h>
+	<stdio.h>
+	<string>
+	<sstream>
+	<map>
+	<set>
+	<vector>
+	<strutils.h>
+
+1378931121 /home/marius/CPP/GUGLE/src/pizubuf/include/os.h
+	<errno.h>
+	<unistd.h>
+	<assert.h>
+	<pthread.h>
+	<semaphore.h>
+	<stdio.h>
+	<inttypes.h>
+	<wchar.h>
+
+1378931121 /home/marius/CPP/GUGLE/src/pizubuf/include/strutils.h
+	<matypes.h>
+	<stdarg.h>
+	<stdio.h>
+	<ctype.h>
+	<string.h>
+	<fstream>
+	<sstream>
+	<consts.h>
+
+1378931121 /home/marius/CPP/GUGLE/src/pizubuf/include/matypes.h
+	<stddef.h>
+	<os.h>
+	<sock.h>
+
+1409239383 /home/marius/CPP/GUGLE/src/pizubuf/socklib/sock.h
+	<os.h>
+	<sys/socket.h>
+	<resolv.h>
+	<sys/select.h>
+	<arpa/inet.h>
+	<sys/ioctl.h>
+	<sys/time.h>
+	<netdb.h>
+	<string.h>
+	<string>
+	<fstream>
+	<math.h>
+
+1378931121 /home/marius/CPP/GUGLE/src/pizubuf/include/consts.h
+	<os.h>
+	<matypes.h>
+	<string.h>
+
+1412011243 source:/home/marius/CPP/GUGLE/src/pizubuf/pizu/context.cpp
+	<assert.h>
+	<iostream>
+	<sstream>
+	<sock.h>
+	"main.h"
+	"config.h"
+	"context.h"
+	"threadpool.h"
+	"ctxthread.h"
+	"listeners.h"
+	"modules.h"
+	<strutils.h>
+	<consts.h>
+
+1412011401 /home/marius/CPP/GUGLE/src/pizubuf/pizu/main.h
+	<dlfcn.h>
+	<os.h>
+	<modiface.h>
+
+1378931121 /home/marius/CPP/GUGLE/src/pizubuf/include/modiface.h
+	<matypes.h>
+	<iostream>
+	<string.h>
+	<stdio.h>
+	<stddef.h>
+	<sys/time.h>
+
+1412011401 /home/marius/CPP/GUGLE/src/pizubuf/pizu/context.h
+	<string>
+	<map>
+	<vector>
+	<sock.h>
+	"main.h"
+	"httprequest.h"
+	"config.h"
+	"modules.h"
+	<modiface.h>
+	"sslcrypt.h"
+
+1412011273 /home/marius/CPP/GUGLE/src/pizubuf/pizu/httprequest.h
+	"os.h"
+	<modiface.h>
+	"config.h"
+	<string>
+	<map>
+
+1412011401 /home/marius/CPP/GUGLE/src/pizubuf/pizu/modules.h
+	<modiface.h>
+	"config.h"
+
+1412011328 /home/marius/CPP/GUGLE/src/pizubuf/pizu/sslcrypt.h
+
+1412011401 /home/marius/CPP/GUGLE/src/pizubuf/pizu/threadpool.h
+	"os.h"
+	<pthread.h>
+	<sys/types.h>
+	<unistd.h>
+	<vector>
+	<list>
+	<algorithm>
+	"ctxqueue.h"
+
+1412011401 /home/marius/CPP/GUGLE/src/pizubuf/pizu/ctxqueue.h
+	<deque>
+	"os.h"
+	"context.h"
+
+1412011263 /home/marius/CPP/GUGLE/src/pizubuf/pizu/ctxthread.h
+	<sys/types.h>
+	<unistd.h>
+	<vector>
+	<list>
+	<algorithm>
+	"tinyclasses.h"
+	"ctxqueue.h"
+
+1412011341 /home/marius/CPP/GUGLE/src/pizubuf/pizu/tinyclasses.h
+	<os.h>
+	<stdlib.h>
+	<vector>
+
+1412011284 /home/marius/CPP/GUGLE/src/pizubuf/pizu/listeners.h
+	<string>
+	<vector>
+	"os.h"
+	"config.h"
+	<sock.h>
+
+1412011401 source:/home/marius/CPP/GUGLE/src/pizubuf/pizu/ctxqueue.cpp
+	"os.h"
+	"ctxqueue.h"
+	"context.h"
+
+1412011259 source:/home/marius/CPP/GUGLE/src/pizubuf/pizu/ctxthread.cpp
+	<assert.h>
+	<algorithm>
+	"tinyclasses.h"
+	"ctxthread.h"
+	"threadpool.h"
+	"config.h"
+	"ctxqueue.h"
+	"context.h"
+	<strutils.h>
+
+1412011268 source:/home/marius/CPP/GUGLE/src/pizubuf/pizu/httprequest.cpp
+	<assert.h>
+	<sstream>
+	<libgen.h>
+	"main.h"
+	<strutils.h>
+	<stdlib.h>
+	<fcntl.h>
+	"threadpool.h"
+	"httprequest.h"
+	"context.h"
+
+1412011277 source:/home/marius/CPP/GUGLE/src/pizubuf/pizu/listeners.cpp
+	<map>
+	<regex>
+	<iostream>
+	<sstream>
+	<tr1/regex>
+	<signal.h>
+	<consts.h>
+	<stdlib.h>
+	<fcntl.h>
+	"main.h"
+	"config.h"
+	"listeners.h"
+	"context.h"
+	"ctxqueue.h"
+	"threadpool.h"
+	"sslcrypt.h"
+
+1412011289 source:/home/marius/CPP/GUGLE/src/pizubuf/pizu/main.cpp
+	<errno.h>
+	<termios.h>
+	<unistd.h>
+	<fcntl.h>
+	<iostream>
+	<signal.h>
+	"os.h"
+	"main.h"
+	"config.h"
+	"listeners.h"
+	"ctxqueue.h"
+	"context.h"
+	"threadpool.h"
+	"modules.h"
+	<strutils.h>
+	"sslcrypt.h"
+
+1412011401 source:/home/marius/CPP/GUGLE/src/pizubuf/pizu/modiface.cpp
+	"listeners.h"
+	"ctxthread.h"
+	<modiface.h>
+	"context.h"
+
+1412011401 source:/home/marius/CPP/GUGLE/src/pizubuf/pizu/modules.cpp
+	<dlfcn.h>
+	"tinyclasses.h"
+	<strutils.h>
+	"modules.h"
+
+1412011320 source:/home/marius/CPP/GUGLE/src/pizubuf/pizu/sslcrypt.cpp
+	<dlfcn.h>
+	"config.h"
+	"sslcrypt.h"
+
+1412011401 source:/home/marius/CPP/GUGLE/src/pizubuf/pizu/threadpool.cpp
+	<iostream>
+	<sstream>
+	"main.h"
+	"threadpool.h"
+	"ctxthread.h"
+	"context.h"
+	"ctxqueue.h"
+	"listeners.h"
+	<sock.h>
+	<string>
+
+1412011401 source:/home/marius/CPP/GUGLE/src/pizubuf/pizu/tinyclasses.cpp
+	"tinyclasses.h"
+
+1412283728 /home/marius/CPP/GUGLE/src/pizubuf/mcoinclude/os.h
+	<errno.h>
+	<unistd.h>
+	<assert.h>
+	<pthread.h>
+	<semaphore.h>
+	<stdio.h>
+	<inttypes.h>
+	<wchar.h>
+
+1412109907 /home/marius/CPP/GUGLE/src/pizubuf/mcoinclude/strutils.h
+	<matypes.h>
+	<stdarg.h>
+	<stdio.h>
+	<ctype.h>
+	<string.h>
+	<fstream>
+	<sstream>
+	<consts.h>
+
+1412109907 /home/marius/CPP/GUGLE/src/pizubuf/mcoinclude/matypes.h
+	<stddef.h>
+	<os.h>
+	<sock.h>
+
+1412307152 /home/marius/CPP/GUGLE/src/pizubuf/mcosocks/sock.h
+	<os.h>
+	<sys/socket.h>
+	<resolv.h>
+	<sys/select.h>
+	<arpa/inet.h>
+	<sys/ioctl.h>
+	<sys/time.h>
+	<netdb.h>
+	<stdlib.h>
+	<string.h>
+	<string>
+	<fstream>
+	<math.h>
+
+1412109907 /home/marius/CPP/GUGLE/src/pizubuf/mcoinclude/consts.h
+	<os.h>
+	<matypes.h>
+	<string.h>
+
+1413910697 /home/marius/CPP/GUGLE/src/pizubuf/mcoinclude/modiface.h
+	<matypes.h>
+	<iostream>
+	<string.h>
+	<stdio.h>
+	<stddef.h>
+	<sys/time.h>
+

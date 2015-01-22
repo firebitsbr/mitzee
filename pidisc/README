@@ -1,0 +1,18 @@
+cmake .
+make
+
+
+# on each PC or raspberry pi on the network
+ ./install.sh
+
+will ask for the token which will be matched with the client
+  - to doscover all PC's om the net give same token to all PC's
+  - you can group PC's with different toens.
+
+
+# on client machine when you wanna discover
+
+ ./pidisc d TOKEN
+
+
+

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="sqstdlib" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Win32 Release">
+				<Option output="/home/marius/approxymate/marius/plugins/sq/sq/sqstdlib/Release/libsqstdlib" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="Release" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="-W" />
+					<Add option="-fexceptions" />
+					<Add option="-O2" />
+					<Add option="-DWIN32" />
+					<Add option="-DNDEBUG" />
+					<Add option="-D_MBCS" />
+					<Add option="-D_LIB" />
+					<Add directory="../include" />
+				</Compiler>
+			</Target>
+			<Target title="Win32 Debug">
+				<Option output="/home/marius/approxymate/marius/plugins/sq/sq/sqstdlib/Debug/libsqstdlib" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="Debug" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="-W" />
+					<Add option="-fexceptions" />
+					<Add option="-g" />
+					<Add option="-DWIN32" />
+					<Add option="-D_DEBUG" />
+					<Add option="-D_MBCS" />
+					<Add option="-D_LIB" />
+					<Add directory="../include" />
+				</Compiler>
+			</Target>
+		</Build>
+		<Unit filename="sqstdblob.cpp" />
+		<Unit filename="sqstdio.cpp" />
+		<Unit filename="sqstdmath.cpp" />
+		<Unit filename="sqstdrex.cpp" />
+		<Unit filename="sqstdstream.cpp" />
+		<Unit filename="sqstdstring.cpp" />
+		<Unit filename="sqstdaux.cpp" />
+		<Unit filename="sqstdsystem.cpp" />
+		<Unit filename="sqstdblobimpl.h" />
+		<Unit filename="sqstdstream.h" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

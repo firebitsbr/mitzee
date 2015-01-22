@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_layout_file>
+	<ActiveTarget name="Debug" />
+	<File name="include/sqstdio.h" open="1" top="0" tabpos="5">
+		<Cursor position="1437" topLine="25" />
+	</File>
+	<File name="sqstdlib/sqstdaux.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="42" topLine="0" />
+	</File>
+	<File name="sqstdlib/sqstdio.cpp" open="1" top="0" tabpos="6">
+		<Cursor position="8607" topLine="316" />
+	</File>
+	<File name="sqstdlib/sqstdrex.cpp" open="1" top="0" tabpos="2">
+		<Cursor position="0" topLine="0" />
+	</File>
+	<File name="squirrel/sqmem.cpp" open="1" top="0" tabpos="4">
+		<Cursor position="1324" topLine="46" />
+	</File>
+	<File name="squirrel/sqobject.h" open="1" top="0" tabpos="3">
+		<Cursor position="0" topLine="0" />
+	</File>
+</CodeBlocks_layout_file>

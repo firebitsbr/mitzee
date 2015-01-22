@@ -1,0 +1,79 @@
+# depslib dependency file v1.0
+1350346210 source:/home/marius/C++/GOOGLE/webhop/pizu/plugins/html/htmlmod.cpp
+	<assert.h>
+	<stdio.h>
+	<string>
+	<fcntl.h>
+	<dirent.h>
+	<sys/stat.h>
+	<utime.h>
+	<pthread.h>
+	<limits.h>
+	<strutils.h>
+	<consts.h>
+	"htmlmod.h"
+	<iostream>
+
+1361475964 /home/marius/C++/GOOGLE/webhop/include/strutils.h
+	<matypes.h>
+	<stdarg.h>
+	<stdio.h>
+	<ctype.h>
+	<string.h>
+	<fstream>
+	<sstream>
+	<consts.h>
+
+1349745262 /home/marius/C++/GOOGLE/webhop/include/matypes.h
+	<stddef.h>
+	<os.h>
+	<sock.h>
+
+1347996372 /home/marius/C++/GOOGLE/webhop/include/os.h
+	<errno.h>
+	<unistd.h>
+	<assert.h>
+	<pthread.h>
+	<semaphore.h>
+	<stdio.h>
+	<inttypes.h>
+	<wchar.h>
+
+1361509243 /home/marius/C++/GOOGLE/webhop/socklib/sock.h
+	<os.h>
+	<sys/socket.h>
+	<resolv.h>
+	<sys/select.h>
+	<arpa/inet.h>
+	<sys/ioctl.h>
+	<sys/time.h>
+	<netdb.h>
+	<string.h>
+	<string>
+	<fstream>
+	<math.h>
+
+1348102372 /home/marius/C++/GOOGLE/webhop/include/consts.h
+	<os.h>
+	<matypes.h>
+	<string.h>
+
+1347996267 /home/marius/C++/GOOGLE/webhop/pizu/plugins/html/htmlmod.h
+	<modiface.h>
+	<sys/stat.h>
+	<string>
+	<vector>
+	<map>
+	<set>
+
+1350345228 /home/marius/C++/GOOGLE/webhop/include/modiface.h
+	<matypes.h>
+	<iostream>
+	<string.h>
+	<stdio.h>
+	<stddef.h>
+	<sys/time.h>
+
+1347996267 source:/home/marius/C++/GOOGLE/webhop/pizu/plugins/html/main.cpp
+	"htmlmod.h"
+

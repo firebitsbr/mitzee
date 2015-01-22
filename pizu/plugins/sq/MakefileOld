@@ -1,0 +1,41 @@
+
+
+MYLIB = ../../../lib/libsq.a
+CC=g++ -fPIC
+CFLAGS = -fexceptions -std=c++0x \
+		-I../../../mcoinclude \
+		-I../../../mcosocks \
+		-Isq/include \
+		-Isq/squirrel \
+		-Isq/sqrat/include \
+		-Isq/sqrat
+
+LIBDIR = ../../../lib
+
+LDFLAGS = -ldl -lpthread
+
+#-lpthread -ldl
+# -l:../lib/libsock.a
+# -fPIC -shared
+
+SOURCES=sqmod.cpp \
+		sqwrap.cpp \
+		globalfoos.cpp \
+		main.cpp
+
+
+OBJECTS=$(SOURCES:.cpp=.o)
+EXECUTABLE=../../../bin/plugins/libsq_mod.so
+
+all: $(SOURCES) $(EXECUTABLE)
+
+$(EXECUTABLE): $(OBJECTS)
+	$(CC) -shared $(LDFLAGS) $(OBJECTS) $(MYLIB) -o $@
+
+.cpp.o:
+	$(CC) -shared  $(CFLAGS) $< -o $@
+
+clean:
+	rm -f $(EXECUTABLE) *.o
+
+
