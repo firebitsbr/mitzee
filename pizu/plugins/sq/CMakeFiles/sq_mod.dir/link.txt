@@ -1,1 +1,0 @@
-/usr/bin/c++  -fPIC  -Wall -std=gnu++0x -fexceptions   -shared -Wl,-soname,libsq_mod.so -o /home/marius/CPP/GUGLE/src/mitze/bin/pizu-plugins/libsq_mod.so CMakeFiles/sq_mod.dir/globalfoos.cpp.o CMakeFiles/sq_mod.dir/main.cpp.o CMakeFiles/sq_mod.dir/sqmod.cpp.o CMakeFiles/sq_mod.dir/sqwrap.cpp.o ../../../lib/libsq.a 

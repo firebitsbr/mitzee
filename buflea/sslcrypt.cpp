@@ -46,6 +46,7 @@ struct ssl_func ssl_sw[] =
     {"SSL_CTX_use_certificate_chain_file", 0},
     {"SSLv23_client_method",0},
     {"SSL_CTX_set_cipher_list",0},
+    {"SSL_CTX_check_private_key",0},
     {0,    0}
 };
 
@@ -122,9 +123,9 @@ SslCrypt::SslCrypt():_psslCtx(0),_psslCtxCli(0)
 bool SslCrypt::init_client()
 {
 
-    if ( (_psslCtxCli = SSL_CTX_new(SSLv23_client_method())) )
+    if ( (_psslCtxCli = SSL_CTX_new(SSLv23_client_method()))==0 )
     {
-        printf("%s,%d %s\n", __FILE__ ,__LINE__, sslNerror().c_str());
+        cout << sslNerror();
         return false;
     }
 
@@ -133,30 +134,36 @@ bool SslCrypt::init_client()
     {
         kchar* cf = GCFG->_ssl.cCert.c_str();
 
-        if(::access(cf,0)==0 && 0==SSL_CTX_use_certificate_file(_psslCtx, cf, SSL_FILETYPE_PEM))
+        if(::access(cf,0)==0)
         {
-            printf("%s: %s,%d  %s\n",cf, __FILE__ ,__LINE__,sslNerror().c_str());
-           return false;
+            if(0==SSL_CTX_use_certificate_file(_psslCtx, cf, SSL_FILETYPE_PEM))
+            {
+                cout << sslNerror();
+                return false;
+            }
         }
     }
 
     //CLIENT KEY
-    if(!GCFG->_ssl.cPk12Key.empty())
+    if(!GCFG->_ssl.cPrivKey.empty())
     {
-        kchar* pem = GCFG->_ssl.cPk12Key.c_str();
-        if(::access(pem,0)==0 && 0==SSL_CTX_use_PrivateKey_file(_psslCtx, pem, SSL_FILETYPE_PEM))
+        kchar* pem = GCFG->_ssl.cPrivKey.c_str();
+        if(::access(pem,0)==0)
         {
-            printf("%s: %s,%d  %s\n",pem, __FILE__ ,__LINE__,sslNerror().c_str());
-            return false;
+            if(0==SSL_CTX_use_PrivateKey_file(_psslCtx, pem, SSL_FILETYPE_PEM))
+            {
+                cout << sslNerror();
+                return false;
+            }
         }
     }
 /*
     if ( !SSL_CTX_check_private_key(_psslCtx) )
     {
-        printf( "Private key does not match the public certificate\n");
-        return false;
+        cout << "CHECK PRIVATE KEY:" << sslNerror();
     }
 */
+
     return true;
 }
 
@@ -165,11 +172,11 @@ bool SslCrypt::init_server()
 
     if ((_psslCtx = SSL_CTX_new(SSLv23_server_method())) == 0 )
     {
-        printf("%s,%d %s\n", __FILE__ ,__LINE__, sslNerror().c_str());
+        cout << sslNerror();
     }
     if(0 == _psslCtx)
     {
-        printf("%s,%d  %s\n", __FILE__ ,__LINE__,sslNerror().c_str());
+        cout << sslNerror();
         return false;
     }
 
@@ -178,10 +185,13 @@ bool SslCrypt::init_server()
     {
         kchar* pem = GCFG->_ssl.sCert.c_str();
 
-        if(::access(pem,0)==0 && 0==SSL_CTX_use_certificate_file(_psslCtx, pem, SSL_FILETYPE_PEM))
+        if(::access(pem,0)==0 )
         {
-            printf("%s: %s,%d  %s\n",pem, __FILE__ ,__LINE__,sslNerror().c_str());
-            return false;
+            if(0==SSL_CTX_use_certificate_file(_psslCtx, pem, SSL_FILETYPE_PEM))
+            {
+                cout << sslNerror();
+                return false;
+            }
         }
     }
 
@@ -189,18 +199,21 @@ bool SslCrypt::init_server()
     if(!GCFG->_ssl.sPrivKey.empty())
     {
         kchar* pem = GCFG->_ssl.sPrivKey.c_str();
-        if(::access(pem,0)==0 && 0==SSL_CTX_use_PrivateKey_file(_psslCtx, pem, SSL_FILETYPE_PEM))
+        if(::access(pem,0)==0)
         {
-            printf("%s: %s,%d  %s\n",pem, __FILE__ ,__LINE__,sslNerror().c_str());
-            return false;
+            if(0==SSL_CTX_use_PrivateKey_file(_psslCtx, pem, SSL_FILETYPE_PEM))
+            {
+                cout << sslNerror();
+                return false;
+            }
         }
-/*
+
         if (!SSL_CTX_check_private_key(_psslCtx))
         {
-             printf("private key dont match public certificate %s: %s,%d  %s\n",pem, __FILE__ ,__LINE__,sslNerror().c_str());
+             cout << sslNerror();
             return false;
         }
- */
+
 
     }
 
@@ -209,7 +222,7 @@ bool SslCrypt::init_server()
         kchar* chain = GCFG->_ssl.sChain.c_str();
         if(0 ==SSL_CTX_use_certificate_chain_file(_psslCtx, chain))
         {
-            printf("%s,%d  %s\n", __FILE__ ,__LINE__,sslNerror().c_str());
+            cout << sslNerror();
             return false;
         }
     }
@@ -226,7 +239,7 @@ bool SslCrypt::init_server()
 
     CRYPTO_set_locking_callback(&ssl_locking_callback);
     CRYPTO_set_id_callback(&ssl_id_callback);
-   return true;
+    return true;
 }
 
 
@@ -242,7 +255,7 @@ int SslCrypt::load_dll(kchar *dll_name, struct ssl_func *sw)
 
     if ((dll_handle = dlopen(dll_name, RTLD_LAZY)) == 0)
     {
-        printf("Cannot open %s \n", dll_name);
+        cout << "Cannot open: " << dll_name;
         return 0;
     }
 
@@ -251,7 +264,7 @@ int SslCrypt::load_dll(kchar *dll_name, struct ssl_func *sw)
         u.p = dlsym(dll_handle, fp->name);
         if (u.fp == 0)
         {
-            printf("Cannot loaf function  %s \n", fp->name);
+            cout << "Cannot load: " << fp->name;
             return 0;
         }
         else

@@ -86,11 +86,13 @@ void ConfPrx::_assign( const char* pred, const char* val, int line)
     char    lpred[256];
     char    loco[256];
 
+
+
     ::strcpy(loco,val);
     ::strcpy(lpred,pred);
     try
     {
-        if(_section == "[server3.0]")
+        if(_section.substr(1,::strlen(__VERSION)) == __VERSION)
         {
             BIND(_glb,runfrom);
             BIND(_glb,slog);
@@ -246,10 +248,9 @@ void ConfPrx::_assign( const char* pred, const char* val, int line)
             _bind(lpred, "srv_certificate_file",_ssl.sCert, val);
             _bind(lpred, "srv_certificate_key_file",_ssl.sPrivKey, val);
             _bind(lpred, "srv_certificate_chain_file",_ssl.sChain, val);
-            _bind(lpred, "srv_ca_certificate_file",_ssl.sCaCert, val);
-            _bind(lpred, "cli_pkcs12_file",_ssl.cPk12Key, val);
+
+            _bind(lpred, "cli_certificate_key_file",_ssl.cPrivKey, val);
             _bind(lpred, "cli_certificate_file",_ssl.cCert, val);
-            _bind(lpred, "cli_csr_file",_ssl.cCsr, val);
 
             if(lpred[0]=='}')
             {
@@ -257,7 +258,7 @@ void ConfPrx::_assign( const char* pred, const char* val, int line)
                 fix_path(_ssl.sPrivKey);
                 fix_path(_ssl.sChain);
                 fix_path(_ssl.sCaCert);
-                fix_path(_ssl.cPk12Key);
+                fix_path(_ssl.cPrivKey);
                 fix_path(_ssl.cCert);
                 fix_path(_ssl.cCsr);
                 /*

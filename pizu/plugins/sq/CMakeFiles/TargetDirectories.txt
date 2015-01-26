@@ -1,1 +1,0 @@
-/home/marius/CPP/GUGLE/src/mitze/pizu/plugins/sq/CMakeFiles/sq_mod.dir

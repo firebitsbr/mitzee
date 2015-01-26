@@ -1084,3 +1084,475 @@
 1421777453 /home/marius/CPP/GUGLE/src/pizubuf/buflea/contextreg.h
 	<string>
 
+1421556360 source:/home/marius/CPP/GUGLE/src/mitzee/mcoinclude/config.cpp
+	<assert.h>
+	<iostream>
+	<stdarg.h>
+	<limits.h>
+	<config.h>
+	<strutils.h>
+
+1421556360 /home/marius/CPP/GUGLE/src/mitzee/mcoinclude/config.h
+	<os.h>
+	<sys/types.h>
+	<sys/stat.h>
+	<unistd.h>
+	<iostream>
+	<stdio.h>
+	<string>
+	<sstream>
+	<map>
+	<set>
+	<vector>
+	<sock.h>
+	<errorstrings.h>
+	"strutils.h"
+
+1421556356 /home/marius/CPP/GUGLE/src/mitzee/mcoinclude/os.h
+	<errno.h>
+	<unistd.h>
+	<assert.h>
+	<pthread.h>
+	<semaphore.h>
+	<stdio.h>
+	<inttypes.h>
+	<wchar.h>
+
+1421776593 /home/marius/CPP/GUGLE/src/mitzee/mcosocks/sock.h
+	<os.h>
+	<sys/socket.h>
+	<resolv.h>
+	<sys/select.h>
+	<arpa/inet.h>
+	<sys/ioctl.h>
+	<sys/time.h>
+	<netdb.h>
+	<stdlib.h>
+	<string.h>
+	<string>
+	<fstream>
+	<math.h>
+
+1421556360 /home/marius/CPP/GUGLE/src/mitzee/mcoinclude/errorstrings.h
+	<consts.h>
+
+1421556360 /home/marius/CPP/GUGLE/src/mitzee/mcoinclude/consts.h
+	<os.h>
+	<matypes.h>
+	<string.h>
+
+1421954749 /home/marius/CPP/GUGLE/src/mitzee/mcoinclude/matypes.h
+	<stddef.h>
+	<os.h>
+	<sock.h>
+
+1421556360 /home/marius/CPP/GUGLE/src/mitzee/mcoinclude/strutils.h
+	<matypes.h>
+	<stdarg.h>
+	<stdio.h>
+	<ctype.h>
+	<string.h>
+	<fstream>
+	<sstream>
+	<consts.h>
+
+1421779098 source:/home/marius/CPP/GUGLE/src/mitzee/mcoinclude/minidb.cpp
+	<iostream>
+	<sock.h>
+	<minidb.h>
+	<config.h>
+
+1421778612 /home/marius/CPP/GUGLE/src/mitzee/mcoinclude/minidb.h
+	<os.h>
+	<sock.h>
+	<strutils.h>
+	<sys/stat.h>
+	<iostream>
+	<fstream>
+	<string.h>
+	<matypes.h>
+	<map>
+	<vector>
+	<config.h>
+	<minidb.h>
+
+1422245506 source:/home/marius/CPP/GUGLE/src/mitzee/buflea/configprx.cpp
+	<assert.h>
+	<iostream>
+	<stdarg.h>
+	<limits.h>
+	<strutils.h>
+	"configprx.h"
+
+1422245319 /home/marius/CPP/GUGLE/src/mitzee/buflea/configprx.h
+	<config.h>
+
+1422222099 source:/home/marius/CPP/GUGLE/src/mitzee/buflea/context.cpp
+	<assert.h>
+	<iostream>
+	<sstream>
+	<sock.h>
+	<strutils.h>
+	"main.h"
+	"configprx.h"
+	"context.h"
+	<consts.h>
+	"threadpool.h"
+	"ctxthread.h"
+	"listeners.h"
+	"minidb.h"
+
+1421556360 /home/marius/CPP/GUGLE/src/mitzee/buflea/main.h
+	<dlfcn.h>
+	<os.h>
+
+1421899949 /home/marius/CPP/GUGLE/src/mitzee/buflea/context.h
+	<string>
+	<map>
+	<vector>
+	<os.h>
+	<sock.h>
+	"tinyclasses.h"
+	"main.h"
+	"configprx.h"
+	"tcppipe.h"
+	"sslcrypt.h"
+	"httphdr.h"
+
+1421556360 /home/marius/CPP/GUGLE/src/mitzee/buflea/tinyclasses.h
+	<stdio.h>
+	<string.h>
+	<stdlib.h>
+	<string>
+	<vector>
+	<os.h>
+	<sock.h>
+
+1421900166 /home/marius/CPP/GUGLE/src/mitzee/buflea/tcppipe.h
+	<iostream>
+	<sock.h>
+	"main.h"
+	"strutils.h"
+	"threadpool.h"
+	"sslcrypt.h"
+
+1421556360 /home/marius/CPP/GUGLE/src/mitzee/buflea/threadpool.h
+	<sstream>
+	<set>
+	<os.h>
+	<pthread.h>
+	<sys/types.h>
+	<unistd.h>
+	<map>
+	<queue>
+	<algorithm>
+	"tinyclasses.h"
+	"ctxqueue.h"
+	<minidb.h>
+
+1421556360 /home/marius/CPP/GUGLE/src/mitzee/buflea/ctxqueue.h
+	<iosfwd>
+	<deque>
+	"os.h"
+
+1422220797 /home/marius/CPP/GUGLE/src/mitzee/buflea/sslcrypt.h
+
+1421768225 /home/marius/CPP/GUGLE/src/mitzee/buflea/httphdr.h
+	<string>
+	<map>
+	<vector>
+	<os.h>
+	<sock.h>
+
+1421556360 /home/marius/CPP/GUGLE/src/mitzee/buflea/ctxthread.h
+	<sys/types.h>
+	<unistd.h>
+	<vector>
+	<algorithm>
+	"tinyclasses.h"
+	"ctxqueue.h"
+
+1421556360 /home/marius/CPP/GUGLE/src/mitzee/buflea/listeners.h
+	<string>
+	<vector>
+	<sock.h>
+	"os.h"
+	"config.h"
+	"context.h"
+	"sslcrypt.h"
+
+1421556465 source:/home/marius/CPP/GUGLE/src/mitzee/buflea/context4.cpp
+	<assert.h>
+	<iostream>
+	<sstream>
+	<sock.h>
+	<strutils.h>
+	"main.h"
+	"configprx.h"
+	"context.h"
+	<consts.h>
+	"threadpool.h"
+	"ctxthread.h"
+	"listeners.h"
+	"context4.h"
+
+1421556360 /home/marius/CPP/GUGLE/src/mitzee/buflea/context4.h
+	"context.h"
+
+1421556360 source:/home/marius/CPP/GUGLE/src/mitzee/buflea/context5.cpp
+	<assert.h>
+	<iostream>
+	<sstream>
+	<sock.h>
+	<strutils.h>
+	<errorstrings.h>
+	"main.h"
+	"config.h"
+	"context.h"
+	<consts.h>
+	"threadpool.h"
+	"ctxthread.h"
+	"listeners.h"
+	"context5.h"
+
+1421556360 /home/marius/CPP/GUGLE/src/mitzee/buflea/context5.h
+	"context.h"
+
+1421779254 source:/home/marius/CPP/GUGLE/src/mitzee/buflea/contextctl.cpp
+	<assert.h>
+	<iostream>
+	<sstream>
+	<sock.h>
+	<strutils.h>
+	"main.h"
+	"config.h"
+	"context.h"
+	<consts.h>
+	<matypes.h>
+	"threadpool.h"
+	"ctxthread.h"
+	"listeners.h"
+	"contextctl.h"
+	"dnsthread.h"
+
+1421556353 /home/marius/CPP/GUGLE/src/mitzee/buflea/contextctl.h
+	<string>
+
+1421784403 /home/marius/CPP/GUGLE/src/mitzee/buflea/dnsthread.h
+	<sstream>
+	<set>
+	<os.h>
+	<pthread.h>
+	<sys/types.h>
+	<unistd.h>
+	<map>
+	<list>
+	<algorithm>
+	<matypes.h>
+	"tinyclasses.h"
+	"ctxqueue.h"
+	"minidb.h"
+
+1421790344 source:/home/marius/CPP/GUGLE/src/mitzee/buflea/contextdns.cpp
+	<assert.h>
+	<iostream>
+	<sstream>
+	<sock.h>
+	<strutils.h>
+	"main.h"
+	"config.h"
+	"context.h"
+	<consts.h>
+	<matypes.h>
+	"threadpool.h"
+	"ctxthread.h"
+	"listeners.h"
+	"contextdns.h"
+	"dnsthread.h"
+
+1421784849 /home/marius/CPP/GUGLE/src/mitzee/buflea/contextdns.h
+	<list>
+
+1421556360 source:/home/marius/CPP/GUGLE/src/mitzee/buflea/contexthttp.cpp
+	<assert.h>
+	<iostream>
+	<sstream>
+	<sock.h>
+	<strutils.h>
+	"main.h"
+	"config.h"
+	"context.h"
+	<consts.h>
+	"threadpool.h"
+	"ctxthread.h"
+	"listeners.h"
+	"contexthttp.h"
+	"dnsthread.h"
+
+1421556360 /home/marius/CPP/GUGLE/src/mitzee/buflea/contexthttp.h
+	<list>
+
+1421556356 source:/home/marius/CPP/GUGLE/src/mitzee/buflea/contextpass.cpp
+	<assert.h>
+	<iostream>
+	<sstream>
+	<sock.h>
+	<strutils.h>
+	"main.h"
+	"config.h"
+	"context.h"
+	<consts.h>
+	"threadpool.h"
+	"ctxthread.h"
+	"listeners.h"
+	"contextpass.h"
+	"dnsthread.h"
+
+1421556360 /home/marius/CPP/GUGLE/src/mitzee/buflea/contextpass.h
+
+1422243844 source:/home/marius/CPP/GUGLE/src/mitzee/buflea/contextreg.cpp
+	<assert.h>
+	<iostream>
+	<sstream>
+	<sock.h>
+	<strutils.h>
+	"main.h"
+	"config.h"
+	"context.h"
+	<consts.h>
+	<matypes.h>
+	"threadpool.h"
+	"ctxthread.h"
+	"listeners.h"
+	"contextreg.h"
+	"dnsthread.h"
+
+1421777453 /home/marius/CPP/GUGLE/src/mitzee/buflea/contextreg.h
+	<string>
+
+1421556360 source:/home/marius/CPP/GUGLE/src/mitzee/buflea/ctxqueue.cpp
+	"os.h"
+	"ctxqueue.h"
+	"context.h"
+
+1421556360 source:/home/marius/CPP/GUGLE/src/mitzee/buflea/ctxthread.cpp
+	<assert.h>
+	<algorithm>
+	<consts.h>
+	"main.h"
+	"tinyclasses.h"
+	"ctxthread.h"
+	"threadpool.h"
+	"configprx.h"
+	"ctxqueue.h"
+	"context.h"
+	<strutils.h>
+
+1421784509 source:/home/marius/CPP/GUGLE/src/mitzee/buflea/dnsthread.cpp
+	<assert.h>
+	<iostream>
+	<sstream>
+	<consts.h>
+	"main.h"
+	<strutils.h>
+	<sock.h>
+	<string>
+	"dnsthread.h"
+	"ctxthread.h"
+	"context.h"
+	"ctxqueue.h"
+	"listeners.h"
+	"minidb.h"
+	"configprx.h"
+
+1421190550 source:/home/marius/CPP/GUGLE/src/mitzee/buflea/httphdr.cpp
+	"context.h"
+
+1422244823 source:/home/marius/CPP/GUGLE/src/mitzee/buflea/listeners.cpp
+	<map>
+	<assert.h>
+	<iostream>
+	<sstream>
+	<signal.h>
+	<consts.h>
+	<fcntl.h>
+	<strutils.h>
+	"main.h"
+	"configprx.h"
+	"listeners.h"
+	"ctxqueue.h"
+	"threadpool.h"
+	"context4.h"
+	"context5.h"
+	"contexthttp.h"
+	"contextdns.h"
+	"contextctl.h"
+	"contextpass.h"
+	"contextreg.h"
+	"tcppipe.h"
+
+1422245338 source:/home/marius/CPP/GUGLE/src/mitzee/buflea/main.cpp
+	<errno.h>
+	<termios.h>
+	<unistd.h>
+	<fcntl.h>
+	<sys/file.h>
+	<iostream>
+	<signal.h>
+	"os.h"
+	"main.h"
+	"config.h"
+	"listeners.h"
+	"ctxqueue.h"
+	"context.h"
+	"threadpool.h"
+	"dnsthread.h"
+	"modules.h"
+	<strutils.h>
+
+1378931121 /home/marius/CPP/GUGLE/src/mitzee/buflea/modules.h
+	<modiface.h>
+	"config.h"
+
+1421556360 /home/marius/CPP/GUGLE/src/mitzee/mcoinclude/modiface.h
+	<matypes.h>
+	<iostream>
+	<string.h>
+	<stdio.h>
+	<stddef.h>
+	<sys/time.h>
+
+1422243703 source:/home/marius/CPP/GUGLE/src/mitzee/buflea/sslcrypt.cpp
+	<dlfcn.h>
+	"configprx.h"
+	"sslcrypt.h"
+
+1421900177 source:/home/marius/CPP/GUGLE/src/mitzee/buflea/tcppipe.cpp
+	"tcppipe.h"
+	"configprx.h"
+	"context.h"
+
+1421702940 source:/home/marius/CPP/GUGLE/src/mitzee/buflea/threadpool.cpp
+	<assert.h>
+	<iostream>
+	<sstream>
+	<consts.h>
+	"main.h"
+	<strutils.h>
+	<sock.h>
+	<string>
+	"config.h"
+	"threadpool.h"
+	"dnsthread.h"
+	"ctxthread.h"
+	"context.h"
+	"ctxqueue.h"
+	"listeners.h"
+	"minidb.h"
+
+1421556360 source:/home/marius/CPP/GUGLE/src/mitzee/buflea/tinyclasses.cpp
+	<sock.h>
+	<strutils.h>
+	"configprx.h"
+	"tinyclasses.h"
+

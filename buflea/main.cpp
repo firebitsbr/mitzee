@@ -34,9 +34,9 @@
 #include <strutils.h>
 
 //-----------------------------------------------------------------------------
-// /usr/bin/valgrind --tool=memcheck  -v --leak-check=full  --track-origins=yes --show-reachable=yes /home/marius/C++/marius/bin/Debug/marius
+// /usr/bin/valgrind --tool=memcheck  -v --leak-check=full  --track-origins=yes --show-reachable=yes /path/to/debug
+
 using namespace std;
-const static char * __BUILD   = "Build 16, Sept 1 2014 Version 3.1";   // metrics enhanced
 const static char * __USR_LOCK    = "/tmp/buflea.lock";
 const static char * __SYS_LOCK    = "/var/run/buflea.lock";
 inline const char* LockFile(){ return getuid() == 0 ? __SYS_LOCK : __USR_LOCK;}
@@ -47,7 +47,7 @@ void ControlC (int i)
 {
     __alive = false;
     printf("Control C. Exiting... \n");
-    sleep(4);
+    sleep(8);
 }
 
 //---------------------------------------------------------------------------------------
@@ -115,7 +115,7 @@ int main(int nargs, char * vargs[])
         sleep(1);
         tpa.set_prio(5);
 
-        GLOGI("STARTING SERVER BUFLEA" << __BUILD);
+        GLOGI("STARTING SERVER BUFLEA:" << __VERSION);
         GLOGI("/tmp/buflea.stop (stops server) ");
 
         thel._listen_spin();

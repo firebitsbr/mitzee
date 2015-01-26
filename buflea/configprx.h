@@ -21,22 +21,23 @@
 #include <config.h>
 
 
-//-----------------------------------------------------------------------------
+//#############################################################################
+#define __VERSION  "Buflea-Proxy-4.0.0"
+//#############################################################################
 
-
-#define __VERSION  "Buflea Proxy Server 3.1.0.0"
-
-//-----------------------------------------------------------------------------
-// TODO MULTIPLE ROCKS
 //-----------------------------------------------------------------------------
 const char HTTP_200[] = "HTTP/1.0 200 Connection established\r\n"
-                               "Proxy-agent: Buflea Proxy Server 3.1.0.0\r\n\r\n";
+                               "Proxy-agent: "
+                               __VERSION
+                               "\r\n\r\n";
 
 //-----------------------------------------------------------------------------
 const char HTTP_400[] = "HTTP/1.1 400\r\n"
                                "Connection: close\r\n"
                                "Content-Type: text/html; charset=utf-8\r\n"
-                               "Proxy-agent: Buflea Proxy Server 3.1.0.0\r\n\r\n";
+                               "Proxy-agent: "
+                               __VERSION
+                               "\r\n\r\n";
 
 
 //-----------------------------------------------------------------------------
@@ -74,6 +75,7 @@ public:
                     slog("IWETDX"),
                     users("acl/users.txt"),
                     hosts("acl/denyhosts.txt"),
+                    tickfile("_hearthbeat"),
                     maxrecs(256),
                     domrecs(256),
                     hostsfilerule(-1),
@@ -94,12 +96,13 @@ public:
         string          usercontrol;        // notiffy user sessiontime add, and user session expire
         string          reloadacls;
         string          hostsfile;
-        string          tickfile;
+
         string          runfrom;        // run foder
         string          users;          // run foder
         string          hosts;          // run foder
         string          admins;
         string          banned_ips;
+        string          tickfile;
         int             maxrecs;
         int             domrecs;
         string          subscribers;
@@ -118,7 +121,7 @@ public:
         string  sPrivKey;
         string  sChain;
         string  sCaCert;
-        string  cPk12Key;
+        string  cPrivKey;
         string  cCert;
         string  cCsr;
 

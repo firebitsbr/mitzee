@@ -79,5 +79,6 @@ std::string sslNerror(void);
 #define ERR_error_string (* (char * (*)(unsigned long,char *)) crypto_sw[4].ptr)
 #define SSLv23_client_method (* (SSL_METHOD * (*)(void)) ssl_sw[17].ptr)
 #define SSL_CTX_set_cipher_list (* (int (*)(SSL_CTX *, const char *)) ssl_sw[18].ptr)
+#define SSL_CTX_check_private_key (* (int (*)(SSL_CTX *)) ssl_sw[19].ptr)
 
 #endif // SSLCRYPT_H

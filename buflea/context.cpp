@@ -53,6 +53,7 @@ Ctx::Ctx(const ConfPrx::Ports* pconf, tcp_xxx_sock& s):
     _hdrsent(false),
     _refs(0),
     _pssl_ctx(0),
+    _pcsl_ctx(0),
     _creatime(time(0)),
     _clireqs(0),
     _getissued(false)

@@ -92,12 +92,13 @@ bool CancelAutoConnect(void* pVoid, ulong time)
 //-----------------------------------------------------------------------------
 void    Listeners::_listen_spin()
 {
-    _mainThread = true;
+    _mainThread = true;  // we call it from main thread. we dont start the thread.
     if(0 == start_thread())
     {
         _bstop = false;
         thread_main();
     }
+    _clear();
 }
 
 //-----------------------------------------------------------------------------
@@ -105,7 +106,10 @@ int  Listeners::start_thread()
 {
     int check = 30;
 
-    initSsl();
+    if(!GCFG->_ssl.ssl_lib.empty())
+    {
+        initSsl();
+    }
     GLOGI("\n");
 again:
     _clear();
@@ -188,17 +192,14 @@ void Listeners::stop_thread()
     //FT();
     AutoLock a(&_m);
     GLOGI("listeners stop thread");
-    OsThread::signal_to_stop();
-    //printf("%s\n",__PRETTY_FUNCTION__);
-    usleep(0xFFFF);
-
-    for(auto it : _ss)
+    if(!_mainThread)
     {
-        it->destroy();
-        delete it;
+        OsThread::signal_to_stop();
+        //printf("%s\n",__PRETTY_FUNCTION__);
         usleep(0xFFFF);
+        OsThread::stop_thread();
     }
-    OsThread::stop_thread();
+
 }
 
 //-----------------------------------------------------------------------------
@@ -376,7 +377,7 @@ Ctx* Listeners::_fabric(const string& sockver,  const ConfPrx::Ports* ports, tcp
         pctx = new Ctx5(ports, s);
     else if(sockver=="PASSTRU")
         pctx = new CtxPasstru(ports, s);
-    else if(sockver=="REGISTER");
+    else if(sockver=="REGISTER")
         pctx = new CtsReg(ports, s);
     return pctx;
 }
