@@ -46,7 +46,18 @@ private:
 };
 
 extern struct ssl_func ssl_sw[];
-std::string sslNerror(void);
+std::string sslNerror(SSL* p=0);
+
+#define SSL_ERROR_NONE          0
+#define SSL_ERROR_SSL           1
+#define SSL_ERROR_WANT_READ     2
+#define SSL_ERROR_WANT_WRITE        3
+#define SSL_ERROR_WANT_X509_LOOKUP  4
+#define SSL_ERROR_SYSCALL       5 /* look at error stack/return value/errno */
+#define SSL_ERROR_ZERO_RETURN       6
+#define SSL_ERROR_WANT_CONNECT      7
+#define SSL_ERROR_WANT_ACCEPT       8
+
 
 #define SSL_free (* (void (*)(SSL *)) ssl_sw[0].ptr)
 #define SSL_accept (* (int (*)(SSL *)) ssl_sw[1].ptr)
@@ -69,7 +80,6 @@ std::string sslNerror(void);
 #define SSL_load_error_strings (* (void (*)(void)) ssl_sw[15].ptr)
 #define SSL_CTX_use_certificate_chain_file \
   (* (int (*)(SSL_CTX *, const char *)) ssl_sw[16].ptr)
-
 #define CRYPTO_num_locks (* (int (*)(void)) crypto_sw[0].ptr)
 #define CRYPTO_set_locking_callback \
   (* (void (*)(void (*)(int, int, const char *, int))) crypto_sw[1].ptr)
@@ -80,5 +90,6 @@ std::string sslNerror(void);
 #define SSLv23_client_method (* (SSL_METHOD * (*)(void)) ssl_sw[17].ptr)
 #define SSL_CTX_set_cipher_list (* (int (*)(SSL_CTX *, const char *)) ssl_sw[18].ptr)
 #define SSL_CTX_check_private_key (* (int (*)(SSL_CTX *)) ssl_sw[19].ptr)
-
+#define SSL_shutdown (* (int (*)(SSL *)) ssl_sw[20].ptr)
 #endif // SSLCRYPT_H
+

@@ -47,6 +47,7 @@ struct ssl_func ssl_sw[] =
     {"SSLv23_client_method",0},
     {"SSL_CTX_set_cipher_list",0},
     {"SSL_CTX_check_private_key",0},
+    {"SSL_shutdown",0},
     {0,    0}
 };
 
@@ -62,13 +63,18 @@ static struct ssl_func crypto_sw[] =
 };
 
 
-std::string sslNerror(void)
+std::string sslNerror(SSL* ctx)
 {
-    unsigned long err;
-    err = ERR_get_error();
+    long err;
+    if(0==ctx)
+        err = ERR_get_error();
+    else
+        err = SSL_get_error(ctx,err);
     if(err)
     {
-        return std::string(ERR_error_string(err, 0));
+        char buff[512]={0};
+        ERR_error_string(err, buff);
+        return std::string(buff);
     }
     return std::string("");
 }
@@ -76,7 +82,7 @@ std::string sslNerror(void)
 static void ssl_locking_callback(int mode, int mutex_num, kchar *file,
                                  int line)
 {
-    line = 0;    // Unused
+    line = 0; // Unused
     file = 0; // Unused
 
     if (mode & CRYPTO_LOCK)
@@ -94,15 +100,14 @@ static unsigned long ssl_id_callback(void)
     return (unsigned long) pthread_self();
 }
 
-
-
-
 SslCrypt::SslCrypt():_psslCtx(0),_psslCtxCli(0)
 {
+
     if (!load_dll(GCFG->_ssl.ssl_lib.c_str(), ssl_sw) ||
         !load_dll(GCFG->_ssl.crypto_lib.c_str(), crypto_sw))
     {
-        GLOGE("Cannot load SSL libraries");
+        // "sudo apt-get install libssl-dev"
+        GLOGE("Cannot load SSL libraries...");
         exit(0);
     }
 
@@ -110,16 +115,7 @@ SslCrypt::SslCrypt():_psslCtx(0),_psslCtxCli(0)
     SSL_load_error_strings();
 }
 
-    /*
-    fix_path(ssl.sCert);
-    fix_path(ssl.sPrivKey);
-    fix_path(ssl.sChain);
-    fix_path(ssl.sCaCert);
-    fix_path(ssl.cPk12Key);
-    fix_path(ssl.cCert);
-    fix_path(ssl.cCsr);
 
-    */
 bool SslCrypt::init_client()
 {
 
@@ -138,9 +134,13 @@ bool SslCrypt::init_client()
         {
             if(0==SSL_CTX_use_certificate_file(_psslCtx, cf, SSL_FILETYPE_PEM))
             {
-                cout << sslNerror();
+                cout << "client:SSL_CTX_use_certificate_file" << cf <<" error: " << sslNerror();
                 return false;
             }
+        }
+        else
+        {
+            GLOGW("File: " << cf << " not found");
         }
     }
 
@@ -152,9 +152,13 @@ bool SslCrypt::init_client()
         {
             if(0==SSL_CTX_use_PrivateKey_file(_psslCtx, pem, SSL_FILETYPE_PEM))
             {
-                cout << sslNerror();
+                cout << "client:SSL_CTX_use_PrivateKey_file" << pem <<" error: " << sslNerror();
                 return false;
             }
+        }
+        else
+        {
+            GLOGW("File: " << pem << " not found");
         }
     }
 /*
@@ -189,10 +193,15 @@ bool SslCrypt::init_server()
         {
             if(0==SSL_CTX_use_certificate_file(_psslCtx, pem, SSL_FILETYPE_PEM))
             {
-                cout << sslNerror();
+                cout << "server:SSL_CTX_use_certificate_file" << pem <<" error: " << sslNerror();
                 return false;
             }
         }
+        else
+        {
+            GLOGW("File: " << pem << " not found");
+        }
+
     }
 
     // SERVER PRIVATE KEY
@@ -203,16 +212,22 @@ bool SslCrypt::init_server()
         {
             if(0==SSL_CTX_use_PrivateKey_file(_psslCtx, pem, SSL_FILETYPE_PEM))
             {
-                cout << sslNerror();
+                cout << "server:SSL_CTX_use_certificate_file" << pem <<" error: " << sslNerror();
                 return false;
             }
+            if (!SSL_CTX_check_private_key(_psslCtx))
+            {
+                 cout << "server:SSL_CTX_check_private_key" << pem <<" error: " << sslNerror();
+                 return false;
+            }
+
+        }
+        else
+        {
+            GLOGW("File: " << pem << " not found");
         }
 
-        if (!SSL_CTX_check_private_key(_psslCtx))
-        {
-             cout << sslNerror();
-            return false;
-        }
+
 
 
     }
@@ -220,10 +235,18 @@ bool SslCrypt::init_server()
     if(!GCFG->_ssl.sChain.empty())
     {
         kchar* chain = GCFG->_ssl.sChain.c_str();
-        if(0 ==SSL_CTX_use_certificate_chain_file(_psslCtx, chain))
+        if(::access(chain,0)==0)
         {
-            cout << sslNerror();
-            return false;
+
+            if(0 ==SSL_CTX_use_certificate_chain_file(_psslCtx, chain))
+            {
+                cout << "server:SSL_CTX_use_certificate_chain_file" << chain <<" error: " << sslNerror();
+                return false;
+            }
+            else
+            {
+                GLOGW("File: " << chain << " not found");
+            }
         }
     }
 

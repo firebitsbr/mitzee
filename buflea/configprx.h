@@ -140,7 +140,8 @@ public:
             port=8083;
             dstport=80;
             socks="SOCKS5";
-            ssl=0;
+            ssli=0;
+            sslo=0;
             openacl=-1;
             authtoken="plain";
             blocking=0;
@@ -157,7 +158,8 @@ public:
         string    socks;
         size_t    blocking;
         int       admin;
-        int       ssl;
+        int       ssli;
+        int       sslo;
         int       openacl;     // 1, proxies everyting, no bans
         string    authtoken;
         string    redirect;

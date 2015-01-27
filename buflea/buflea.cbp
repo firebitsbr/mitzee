@@ -47,6 +47,8 @@
 		<Unit filename="../../../bin/buflea/acl/banned.txt" />
 		<Unit filename="../../../bin/buflea/acl/hosts.txt" />
 		<Unit filename="../../../bin/buflea/buflea.conf" />
+		<Unit filename="../../../bin/buflea/buflea.conf-public" />
+		<Unit filename="../../../bin/buflea/buflea.conf.save" />
 		<Unit filename="../../../bin/buflea/buflea.sysV" />
 		<Unit filename="../../../bin/buflea/install.sh" />
 		<Unit filename="../../../bin/buflea/www/register.php" />

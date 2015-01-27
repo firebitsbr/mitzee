@@ -44,6 +44,7 @@ public:
         if(_ssl){
 //            int sd = SSL_get_fd(_ssl);
 //            ::close(sd);
+            //SSL_shutdown(_ssl);
             SSL_set_fd(_ssl, 0);
             SSL_free(_ssl);
             _ssl = 0;

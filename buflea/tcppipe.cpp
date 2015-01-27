@@ -23,7 +23,7 @@ int TcpPipe::sendall(const u_int8_t* buff, int length, int tout)
 {
     if(_ssl)
     {
-        int   shot, sent=0,trys=10;
+        int   shot, sent=0,trys=10,err;
 
         if(length>GCFG->_pool.buffsize)
         {
@@ -35,19 +35,14 @@ int TcpPipe::sendall(const u_int8_t* buff, int length, int tout)
             shot = SSL_write(_ssl, buff + sent, length);
             if(shot <= 0)
             {
-                if(errno == EAGAIN && trys-->0)
-                {
-                    usleep(0x1FFF);
-                    continue;
-                }
-                GLOGE( "SSL sendall" << sslNerror());
+                GLOGE( "SSL sendall" << sslNerror(_ssl));
                 destroy();
                 break;
             }
             sent+=shot;
             length-=shot;
         }
-        return length; //return 0 if all was send
+        return length;              //return 0 if all was send
     }
     return tcp_cli_sock::sendall((unsigned char*)buff, length, tout);
 }
@@ -55,14 +50,16 @@ int TcpPipe::sendall(const u_int8_t* buff, int length, int tout)
 //-----------------------------------------------------------------------------
 int TcpPipe::receive(u_int8_t* buff, int length)
 {
-    int rd;
+    int rd,err;
     if(_ssl)
     {
         rd = SSL_read(_ssl, buff, length);
         if(rd <= 0)
         {
-            GLOGE( "SSL read" << sslNerror());
+            GLOGE( "SSL read" << sslNerror(_ssl) <<" : "<< errno);
+            rd=0;
             destroy();
+
         }
         return rd;
     }
@@ -85,7 +82,7 @@ bool TcpPipe::setconnected(const Ctx* pc)
         }
         if(-1==SSL_connect(_ssl))
         {
-            GLOGE( "SSL connect" << sslNerror());
+            GLOGE( "SSL connect" << sslNerror(_ssl));
             destroy();
             return false;
         }
@@ -106,7 +103,7 @@ bool TcpPipe::ssl_accept(const Ctx* pc)
         SSL_set_fd(_ssl, socket());
         if(SSL_accept(_ssl)<=0)
         {
-            GLOGE( "SSL accept error: did you load certificates and or pen files ???" << sslNerror()); //will faild
+            GLOGE( "SSL accept error: " << sslNerror(_ssl)); //will faild
             destroy();
             return false;
         }

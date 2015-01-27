@@ -151,12 +151,12 @@ again:
             if(pss->listen(prt.pending)==0)
             {
                 GLOGIN("listen: " << prt.port << " "<< prt.socks <<
-                       " addr: " << pbind);
+                       " addr: " << pbind << "ssl:" << prt.ssli <<"->"<<prt.sslo);
                 _ss.push_back(pss);
             }
             else
             {
-                //  scr_color(scr_red);
+
                 GLOGEN("listen: " << prt.port << " "<< prt.socks <<
                        " addr: " << pbind << " error: " << pss->error());
                 delete pss;
@@ -294,34 +294,38 @@ void Listeners::_put_inqueue(tcp_xxx_sock& s, int every_sec, const SrvSock* psrv
     const string            sockver = ports->socks;
     const SADDR_46          saddr   = s.getsocketaddr();
 
-    if(_previp != IP2STR(saddr))
+    if(ports->openacl==0)
     {
-        GLOGD("c->p: " << IP2STR(s.getsocketaddr()));
-        _previp=IP2STR(saddr);
-        _rejected=_pdb->is_banned(saddr);
+        if(_previp != IP2STR(saddr))
+        {
+            GLOGD("c->p: " << IP2STR(s.getsocketaddr()));
+            _previp=IP2STR(saddr);
+            _rejected=_pdb->is_banned(saddr);
+            if(_rejected)
+            {
+                GLOGI("IP:" <<saddr << " rejected from banned");
+            }
+            else if(_pdb->has_bounced_max(saddr))
+            {
+                _rejected=true;
+                GLOGI("IP:" <<saddr << " rejected from bounce banned");
+            }
+        }
         if(_rejected)
         {
-            GLOGI("IP:" <<saddr << " rejected from banned");
+            s.destroy();
+            _previp="*";
+            return;
         }
-        else if(_pdb->has_bounced_max(saddr))
-        {
-            _rejected=true;
-            GLOGI("IP:" <<saddr << " rejected from bounce banned");
-        }
-    }
-    if(_rejected)
-    {
-        s.destroy();
-        _previp="*";
-        return;
     }
 
     pctx=this->_fabric(sockver,ports,s);
     if(pctx)
     {
-        if(ports->ssl)
+        if(ports->sslo || ports->ssli)
         {
-            if(!pctx->ssl_bind(_pssl->srv_ctx(), _pssl->cli_ctx()))
+            if(!pctx->ssl_bind(ports->ssli ? _pssl->srv_ctx() : 0,
+                               ports->sslo ? _pssl->cli_ctx() : 0))
             {
                 delete pctx;
                 return;

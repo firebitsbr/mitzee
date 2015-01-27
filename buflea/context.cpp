@@ -115,9 +115,11 @@ bool   Ctx::ssl_bind(SSL_CTX* psl, SSL_CTX* pcl)
 {
     assert(_pssl_ctx==0);
     assert(_pcsl_ctx==0);
-    _pssl_ctx=psl;
+    _pssl_ctx = psl;
     _pcsl_ctx = pcl;
-    return _sock.ssl_accept(this);
+    if(_pssl_ctx)
+        return _sock.ssl_accept(this);
+    return true;
 }
 
 //-----------------------------------------------------------------------------
@@ -319,7 +321,7 @@ int  Ctx::_rec_some()
 bool Ctx::_is_access_blocked(const SADDR_46& addr, const char* host, const char* refh)
 {
     // no acl's at all
-    if(_pconf->openacl)
+    if(_pconf->openacl==1)
     {
 #if 0
      testing db
@@ -457,7 +459,7 @@ CALLR  Ctx::_r_pending()
             _s_send_reply(NOHOST);
             throw Mex(CONNECTION_FAILED,__FILE__,__LINE__);
         }
-        LOGI(IP2STR(_cliip) << " <--> " << IP2STR(_rock.getsocketaddr()));
+        LOGI(IP2STR(_cliip) << ": <-----[PRX]-----> :" << IP2STR(_rock.getsocketaddr()));
         _rock.setconnected(this);
         return _r_send_header();
     }
@@ -548,8 +550,22 @@ CALLR  Ctx::_rock_sock(u_int8_t* buff, int rsz)
         int ssz =_sock.sendall(buff, sz, SS_TOUT);
         if(0==ssz)
         {
-            LOGT(" s <- r ["  << (sz-ssz) << "<-" << sz <<"]");
+            LOGT(" s <-o-- r ["  << (sz-ssz) << "<-" << sz <<"]");
             _stats._temp_bytes[BysStat::eIN]+=sz;
+
+             if(GCFG->_blog & 0x40)
+             {
+                if(sz > 256)
+                {
+                    char c = buff[256];
+                    buff[256]=0;
+                    LOGH("\n"<<(const char*)buff<<","<< sz <<"\n");
+                    buff[256]=c;
+                }else
+                {
+                    LOGH("\n"<<(const char*)buff<<","<< sz <<"\n");
+                }
+            }
         }
         return ssz!=0?R_KILL:R_CONTINUE;
     }
@@ -562,17 +578,18 @@ CALLR  Ctx::_transfer()
     int         rsz = 0;
     u_int8_t*   buff = _pt->buffer(rsz);
 
+    if(_sock.set() & 0x00000001)
+    {
+        if(_sock_rock(buff,rsz)==R_KILL)
+            return R_KILL;
+    }
     if(_rock.set() & 0x00000001)
     {
         if(_rock_sock(buff, rsz)==R_KILL)
             return R_KILL;
     }
 
-    if(_sock.set() & 0x00000001)
-    {
-        if(_sock_rock(buff,rsz)==R_KILL)
-            return R_KILL;
-    }
+
 
     return R_CONTINUE;
 }
@@ -709,7 +726,8 @@ int    Ctx::_s_send_reply(u_int8_t code, const char* info)
         {
             LOGH("Partial request \n[" << _hdr.buf() << ","<<_hdr.bytes()<<"]\n");
         }
-        __db->check_bounce(_cliip);
+        if(_pconf->openacl==0)
+            __db->check_bounce(_cliip);
     }
     return 0;
 }

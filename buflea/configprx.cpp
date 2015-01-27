@@ -128,7 +128,7 @@ void ConfPrx::_assign( const char* pred, const char* val, int line)
                     _glb.signature = buffer.str();
                     t.close();
                 }
-
+                _glb.blog=0;
                 _glb.blog |= _glb.slog.find('I') == string::npos ? 0 : 0x1;
                 _glb.blog |= _glb.slog.find('W') == string::npos ? 0 : 0x2;
                 _glb.blog |= _glb.slog.find('E') == string::npos ? 0 : 0x4;
@@ -175,7 +175,8 @@ void ConfPrx::_assign( const char* pred, const char* val, int line)
 //            AUTO, RESERVED_ACL, , PASSTRU_SSL, HTTP, SOCKS5, SOCKS4,SERVER
             BIND(_ports,socks);
             BIND(_ports,admin);
-            BIND(_ports,ssl);
+            BIND(_ports,ssli);
+            BIND(_ports,sslo);
             BIND(_ports, openacl);
             BIND(_ports, authtoken);
 
@@ -283,7 +284,7 @@ void ConfPrx::_assign( const char* pred, const char* val, int line)
 bool ConfPrx::finalize()
 {
 
-    if(_glb.authurl.empty())
+    if(_glb.authurl.empty() && _glb.openacl==0)
     {
         printf("Error: authurl IP is missconfigured/missing in config file\n");
     }
