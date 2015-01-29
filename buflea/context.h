@@ -103,6 +103,13 @@ protected:
         P_PASSTRU,
     };
 
+    enum{
+        SOCK_ON =0x1,
+        ROCK_ON =0x2,
+        SSL_IN =0x4,
+        SLL_OUT =0x8,
+    };
+
 public:
     friend class CtxMod;
     friend class CtxesThread;
@@ -134,6 +141,7 @@ public:
 	bool    isdead(){
 		return !_sock.isopen() && !_rock.isopen();
 	}
+	void    close_sockets();
 protected:
     virtual int _s_send_reply(u_int8_t code, const char* info=0);
     virtual bool _new_request(const u_int8_t* buff, int bytes)=0;
@@ -159,14 +167,21 @@ protected:
 
     void    _cache_45hdr(const uint8_t* pbuff, int len);
     void    _clear_header(bool transp=false);
+    void    _destroy_sock();
+    void    _destroy_rock();
+    void    _init_check_cb( PFCLL );//&Ctx5::_rec_header);
+    void    _ssl_replace_cb( PFCLL );//&Ctx5::_rec_header);
 private:
     CALLR   _sock_rock(u_int8_t* pb, int len);
     CALLR   _rock_sock(u_int8_t* pb, int len);
+    CALLR   _ssl_accept();
+    CALLR   _ssl_connect();
 
 protected:
     mutex               _lmutex;
     PFCLL               _pcall;
     CtxesThread        *_pt;
+    const ConfPrx::Ports  *_pcon;
     const ConfPrx::Ports  *_pconf;
     tcp_xxx_sock       _sock;
     TcpPipe            _rock;
@@ -192,6 +207,9 @@ protected:
     Ctx*                _pactive;
     bool               _getissued;
     string             _reason;
+    bool               _des;
+    int                _state;
+    PFCLL              _next;
 };
 
 

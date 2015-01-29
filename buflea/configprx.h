@@ -165,7 +165,6 @@ public:
         string    redirect;
         SADDR_46  toaddr;
         int       conport;
-
         map<string,string>  overs;
     } _ports;
 

@@ -68,7 +68,7 @@ public:
     bool    initSsl();
     bool    san(){ return _sanity;}
     void    metrics(std::stringstream& str, SinOut& bpss)const;
-
+    SslCrypt* sslglob(){return  _pssl;}
 private:
     void    _put_inqueue(tcp_xxx_sock& s, int every_sec, const SrvSock* psrv);
     void    thread_main();

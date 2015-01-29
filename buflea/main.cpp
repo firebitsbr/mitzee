@@ -43,11 +43,15 @@ inline const char* LockFile(){ return getuid() == 0 ? __SYS_LOCK : __USR_LOCK;}
 static bool         __owner = false;
 //-----------------------------------------------------------------------------
 bool __alive = true;
+int  __alivethrds=0;
 void ControlC (int i)
 {
     __alive = false;
-    printf("Control C. Exiting... \n");
-    sleep(8);
+    sleep(5);
+    if(__alivethrds)
+    {
+        system("kill -kill $(pidof buflea)");
+    }
 }
 
 //---------------------------------------------------------------------------------------

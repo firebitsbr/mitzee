@@ -19,9 +19,8 @@
 #include "sslcrypt.h"
 
 
-#define SSL_ERROR_WANT_READ 2
-#define SSL_ERROR_WANT_WRITE 3
 #define SSL_FILETYPE_PEM 1
+
 #define CRYPTO_LOCK  1
 static pthread_mutex_t* ssl_mutexes;
 
@@ -65,18 +64,28 @@ static struct ssl_func crypto_sw[] =
 
 std::string sslNerror(SSL* ctx)
 {
-    long err;
-    if(0==ctx)
-        err = ERR_get_error();
-    else
-        err = SSL_get_error(ctx,err);
-    if(err)
+    int             nerr = errno;
+    long            err = ERR_get_error();
+    std::string     strerr;
+    char            fmt[256];
+
+    strerr = "ERR_get_error(";
+    while(err)
     {
-        char buff[512]={0};
-        ERR_error_string(err, buff);
-        return std::string(buff);
+        err = ERR_get_error();
+        ::sprintf(fmt,"%ld, ", err);
+        strerr += fmt;
     }
-    return std::string("");
+    strerr += "), SSL_get_error(";
+    long sslerr = SSL_get_error(ctx,err);
+    if(sslerr)
+    {
+        ERR_error_string(err, fmt);
+        strerr += fmt;
+    }
+    sprintf(fmt, ") nerror(%d)", nerr);
+    strerr += fmt;
+    return strerr;
 }
 
 static void ssl_locking_callback(int mode, int mutex_num, kchar *file,
@@ -121,7 +130,7 @@ bool SslCrypt::init_client()
 
     if ( (_psslCtxCli = SSL_CTX_new(SSLv23_client_method()))==0 )
     {
-        cout << sslNerror();
+        GLOGE("SSL_CTX_new(SSLv23_client_method())" << sslNerror());
         return false;
     }
 
@@ -176,11 +185,11 @@ bool SslCrypt::init_server()
 
     if ((_psslCtx = SSL_CTX_new(SSLv23_server_method())) == 0 )
     {
-        cout << sslNerror();
+        GLOGE("SSL_CTX_new(SSLv23_server_method())" << sslNerror());
     }
     if(0 == _psslCtx)
     {
-        cout << sslNerror();
+        GLOGE("SSL_CTX_new(SSLv23_server_method())" << sslNerror());
         return false;
     }
 

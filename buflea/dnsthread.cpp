@@ -100,8 +100,8 @@ bool    DnsHtps::deque_host(const SADDR_46& ipcli, const uint64_t sigbuff, DnsCo
         return true;
     }
 
-    dns = record->second.find(0);   //default one
-    dest = dns->second;
+    auto const&  dns2 = record->second.find(0);   //default one
+    dest = dns2->second;
     GLOGX("getting ssh host -> [" << IP2STR(dest.client) <<  "]=" << dest.hostname << "] PRX");
     return true;
 }

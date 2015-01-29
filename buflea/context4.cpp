@@ -39,7 +39,7 @@ Ctx4::Ctx4(const ConfPrx::Ports* pconf, tcp_xxx_sock& s):
 {
     _tc= '4';
     _mode= P_SOCKS4;
-    _pcall = (PFCLL)&Ctx4::_rec_header;
+    Ctx::_init_check_cb((PFCLL)&Ctx4::_rec_header);
 }
 
 //----------------------------------------------------------------------------

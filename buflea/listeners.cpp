@@ -145,8 +145,10 @@ again:
                 pss->set_option(SO_SNDBUF, GCFG->_pool.socketsize/4);
                 pss->set_option(SO_RCVBUF, GCFG->_pool.socketsize);
             }
+
             fcntl(pss->socket(), F_SETFD, FD_CLOEXEC);
             pss->set_blocking(prt.blocking);
+
             pbind = pbind ? pbind : "*";
             if(pss->listen(prt.pending)==0)
             {
@@ -213,11 +215,13 @@ void Listeners::thread_main()
     timeval tv = {0,16384};
     time_t  tnow = time(NULL);
     int     conspesec = 0;
+    int     spin=0;
+    ++__alivethrds;
 
     GLOGI("listeners starts");
     while(!_bstop && __alive)
     {
-        usleep(0x3F);
+        usleep(0xFF);
         ndfs = 0;
         FD_ZERO(&rd);
         // vector<SrvSock*>::iterator it = _ss.begin();
@@ -261,6 +265,7 @@ void Listeners::thread_main()
             SrvSock* psrv = it;
             if(psrv->accept(s)>0)
             {
+                GLOGI("new incomming connection...");
                 ++it->_acons;
                 conspesec=0;
                 if(time(NULL)- tnow > 1)   //calc cons/sec
@@ -280,10 +285,14 @@ void Listeners::thread_main()
             FD_CLR(it->socket(), &rd);
 
         }//for
+
+
     }//while alive
 DONE:
+    GLOGD("Listener Thread exits");
     _sanity=false;
     __alive=false;
+    --__alivethrds;
 }
 
 //-----------------------------------------------------------------------------
@@ -322,15 +331,6 @@ void Listeners::_put_inqueue(tcp_xxx_sock& s, int every_sec, const SrvSock* psrv
     pctx=this->_fabric(sockver,ports,s);
     if(pctx)
     {
-        if(ports->sslo || ports->ssli)
-        {
-            if(!pctx->ssl_bind(ports->ssli ? _pssl->srv_ctx() : 0,
-                               ports->sslo ? _pssl->cli_ctx() : 0))
-            {
-                delete pctx;
-                return;
-            }
-        }
         s.set_blocking(ports->blocking);
         s.detach();
         int r = _pqa->push(pctx); //One thd per ctx

@@ -29,12 +29,15 @@ extern Listeners*  __pl;
 extern ThreadPool* __tp;
 extern DnsHtps*  __dnsssl;
 extern bool __alive;
+extern int  __alivethrds;
 //-----------------------------------------------------------------------------
 
 struct Uid{
     Uid():_unicid(0){}
     u_int32_t _unicid;
 };
+
+
 
 
 #endif// MAIN_H

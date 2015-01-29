@@ -47,7 +47,7 @@ CtxCtl::CtxCtl(const ConfPrx::Ports* pconf, tcp_xxx_sock& s):Ctx(pconf, s)
     _tc= 'A';
     _mode=P_CONTORL; //dns ssh
     LOGI("ACL connect from:" << IP2STR(_cliip));
-    _pcall = (PFCLL)&CtxCtl::_pend;
+    Ctx::_init_check_cb((PFCLL)&CtxCtl::_pend);
 }
 
 //-----------------------------------------------------------------------------

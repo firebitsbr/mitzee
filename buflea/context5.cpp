@@ -42,7 +42,8 @@ Ctx5::Ctx5(const ConfPrx::Ports* pconf, tcp_xxx_sock& s):
 {
     _tc= '5';
     _mode= P_SOCKS5;
-    _pcall = (PFCLL)&Ctx5::_rec_header;
+    Ctx::_init_check_cb((PFCLL)&Ctx5::_rec_header);
+    //_pcall = (PFCLL)&Ctx5::_rec_header;
 }
 
 //----------------------------------------------------------------------------
@@ -101,7 +102,7 @@ CALLR  Ctx5::_rec_header()
 done:
     if(_sock.sendall(response, 2, SS_TOUT)!=0)
     {
-        _sock.destroy();
+        _destroy_sock();
         throw Mex(CLIENT_CLOSED,__FILE__,__LINE__);
     }
 

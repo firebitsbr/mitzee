@@ -31,6 +31,14 @@ unsigned long       sock::_tout = 2000;
 
 
 //-----------------------------------------------------------------------------
+bio_unblock::bio_unblock(sock* sock):_sk(sock),_bl(_sk->_blocking){
+    sock->set_blocking(0);
+}
+bio_unblock::~bio_unblock(){
+    _sk->set_blocking(_bl);
+}
+
+//-----------------------------------------------------------------------------
 void sock::Init()
 {
 #ifdef WIN32
@@ -60,6 +68,7 @@ void sock::Uninit()
     WSACleanup();
 #endif
 }
+
 
 //-----------------------------------------------------------------------------
 bool sock::CTime(void* , unsigned long time)
@@ -182,9 +191,9 @@ void  sock::attach(int s)
 //-----------------------------------------------------------------------------
 int sock::set_blocking(const unsigned long block)
 {
+    _blocking = block;
     if(isopen())
     {
-        _blocking = block;
         int flags = fcntl(_thesock, F_GETFL, 0);
         if(!block)
             fcntl(_thesock, F_SETFL, flags | O_NONBLOCK);
@@ -389,13 +398,11 @@ int     tcp_sock::sendall(const unsigned char* buff, int length, int tout)
             {
                 if(--toutnonblock < 0)
                 {
-                    destroy();
                     break; //
                 }
                 usleep(10000); // 10 milliseconds
                 continue;
             }
-            destroy();
             break;
         }
         length -= shot;
@@ -457,9 +464,9 @@ int tcp_sock::receive(unsigned char* buff, int length, int , const char* )
 }
 
 //-----------------------------------------------------------------------------
-void sock::destroy()
+bool sock::destroy(bool emptyit)
 {
-    //std::cout << "destroy sock " <<_thesock<< "\n";
+    bool b=false;
     _set = 0;
     if((int)_thesock > 0)
     {
@@ -467,27 +474,30 @@ void sock::destroy()
         while(-1==::close(_thesock) && --k>0)
         {
             _error = errno;
-            usleep(0xFFFF);
+            usleep(0xFF);
         }
+        b=true;
     }
     _thesock = -1;
+    return b;
 }
 
-void    tcp_srv_sock::destroy()
+bool    tcp_srv_sock::destroy(bool emptyit)
 {
-    if(!isopen())   return;
-    char buff[256];
-    int  n = 0;
+    if(!isopen())  return false;
+    int         n = 0;
 
-    set_blocking(0);
     shutdown(_thesock, 0x3);
-    do
+    if(emptyit)
     {
-        n = recv(_thesock,(char *)buff, 256, 0);
+        char        buff[64];
+        bio_unblock bl(this);
+        do{
+            n = recv(_thesock,(char *)buff, 64, 0);
+        } while (n > 0);
+        shutdown(_thesock, 0x3);
     }
-    while (n > 0);
-    shutdown(_thesock, 0x3);
-    sock::destroy();
+    return sock::destroy(emptyit);
 }
 
 tcp_cli_sock::tcp_cli_sock()
@@ -546,23 +556,24 @@ tcp_cli_sock::~tcp_cli_sock()
 }
 
 
-void    tcp_cli_sock::destroy()
+bool    tcp_cli_sock::destroy(bool emptyit)
 {
-    if(!isopen())   return;
+    if(!isopen())   return false;
+    int         n = 0;
     _connecting = 0;
     _connected = 0;
-    char buff[128];
-    int  n = 0;
-    set_blocking(0);
-    //std::cout << "closing socket " << _thesock << "\n";
     shutdown(_thesock, 0x3);
-    do
+    if(emptyit)
     {
-        n = recv(_thesock,(char *)buff,128, 0);
+        char        buff[64];
+        bio_unblock bl(this);
+        do{
+            n = recv(_thesock,(char *)buff,64, 0);
+        }while (n > 0);
+        shutdown(_thesock, 0x3);
     }
-    while (n > 0);
-    shutdown(_thesock, 0x3);
-    sock::destroy();
+
+    return sock::destroy(emptyit);
 }
 
 /*
@@ -762,50 +773,42 @@ int tcp_cli_sock::try_connect(const char* sip, int port)
 {
     sockaddr_in    locSin;
 
-    _connecting = 1;
-    _error      = 0;
+    assert((int)_thesock < 0);
+
     _hostent = ::gethostbyname(sip);
     if(_hostent==0)
     {
         long dwbo = inet_addr(sip);
         _hostent = gethostbyaddr((char*)&dwbo, (int)sizeof(dwbo), AF_INET );
     }
-    if(_hostent)
+    if(!_hostent)
     {
-        ::memcpy((char*)&(locSin.sin_addr), _hostent->h_addr, _hostent->h_length);
-        if((int)_thesock != (int)-1)
-        {
-            destroy();
-        }
-        _error = 0;
-        assert(_thesock<=0);
-        _thesock = ::socket(AF_INET, SOCK_STREAM, 0);
-        if((int)_thesock < 0)
-        {
-            _connecting = 0;
-            _error = errno;
-            return _error;
-        }
-        //set_blocking(0);
-        _remote_sin.sin_family		= AF_INET;
-        _remote_sin.sin_addr.s_addr	= locSin.sin_addr.s_addr;
-        _remote_sin.sin_port		= htons(port);
-        //printf("%s\n",IP2STR(_remote_sin));
-
-        if(-1 == ::connect(_thesock, (const struct sockaddr*)&_remote_sin, _remote_sin.rsz()))
-        {
-            _error = errno;
-            if(_error==EINPROGRESS || _error == WOULDBLOCK)
-            {
-                _connecting = 1;
-            }
-            return -1;
-        }
+        return -1;
+    }
+    _connecting = 1;
+    _error      = 0;
+    ::memcpy((char*)&(locSin.sin_addr), _hostent->h_addr, _hostent->h_length);
+    _thesock = ::socket(AF_INET, SOCK_STREAM, 0);
+    if(_thesock<=0)
+    {
         _connecting = 0;
-        return 0;
+        _error = errno;
+        return -1;
+    }
+    _remote_sin.sin_family		= AF_INET;
+    _remote_sin.sin_addr.s_addr	= locSin.sin_addr.s_addr;
+    _remote_sin.sin_port		= htons(port);
+    if(-1 == ::connect(_thesock, (const struct sockaddr*)&_remote_sin, _remote_sin.rsz()))
+    {
+        _error = errno;
+        if(_error==EINPROGRESS || _error == WOULDBLOCK)
+        {
+            _connecting = 1;
+        }
+        return -1;
     }
     _connecting = 0;
-    return -1;
+    return 0; //connected
 }
 
 /*
@@ -833,6 +836,7 @@ int tcp_cli_sock::raw_connect(const SADDR_46&  saddr, int tout)
     _error   = 0;
     _connecting = 0;
     _error   = 0;
+
     assert(_thesock<=0);
     _thesock = ::socket(AF_INET, SOCK_STREAM, 0);
     if((int)_thesock < 0)
@@ -845,11 +849,9 @@ int tcp_cli_sock::raw_connect(const SADDR_46&  saddr, int tout)
         set_option(SO_SNDBUF,_buffers[0]);
         set_option(SO_RCVBUF,_buffers[1]);
     }
-
-    set_blocking(0);
+    bio_unblock  ul(this);
     _remote_sin = saddr;
     int rv = ::connect(_thesock, (const struct sockaddr*)&_remote_sin, _remote_sin.rsz());
-    set_blocking(_blocking);
     if(-1 == rv)
     {
         _error = errno;
@@ -872,7 +874,6 @@ int tcp_cli_sock::raw_connect(const SADDR_46&  saddr, int tout)
                     {
                         if(FD_ISSET(_thesock, &fdWr))
                         {
-                            set_blocking(_blocking);
                             return 0;   // no error
                         }
                     }
@@ -912,10 +913,8 @@ int     tcp_cli_sock::raw_connect_sin()
         _buffers[0] = _buffers[1] = 0;
     }
     _connecting = 0;
-    const int bloking = _blocking;
-    set_blocking(0);
+    bio_unblock bl(this);
     int rv = ::connect(_thesock, (const struct sockaddr*)&_remote_sin, _remote_sin.rsz());
-    set_blocking(bloking);
     if(-1 == rv)
     {
         _error = errno;
@@ -958,7 +957,7 @@ int tcp_cli_sock::i4connect(const SADDR_46&  addr, CancelCB cbCall, void* pUser)
     // non blocking node couse we can cancel it by Cancel f_call
     if(0==cbCall) cbCall = sock::DefCBCall;
 
-    set_blocking(0);
+    bio_unblock bl(this);
     time_t  ti = time(0);
     _connecting = 0;
     err = ::connect(_thesock, (const struct sockaddr*)&_remote_sin, _remote_sin.rsz());
@@ -981,7 +980,6 @@ int tcp_cli_sock::i4connect(const SADDR_46&  addr, CancelCB cbCall, void* pUser)
             {
                 if(FD_ISSET(_thesock, &fdWr))
                 {
-                    set_blocking(_blocking);
                     _connecting = 0;
                     return 0;   // no error
                 }
@@ -1030,7 +1028,8 @@ int tcp_cli_sock::s4connect(const char* sip, int port, CancelCB cbCall, void* pU
 #else
     inet_aton(sip, &_remote_sin.sin_addr);
 #endif //
-    set_blocking(0);
+    bio_unblock bl(this);
+
     _connecting = 0;
     err = ::connect(_thesock, (const struct sockaddr*)&_remote_sin, _remote_sin.rsz());
     if(err==-1)
@@ -1059,7 +1058,6 @@ int tcp_cli_sock::s4connect(const char* sip, int port, CancelCB cbCall, void* pU
             {
                 if(FD_ISSET(_thesock, &fdWr))
                 {
-                    set_blocking(1);
                     _connecting = 0;
                     return 0;   // no error
                 }
@@ -1354,8 +1352,8 @@ int  udp_sock::connect(const char* sip, int port, CancelCB cbCall, void* pUser)
     memset(&_remote_sin.sin_zero, 0, sizeof(_remote_sin.sin_zero));
 
     // non blocking node couse we can cancel it by Cancel f_call
-    set_blocking(0);
-    time_t         ti = time(0);
+    bio_unblock     bl(this);
+    time_t          ti = time(0);
     err = ::connect(_thesock, (const struct sockaddr*)&_remote_sin, _remote_sin.rsz());
     if(0==cbCall)
         cbCall = sock::DefCBCall;
@@ -1371,7 +1369,6 @@ int  udp_sock::connect(const char* sip, int port, CancelCB cbCall, void* pUser)
         {
             if(FD_ISSET(_thesock, &fdWr))
             {
-                set_blocking(1);
                 _connected = 1;
                 return 0;   // no error
             }
@@ -1448,7 +1445,7 @@ int udp_group_sock::receive(unsigned char* pbuff, int length, int port, const ch
 }
 
 //-----------------------------------------------------------------------------
-void    udp_group_sock::destroy()
+bool    udp_group_sock::destroy()
 {
     if(_groupmember)
     {

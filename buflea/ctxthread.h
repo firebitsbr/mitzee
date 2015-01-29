@@ -46,6 +46,8 @@ public:
     bool    add_context(Ctx* pc){return _pctxs.push(pc);};
     void    metrics(std::stringstream& str, SinOut& bpss)const;
     mutex&  get_mutex(){return _m;}
+    time_t  last_spin()const {return _curtime;}
+    void    close_sockets();
 protected:
     void    _close_all();
     bool    _pre_thread_foo();
@@ -60,6 +62,7 @@ public:
 
 private:
     ThreadPool*     _tp;
+    time_t          _curtime;
     int             _index;
     bool            _dynamic;
     bool            _flushed;

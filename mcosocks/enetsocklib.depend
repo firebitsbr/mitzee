@@ -70,3 +70,39 @@
 	<inttypes.h>
 	<wchar.h>
 
+1422417385 source:/home/marius/CPP/GUGLE/src/mitzee/mcosocks/sock.cpp
+	<assert.h>
+	<fcntl.h>
+	<errno.h>
+	<unistd.h>
+	<stdlib.h>
+	<iostream>
+	<time.h>
+	"sock.h"
+	<ifaddrs.h>
+
+1422417401 /home/marius/CPP/GUGLE/src/mitzee/mcosocks/sock.h
+	<os.h>
+	<sys/socket.h>
+	<resolv.h>
+	<sys/select.h>
+	<arpa/inet.h>
+	<sys/ioctl.h>
+	<sys/time.h>
+	<netdb.h>
+	<stdlib.h>
+	<string.h>
+	<string>
+	<fstream>
+	<math.h>
+
+1421556356 /home/marius/CPP/GUGLE/src/mitzee/mcoinclude/os.h
+	<errno.h>
+	<unistd.h>
+	<assert.h>
+	<pthread.h>
+	<semaphore.h>
+	<stdio.h>
+	<inttypes.h>
+	<wchar.h>
+

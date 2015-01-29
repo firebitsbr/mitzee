@@ -44,7 +44,7 @@ CtxHttp::CtxHttp(const ConfPrx::Ports* pconf, tcp_xxx_sock& s):
 {
     _tc= 'H';
     _mode= P_HTTP;
-    _pcall = (PFCLL)&CtxHttp::_parse_header;
+    Ctx::_init_check_cb((PFCLL)&CtxHttp::_parse_header);
 }
 
 //-----------------------------------------------------------------------------
@@ -148,7 +148,7 @@ CALLR  CtxHttp::_empty_rock()
     _working = false;
     _negok = false;
     _hdrsent = false;
-    _rock.destroy();
+    _destroy_rock();
     _set_rhost(_rip);
     return _rock_connect(_rock);
 }

@@ -79,7 +79,7 @@ public:
     void    metrics(std::stringstream& str)const;
     void    dump_metrics(TcpPipe& s);
 private:
-
+    void  _check_threads(time_t now);
     bool _pre_thread_foo();
     void _post_thread_foo();
     void _comit_stats_to_file(time_t t , time_t d);
@@ -95,10 +95,10 @@ private:
     size_t                      _count;
     size_t                      _alive;
     size_t                      _max_clients;
-    BysStat                  _stats;
+    BysStat                     _stats;
     vector<CtxesThread*>        _pool;
     CtxQueue                    _q;
-    map<u_int32_t, BysStat>  _clients;
+    map<u_int32_t, BysStat>     _clients;
 
 };
 

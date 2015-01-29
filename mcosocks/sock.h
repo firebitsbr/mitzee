@@ -61,6 +61,7 @@ typedef bool (*CancelCB)(void* pVoid, unsigned long time);
 class tcp_sock;
 
 typedef struct sockaddr_in  SA_46;
+struct bio_unblock;
 
 //fake till migrate to 4 and 6
 /*
@@ -264,11 +265,13 @@ union SADDR_46  {
 };
 #endif
 
+
+
 //---------------------------------------------------------------------------------------
 class sock
 {
 public:
-
+    friend struct bio_unblock;
     static      bool DefCBCall(void*,unsigned long);
     static void Init();
     static void Uninit();
@@ -282,7 +285,7 @@ public:
     virtual ~sock();
     virtual SOCKET  create(int port, int opt=0, const char* inetaddr=0);
     virtual SOCKET  create(const SADDR_46& r,int opt=0);
-    virtual void    destroy();
+    virtual bool    destroy(bool be=true);
     virtual int     send(const char* buff, const int length, int port=0, const char* ip=0  )=0;
     virtual int     send(const char* buff, const int length, const  SADDR_46& rsin)=0;
     virtual int     send(const unsigned char* buff, const int length, int port=0, const char* ip=0  )=0;
@@ -301,7 +304,7 @@ public:
     SOCKET&         socket() {return _thesock;}
     bool            isopen()const{return (int)_thesock > 0;}
     int             error()const{return _error;}
-    bool            is_blocking(){return _blocking;}
+    int             is_blocking(){return _blocking;}
     void            pre_set(int sb, int rb){_buffers[0]=sb;_buffers[1]=rb;}
     void            reset(){_set = 0;};
     int&            set(){return _set;};
@@ -365,7 +368,7 @@ public:
     int port()const{return n_port;}
     tcp_srv_sock();
     virtual ~tcp_srv_sock();
-    virtual void    destroy();
+    virtual bool    destroy(bool be=true);
     SOCKET     accept(tcp_cli_sock& cliSock);
     virtual SOCKET   create(int port, int opt=0, const char* inetaddr=0);
     virtual SOCKET  create(const SADDR_46& r, int opt=0);
@@ -393,7 +396,7 @@ public:
     bool            is_really_connected();
     bool            check_connection()const {return _connected;};
     struct hostent* gethostent(){return _hostent;}
-    virtual void    destroy();
+    virtual bool    destroy(bool be=true);
     int             isconnecting(){
         return _connecting;
     }
@@ -413,8 +416,8 @@ class udp_sock : public sock
 {
 public:
     udp_sock():_connected(0),_bind(0){}
-    virtual ~udp_sock(){destroy();}
-    virtual void    destroy(){sock::destroy();_connected=0;};
+    virtual ~udp_sock(){destroy(false);}
+    virtual bool    destroy(bool be=true){bool b = sock::destroy(be);_connected=0;return b;};
     virtual SOCKET  create(int port, int opt=0, const char* inetaddr=0);
     virtual SOCKET  create(const SADDR_46& r, int opt=0);
     virtual int     send(const char* buff, const int length, int port=0, const char* ip=0  );
@@ -456,7 +459,7 @@ public:
 
     virtual int     send(unsigned char* buff, int length, int port=0, const char* ip=0  );
     virtual int     receive(unsigned char* buff, int length, int port=0, const char* ip=0  );
-    virtual void    destroy();
+    virtual bool    destroy();
     */
 };
 
@@ -485,6 +488,14 @@ public:
     }
 };
 
+
+struct bio_unblock
+{
+    sock* _sk;
+    int   _bl;
+    bio_unblock(sock* sock);
+    ~bio_unblock();
+};
 
 
 

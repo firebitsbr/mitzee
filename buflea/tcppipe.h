@@ -31,27 +31,25 @@ class TcpPipe : public tcp_cli_sock
 {
 public:
 
-    TcpPipe():tcp_cli_sock(),_ssl(0),_incoming(false),_gothdr(false){
+    TcpPipe():tcp_cli_sock(),_ssl(0),_gothdr(false){
     }
     virtual ~TcpPipe(){
-        destroy();
+        destroy(false);
     }
     //just the socket
     TcpPipe(const TcpPipe& o):tcp_cli_sock(o),_ssl(0){
         //_ssl = o._ssl
     }
-    void destroy(){
+    bool destroy(bool emptyit=true){
         if(_ssl){
-//            int sd = SSL_get_fd(_ssl);
-//            ::close(sd);
-            //SSL_shutdown(_ssl);
+            SSL_shutdown(_ssl);
             SSL_set_fd(_ssl, 0);
             SSL_free(_ssl);
             _ssl = 0;
         }
-        tcp_cli_sock::destroy();
-        _incoming=false;
+        return tcp_cli_sock::destroy(emptyit);
     }
+
     int sendall(const u_int8_t* buff, int length, int tout=8912);
     int sendall(const std::string& s, int tout=8912){return sendall((u_int8_t*)s.c_str(), (int)s.length(), tout);}
     int receive(u_int8_t* buff, int length);
@@ -59,14 +57,16 @@ public:
         int rv =  tcp_cli_sock::raw_connect(uip4, port);
         return rv;
     }
+    bool setaccepted(const Ctx* pc);
     bool setconnected(const Ctx* pc);
-    bool ssl_accept(const Ctx* pc);
+    int  ssl_connect(const Ctx* pc);
+    int  ssl_accept(const Ctx* pc);
     void set_ctx(const Ctx* pc){_pc=pc;}
 
 
 private:
+    bool    _create_ssl(SSL_CTX* pc);
     SSL     *_ssl;
-    bool    _incoming;
     bool    _gothdr;
     const   Ctx* _pc;
 public:

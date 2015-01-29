@@ -43,7 +43,7 @@ CtxDns::CtxDns(const ConfPrx::Ports* pconf, tcp_xxx_sock& s):
 {
     _tc= 'P';
     _mode=P_DNSSOCK; //dns ssh
-    _pcall = (PFCLL)&CtxDns::_rec_minimal;
+    Ctx::_init_check_cb((PFCLL)&CtxDns::_rec_minimal);
 }
 
 //-----------------------------------------------------------------------------

@@ -45,8 +45,8 @@ CtsReg::CtsReg(const ConfPrx::Ports* pconf, tcp_xxx_sock& s):Ctx(pconf, s)
 {
     _tc= 'A';
     _mode=P_CONTORL; //dns ssh
-    LOGI("ACL connect from:" << IP2STR(_cliip));
-    _pcall = (PFCLL)&CtsReg::_pend;
+    LOGI("REG connect from:" << IP2STR(_cliip));
+    Ctx::_init_check_cb((PFCLL)&CtsReg::_pend);
 }
 
 //-----------------------------------------------------------------------------
@@ -93,7 +93,7 @@ bool  CtsReg::_postprocess()
     //
     // add tto payers
     GLOGI(_hdr.buf());
-    _sock.sendall("SOCKET CONNECT OK",18,  SS_TOUT);
+    _sock.sendall((const uint8_t*)"SOCKET CONNECT OK",17,  SS_TOUT);
     return false;
 }
 

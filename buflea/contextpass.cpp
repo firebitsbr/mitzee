@@ -44,7 +44,7 @@ CtxPasstru::CtxPasstru(const ConfPrx::Ports* pconf, tcp_xxx_sock& s):
 {
     _tc= 'P';
     _mode= P_PASSTRU;
-    _pcall = (PFCLL)&CtxPasstru::_overwrite_addr;
+    Ctx::_init_check_cb((PFCLL)&CtxPasstru::_overwrite_addr);
 }
 
 //-----------------------------------------------------------------------------
@@ -81,6 +81,7 @@ CALLR  CtxPasstru::_overwrite_hosts(const char* host)
         LOGD("The context does not have config redirs. closing");
         return R_KILL;
     }
+    LOGD("REDIRECT:" << _pconf->redirect);
     _set_rhost(_pconf->toaddr, 0, 0);
     return R_CONTINUE;
 }

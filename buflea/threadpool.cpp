@@ -151,13 +151,11 @@ void ThreadPool::thread_main()
     time_t       prev = now;
     size_t       k = 0;
 
-
+    ++__alivethrds;
     while(!this->is_stopped() && __alive /*&& s_side.isopen()*/)
     {
 
         now = time(0);
-
-
         if(k % 3 == 0)  // 3 secs
         {
             time_t diff = now - prev;
@@ -172,12 +170,35 @@ void ThreadPool::thread_main()
                 __alive = false;
             }
         }
+        if(k % 5 == 0)
+        {
+           //// _check_threads( now);
+        }
         ++k;
         sleep(1);
     }
+
+    GLOGD("Thread pool exits");
+    _check_threads(0);
     _comit_stats_to_file(now, 10);
     unlink("/tmp/buflea.stop");
     __alive=false;
+    --__alivethrds;
+}
+
+void ThreadPool::_check_threads(time_t now)
+{
+    AutoLock a(&_m);
+
+    for(auto const& thread : _pool)
+    {
+        const time_t last_spin = thread->last_spin();
+        if(now==0 || now - last_spin > (GCFG->_pool.time_out*2))
+        {
+            GLOGI("A thread was found hanging because did not spamped last time. Destroyng ctxes...");
+            thread->close_sockets();
+        }
+    }
 }
 
 
@@ -201,10 +222,12 @@ void    ThreadPool::_comit_stats_to_file(time_t now, time_t diff)
 
     if(diff==0)diff=1;
 
-    do{
+    do
+    {
         AutoLock __a(&_m);
         local = _clients;
-    } while(0);
+    }
+    while(0);
 
 
     u_int64_t bytesin, bytesout, prev_bytesin, prev_bytesout, dummy;

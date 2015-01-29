@@ -95,25 +95,28 @@ int CtxesThread::_get_from_q(CtxQueue* pq, size_t maxctxes)
 //
 void CtxesThread::thread_main()
 {
+    ++__alivethrds;
     if(0 == _pbuff)
     {
         __alive=false;
         GLOGE("Thread error. Canot allocate buffer.");
+        --__alivethrds;
         return;
     }
 
     GLOGD("T++:" << _index);
 
     time_t      tout = (time_t)GCFG->_pool.time_out;
-    time_t      curtime  = time(0);
-    time_t      last_activ_select = curtime;
-    time_t      prevtime = curtime;
+    _curtime  = time(0);
+    time_t      last_activ_select = _curtime;
+    time_t      prevtime = _curtime;
     time_t      delay_for_bps = 10;
     size_t      maxctxes = _tp->capacity();
     CtxQueue*   pq = _tp->get_q();
     fd_set      rd,wr;
     int         ndfs;
     bool        delete_oldies=false;
+    int         delaytick=0;
     timeval     tv = {0,0xFFF};
 
 
@@ -131,15 +134,16 @@ void CtxesThread::thread_main()
     FD_ZERO(&wr);
     while(!this->_bstop && __alive )
     {
-        usleep(1024);
-        curtime = time(0);
+        usleep(256);
+        _curtime = time(0);
         delete_oldies = false;                      // we dont bps now
-        if(curtime - prevtime > tout)               // reports every tout seconds
+        if(_curtime - prevtime > tout)               // reports every tout seconds
         {
-            delay_for_bps = curtime-prevtime;       //only now
-            prevtime = curtime;
+            delay_for_bps = _curtime-prevtime;       //only now
+            prevtime = _curtime;
             delete_oldies = true;
-            _file_tick(curtime);                            // tick date in file
+            if(++delaytick%10==0)
+                _file_tick(_curtime);                // tick date in file
         }
         int qn = _get_from_q(pq, maxctxes);
 
@@ -154,12 +158,12 @@ void CtxesThread::thread_main()
         //
         if(0 == _pctxs.size())
         {
-            if(_dynamic && curtime -last_activ_select > tout)
+            if(_dynamic && _curtime -last_activ_select > tout)
             {
                 GLOGD("dynamic T breaks");
                 break; //terminate dynamic thread
             }
-            usleep(500000);
+            usleep(0xFFFF);
             continue;
         }
 
@@ -259,7 +263,8 @@ void CtxesThread::thread_main()
     {
         __alive = false;
     }
-    GLOGD("T exits:" << _index);
+    GLOGD("T-CTX exits:" << _index);
+    --__alivethrds;
 }
 
 void CtxesThread::_close_all()
@@ -338,6 +343,10 @@ void    CtxesThread::_file_tick(time_t time)
     FILE*    pf;
     const char* ptick = GCFG->_glb.tickfile.c_str();
 
+#ifdef DEBUG
+    GLOGI("tick:" << _index);
+#endif //DEBUG
+
     if(::access(ptick,0)==0)
         pf = ::fopen(ptick,"ab");
     else
@@ -358,13 +367,13 @@ void    CtxesThread::_file_tick(time_t time)
 
 }
 
-
-
-
-
-
-
-
-
+void    CtxesThread::close_sockets()
+{
+    //som ssl block forever. let's see
+    for(size_t k=0; k < _pctxs.size(); k++)
+    {
+        _pctxs[k]->close_sockets();
+    }
+}
 
 

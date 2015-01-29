@@ -56,7 +56,9 @@ Ctx::Ctx(const ConfPrx::Ports* pconf, tcp_xxx_sock& s):
     _pcsl_ctx(0),
     _creatime(time(0)),
     _clireqs(0),
-    _getissued(false)
+    _getissued(false),
+    _des(false),
+    _next(0)
 {
     _pactive = this;
     _sock.set_ctx(this);
@@ -80,6 +82,7 @@ Ctx::Ctx(const ConfPrx::Ports* pconf, tcp_xxx_sock& s):
          << " from:" << IP2STR(_cliip)
          << " ctx:" << __ctxc);
 
+    _state=SOCK_ON;
 }
 
 //-----------------------------------------------------------------------------
@@ -96,15 +99,15 @@ Ctx::~Ctx()
         AutoLock _a(&__tp->_hctxcount);
         clear();
         --__ctxc;
-        if(0 == __ctxc)
-        {
-            LOGI("idling");
-            __ctx = 0;
-        }
         LOGI("C- uid:" << _unicid << " " <<_pconf->socks
              << " from:" << IP2STR(_cliip)
              << " ctx:" << __ctxc);
 
+        if(0 == __ctxc)
+        {
+            LOGI("NO CONTEXTS. IDLING....");
+            __ctx = 0;
+        }
 
     }while(0);
 
@@ -117,8 +120,13 @@ bool   Ctx::ssl_bind(SSL_CTX* psl, SSL_CTX* pcl)
     assert(_pcsl_ctx==0);
     _pssl_ctx = psl;
     _pcsl_ctx = pcl;
+/*
     if(_pssl_ctx)
+    {
         return _sock.ssl_accept(this);
+    }
+*/
+
     return true;
 }
 
@@ -279,13 +287,26 @@ int Ctx::clear_fd(fd_set& rd, fd_set& wr,
 //--------
 void  Ctx::destroy()
 {
-    if(_sock.isopen())
-    {
-        LOGT("[S]--------x x-------[R]");
-        ;
-    }
+    if(_state&SOCK_ON)
+        _destroy_sock();
+    if(_state&ROCK_ON)
+        _destroy_rock();
+}
+
+
+void   Ctx::_destroy_sock()
+{
+    _state&=~SOCK_ON;
     _sock.destroy();
+    LOGT("[ C ]x-o--[ R ]");
+
+}
+
+void   Ctx::_destroy_rock()
+{
+    _state&=~ROCK_ON;
     _rock.destroy();
+    LOGT("[ C ]--o-x[ R ]");
 }
 
 int  Ctx::_rec_some()
@@ -397,12 +418,12 @@ CALLR Ctx::_redirecting()
 //-----------------------------------------------------------------------------
 int  Ctx::_deny_dest_host(const char* fbd)
 {
-    int  k = 8;
-    u_int8_t dontcare[512];
+    int         k = 16;
+    u_int8_t    dontcare[64];
+    bio_unblock bub(&_sock);
 
-    _sock.set_blocking(0);
-    while(_sock.receive(dontcare, 512)>0 && --k)
-        usleep(0xF);
+    while(_sock.receive(dontcare, sizeof(dontcare))>0 && --k)
+        usleep(0x1F);
 
     stringstream ost;
     ost << HTTP_400;
@@ -459,9 +480,9 @@ CALLR  Ctx::_r_pending()
             _s_send_reply(NOHOST);
             throw Mex(CONNECTION_FAILED,__FILE__,__LINE__);
         }
-        LOGI(IP2STR(_cliip) << ": <-----[PRX]-----> :" << IP2STR(_rock.getsocketaddr()));
-        _rock.setconnected(this);
-        return _r_send_header();
+        LOGI(IP2STR(_cliip) << "--o--" << IP2STR(_rock.getsocketaddr()));
+        _state|=ROCK_ON;
+        _ssl_replace_cb((PFCLL)&_r_send_header);
     }
     return R_CONTINUE;
 }
@@ -470,8 +491,8 @@ CALLR  Ctx::_r_pending()
 CALLR  Ctx::_r_send_header()
 {
     _working = true;
-    _negok = true;
-    _pcall=(PFCLL)&Ctx::_transfer;
+    _negok   = true;
+    _pcall   = (PFCLL)&Ctx::_transfer;
     return R_CONTINUE;
 }
 
@@ -537,7 +558,10 @@ CALLR  Ctx::_sock_rock( u_int8_t* buff, int rsz)
                 LOGH("\n"<<(const char*)buff<<","<< sz <<"\n");
             }
         }
+        LOGT("[" << (sz) << "]>>o>>[" << (sz-ssz) <<"]");
+
     }
+
     return sz==0 ? R_KILL : R_CONTINUE;
 }
 
@@ -550,7 +574,8 @@ CALLR  Ctx::_rock_sock(u_int8_t* buff, int rsz)
         int ssz =_sock.sendall(buff, sz, SS_TOUT);
         if(0==ssz)
         {
-            LOGT(" s <-o-- r ["  << (sz-ssz) << "<-" << sz <<"]");
+            LOGT("[" << (sz-ssz) << "]<<o<<[" << sz <<"]");
+
             _stats._temp_bytes[BysStat::eIN]+=sz;
 
              if(GCFG->_blog & 0x40)
@@ -622,7 +647,7 @@ CALLR  Ctx::_rock_connect(TcpPipe& rock)
     assert(rock.isopen()==false);
     rock.pre_set(GCFG->_pool.socketsize/4, GCFG->_pool.socketsize);
     SADDR_46& rs = rock.Rsin();
-    LOGI(IP2STR(_cliip) << " ->o- " << IP2STR(rs));
+    LOGI(IP2STR(_cliip) << "--o->" << IP2STR(rs));
     assert(rs.sin_family==AF_INET);
     assert(rs.sin_port!=0);
     assert(rs.sin_addr.s_addr!=0);
@@ -633,7 +658,9 @@ CALLR  Ctx::_rock_connect(TcpPipe& rock)
         _s_send_reply(NOHOST, err);
         throw Mex(CANNOT_CONNECT,__FILE__,__LINE__);
     }
-    rock.set_blocking(_sock.is_blocking());
+
+    rock.set_blocking(_pconf->blocking);
+
     if(rock.isconnecting())
     {
         _pcall = (PFCLL)&Ctx::_r_pending;
@@ -687,7 +714,7 @@ void    Ctx::_set_rhost(const SADDR_46& addr, const char* host, const char* refe
 //-----------------------------------------------------------------------------
 void  Ctx::_reuse_context()
 {
-    _rock.destroy();
+    _destroy_rock();
     _working = false;
     _negok = false;
     _getissued=false;
@@ -700,7 +727,10 @@ void  Ctx::_reuse_context()
         _logcntn.seekp(0);
         _logcntn.seekg(0);
     }
-    //GLOGD("Reusing context");
+    LOGI("C*:" << _unicid << " " <<_pconf->socks
+     << " from:" << IP2STR(_cliip)
+     << " ctx:" << __ctxc);
+
 }
 
 
@@ -731,6 +761,76 @@ int    Ctx::_s_send_reply(u_int8_t code, const char* info)
     }
     return 0;
 }
+
+
+//-----------------------------------------------------------------------------
+void    Ctx::close_sockets()
+{
+    if(_state&SOCK_ON)
+        _sock.destroy(false);
+    if(_state&ROCK_ON)
+        _rock.destroy(false);
+    _state&=~ROCK_ON;
+    _state&=~SOCK_ON;
+}
+
+
+CALLR   Ctx::_ssl_accept()
+{
+    int rv = _sock.ssl_accept(this);
+    if(rv==0)return R_KILL;
+    if(rv==-1)return R_CONTINUE;
+    _pcall = _next;
+    _next = 0;
+    return R_CONTINUE;
+}
+
+
+CALLR      Ctx::_ssl_connect()
+{
+    int rv = _rock.ssl_connect(this);
+    if(rv==0)return R_KILL;
+    if(rv==-1)return R_CONTINUE;
+    _pcall = _next;
+    _next = 0;
+    return R_CONTINUE;
+}
+
+void    Ctx::_init_check_cb( PFCLL cb)//&Ctx5::_rec_header);
+{
+    if(_pconf->sslo || _pconf->ssli)
+    {
+        if(!ssl_bind(_pconf->ssli ? __pl->sslglob()->srv_ctx() : 0,
+                     _pconf->sslo ? __pl->sslglob()->cli_ctx() : 0))
+        {
+            GLOGW("Cannot bind ssl sockets");
+        }
+    }
+
+    if(_pssl_ctx)
+    {
+        _sock.setaccepted(this);
+        _next=cb;
+        _pcall = &Ctx::_ssl_accept;
+    }
+    else
+        _pcall = cb;
+}
+
+
+
+void    Ctx::_ssl_replace_cb( PFCLL cb)//&Ctx5::_rec_header);
+{
+    if(_pcsl_ctx)
+    {
+        _rock.setconnected(this);
+        _next=cb;
+        _pcall = &Ctx::_ssl_connect;
+    }
+    else
+        _pcall = cb;
+}
+
 
 
 
