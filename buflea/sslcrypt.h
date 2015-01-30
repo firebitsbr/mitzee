@@ -92,5 +92,11 @@ std::string sslNerror(SSL* p=0, int* e=0, int* r=0);
 #define SSL_CTX_check_private_key (* (int (*)(SSL_CTX *)) ssl_sw[19].ptr)
 #define SSL_shutdown (* (int (*)(SSL *)) ssl_sw[20].ptr)
 #define SSL_pending (* (int (*)(SSL *)) ssl_sw[21].ptr)
+#define OpenSSL_add_ssl_algorithms (* (int(*)(void)) ssl_sw[22].ptr)
+#define SSLv3_server_method (* (SSL_METHOD * (*)(void))  ssl_sw[23].ptr)
+#define SSLv2_server_method (* (SSL_METHOD * (*)(void))  ssl_sw[24].ptr)
+#define SSLv3_client_method (* (SSL_METHOD * (*)(void))  ssl_sw[25].ptr)
+#define SSLv2_client_method (* (SSL_METHOD * (*)(void))  ssl_sw[26].ptr)
+
 #endif // SSLCRYPT_H
 

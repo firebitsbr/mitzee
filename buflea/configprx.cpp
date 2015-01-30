@@ -59,7 +59,6 @@ SADDR_46  fromstringip(const std::string& s, int& hostisssl)
         tmp = s.substr(7);
     else if(tmp.find("https://") == 0)
     {
-        hostisssl=1;
         tmp = s.substr(8);
         nport = 443;
     }
@@ -258,6 +257,7 @@ void ConfPrx::_assign( const char* pred, const char* val, int line)
 
             _bind(lpred, "cli_certificate_key_file",_ssl.cPrivKey, val);
             _bind(lpred, "cli_certificate_file",_ssl.cCert, val);
+            BIND(_ssl, version);
 
             if(lpred[0]=='}')
             {

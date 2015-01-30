@@ -124,6 +124,7 @@ public:
         string  cPrivKey;
         string  cCert;
         string  cCsr;
+        string  version;
 
     } _ssl;
 
