@@ -140,8 +140,8 @@ public:
             port=8083;
             dstport=80;
             socks="SOCKS5";
-            ssli=0;
-            sslo=0;
+            clientisssl=0;
+            hostisssl=0;
             openacl=-1;
             authtoken="plain";
             blocking=0;
@@ -158,8 +158,8 @@ public:
         string    socks;
         size_t    blocking;
         int       admin;
-        int       ssli;
-        int       sslo;
+        int       clientisssl;
+        int       hostisssl;
         int       openacl;     // 1, proxies everyting, no bans
         string    authtoken;
         string    redirect;
@@ -190,6 +190,6 @@ public:
 
 //-----------------------------------------------------------------------------------
 extern ConfPrx* GCFG;
-extern SADDR_46  fromstringip(const std::string& s);
+extern SADDR_46  fromstringip(const std::string& s, int& ssl);
 
 #endif //_CONFIGPRX_H_

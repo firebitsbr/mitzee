@@ -57,15 +57,14 @@ public:
         int rv =  tcp_cli_sock::raw_connect(uip4, port);
         return rv;
     }
-    bool setaccepted(const Ctx* pc);
-    bool setconnected(const Ctx* pc);
+    bool ssl_pre_accept(const Ctx* pc);
+    bool ssl_pre_connect(const Ctx* pc);
     int  ssl_connect(const Ctx* pc);
     int  ssl_accept(const Ctx* pc);
     void set_ctx(const Ctx* pc){_pc=pc;}
 
 
 private:
-    bool    _create_ssl(SSL_CTX* pc);
     SSL     *_ssl;
     bool    _gothdr;
     const   Ctx* _pc;

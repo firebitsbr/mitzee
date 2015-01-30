@@ -28,11 +28,15 @@ public:
     virtual ~Ctx5();
     virtual void    send_exception(const char* desc);
 protected:
-    CALLR  _negociate_header();
+
     int  _s_send_reply(u_int8_t code, const char* info=0);
-    CALLR  _r_send_header();
-    CALLR  _rec_header();
     bool _new_request(const u_int8_t* buff, int sz);
+
+slots
+    CALLR  _create_ctx();
+    CALLR  _negociate_header();
+    CALLR  _r_is_connected();
+    CALLR  _s_is_connected();
 };
 
 #endif // CONTEXT5_H

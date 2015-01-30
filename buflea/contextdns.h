@@ -35,12 +35,14 @@ public:
 
 protected:
     int     _s_send_reply(u_int8_t code, const char* info=0);
-    CALLR   _r_send_header();
     bool    _new_request(const u_int8_t* buff, int sz);
-private:
+
+slots
+    CALLR  _create_ctx();
+    CALLR   _r_is_connected();
     CALLR   _get_hostname();
-    CALLR   _rec_minimal();
-    CALLR   _transfer();
+    CALLR   _s_is_connected();
+    CALLR   _io();
 
 };
 

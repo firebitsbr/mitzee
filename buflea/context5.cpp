@@ -42,8 +42,6 @@ Ctx5::Ctx5(const ConfPrx::Ports* pconf, tcp_xxx_sock& s):
 {
     _tc= '5';
     _mode= P_SOCKS5;
-    Ctx::_init_check_cb((PFCLL)&Ctx5::_rec_header);
-    //_pcall = (PFCLL)&Ctx5::_rec_header;
 }
 
 //----------------------------------------------------------------------------
@@ -52,6 +50,11 @@ Ctx5::~Ctx5()
     //dtor
 }
 
+CALLR  Ctx5::_create_ctx()
+{
+    _pcall=(PFCLL)&Ctx5::_s_is_connected;
+    return Ctx5::_s_is_connected();
+}
 
 //-----------------------------------------------------------------------------
 /*
@@ -59,7 +62,7 @@ Ctx5::~Ctx5()
                    <-----------------[5][option]
 
 */
-CALLR  Ctx5::_rec_header()
+CALLR  Ctx5::_s_is_connected()
 {
     _rec_some();
 
@@ -100,9 +103,9 @@ CALLR  Ctx5::_rec_header()
         }
     }
 done:
-    if(_sock.sendall(response, 2, SS_TOUT)!=0)
+    if(_cli_sock.sendall(response, 2, SS_TOUT)!=0)
     {
-        _destroy_sock();
+        _destroy_clis();
         throw Mex(CLIENT_CLOSED,__FILE__,__LINE__);
     }
 
@@ -177,7 +180,7 @@ CALLR  Ctx5::_negociate_header()
     LOGH("o -> [SOCKS-5]: Open-IP: "<<_raddr.c_str());
     _set_rhost(_raddr);
 
-    return _rock_connect(_rock);
+    return _host_connect(_hst_sock);
 }
 
 //-----------------------------------------------------------------------------
@@ -188,8 +191,8 @@ int  Ctx5::_s_send_reply(u_int8_t code, const char* info)
 
     Ctx::_s_send_reply( code, info);
 
-    SADDR_46 ip4 =  _rock.getsocketaddr();
-    u_int16_t np =  _rock.getsocketport();
+    SADDR_46 ip4 =  _hst_sock.getsocketaddr();
+    u_int16_t np =  _hst_sock.getsocketport();
 
     const struct
     {
@@ -203,15 +206,15 @@ int  Ctx5::_s_send_reply(u_int8_t code, const char* info)
     {0x5, errors[code], 0, DN_IPV4, ip4.ip4(), np};
 
     LOGH("o <- [SOCKS-5]:" << socks_err(code));
-    _sock.sendall((const u_int8_t*)&response, sizeof(response), SS_TOUT);
+    _cli_sock.sendall((const u_int8_t*)&response, sizeof(response), SS_TOUT);
     return 1;
 }
 
 //-----------------------------------------------------------------------------
-CALLR  Ctx5::_r_send_header()
+CALLR  Ctx5::_r_is_connected()
 {
     _s_send_reply(SUCCESS);
-    return Ctx::_r_send_header();
+    return Ctx::_r_is_connected();
 }
 
 void  Ctx5::send_exception(const char* desc)
@@ -225,7 +228,7 @@ bool Ctx5::_new_request(const u_int8_t* buff, int bytes)
     {
         _clear_header();
         _hdr.append((const char*)buff, bytes);
-        _pcall = (PFCLL)&Ctx5::_rec_header;
+        _pcall = (PFCLL)&Ctx5::_s_is_connected;
         return true;
     }
     return false;

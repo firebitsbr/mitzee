@@ -29,10 +29,13 @@ public:
     virtual ~Ctx4();
     virtual void    send_exception(const char* desc);
 protected:
-
     int  _s_send_reply(u_int8_t code, const char* info=0);//pure
-    CALLR  _r_send_header();
-    CALLR  _rec_header();
+
+slots
+    CALLR  _r_is_connected();
+    CALLR  _s_is_connected();
+    CALLR  _create_ctx();
+
     bool _new_request(const u_int8_t* buff, int sz);
 
 private:

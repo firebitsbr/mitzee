@@ -87,7 +87,7 @@ private:
 };
 
 //----------------------------------------------------------------------------
-
+#define slots protected:    //
 //----------------------------------------------------------------------------
 class Ctx
 {
@@ -139,25 +139,19 @@ public:
     void    inc(){++_refs;}
     void    dec(){--_refs;}
 	bool    isdead(){
-		return !_sock.isopen() && !_rock.isopen();
+            return !_cli_sock.isopen() && !_hst_sock.isopen();
 	}
 	void    close_sockets();
 protected:
-    virtual int _s_send_reply(u_int8_t code, const char* info=0);
+    virtual int  _s_send_reply(u_int8_t code, const char* info=0);
     virtual bool _new_request(const u_int8_t* buff, int bytes)=0;
-    virtual CALLR _r_send_header();
-    virtual CALLR _transfer();
-    virtual int _rec_some();
+
+    int     _rec_some();
+    int     _set_fd (fd_set& rd, fd_set& wr);
     void    _check_header(const char* buff, size_t sz);
-    virtual int _set_fd (fd_set& rd, fd_set& wr);
-//    virtual int _set_io_fd (fd_set& rd, fd_set& wr);
     void    _reuse_context();
-    CALLR   _r_pending();
-    CALLR   _rock_connect(TcpPipe& rock);
-    CALLR   _redirecting();
     void    _get_redirect_doc(stringstream& ost, const char* link);
     bool    _was_idling(time_t, int);
-
     int     _deny_dest_host(const char* fbd);
     void    _check_log_size();
     int     _spoof_cookie();
@@ -167,13 +161,21 @@ protected:
 
     void    _cache_45hdr(const uint8_t* pbuff, int len);
     void    _clear_header(bool transp=false);
-    void    _destroy_sock();
-    void    _destroy_rock();
-    void    _init_check_cb( PFCLL );//&Ctx5::_rec_header);
-    void    _ssl_replace_cb( PFCLL );//&Ctx5::_rec_header);
+    void    _destroy_clis();
+    void    _destroy_host();
+    const   char*  _ls(const char c)const;
+slots
+    virtual CALLR _io();
+    virtual CALLR  _create_ctx()=0;
+    virtual CALLR _r_is_connected();
+    CALLR   _r_pending();
+    CALLR   _host_connect(TcpPipe& rock);
+    CALLR   _redirecting();
+
 private:
-    CALLR   _sock_rock(u_int8_t* pb, int len);
-    CALLR   _rock_sock(u_int8_t* pb, int len);
+    CALLR   _ctx_init();
+    CALLR   _cli2host(u_int8_t* pb, int len);
+    CALLR   _host2cli(u_int8_t* pb, int len);
     CALLR   _ssl_accept();
     CALLR   _ssl_connect();
 
@@ -183,8 +185,8 @@ protected:
     CtxesThread        *_pt;
     const ConfPrx::Ports  *_pcon;
     const ConfPrx::Ports  *_pconf;
-    tcp_xxx_sock       _sock;
-    TcpPipe            _rock;
+    tcp_xxx_sock       _cli_sock;
+    TcpPipe            _hst_sock;
     int                _mode;
     size_t             _blog;
     time_t             _last_time;
@@ -194,8 +196,8 @@ protected:
     bool               _negok;
     bool               _hdrsent;
     int                _refs;
-    SSL_CTX *          _pssl_ctx;
-    SSL_CTX *          _pcsl_ctx;
+    SSL_CTX *          _pcli_isssl;
+    SSL_CTX *          _phost_isssl;
     BysStat            _stats;
     SADDR_46           _cliip;
     SADDR_46           _raddr;
@@ -209,7 +211,6 @@ protected:
     string             _reason;
     bool               _des;
     int                _state;
-    PFCLL              _next;
 };
 
 

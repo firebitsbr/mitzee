@@ -30,19 +30,21 @@ public:
     CtxHttp(const ConfPrx::Ports* pconf, tcp_xxx_sock& s);
     virtual ~CtxHttp();
 protected:
-    CALLR  _r_send_header();
-    int  _s_send_reply(u_int8_t code, const char* info=0);
-    CALLR  _parse_header();
-    CALLR  _empty_rock();
-    int  _connect_to_host();
-    CALLR  _transfer();
-    CALLR  _sr_http_read_write();
-    bool _new_request(const u_int8_t* buff, int sz);
+    int     _s_send_reply(u_int8_t code, const char* info=0);
+    bool    _new_request(const u_int8_t* buff, int sz);
     virtual void send_exception(const char* desc);
-private:
-    int  _get_hdr();
-    CALLR  _get_from_rock();
+    int     _get_hdr();
+    int     _connect_to_host();
+
+slots
+    CALLR  _create_ctx();
+    CALLR   _s_is_connected();
+    CALLR  _empty_host();
+    CALLR  _r_is_connected();
+    CALLR  _sr_http_read_write();
+    CALLR  _get_from_host();
     CALLR  _overwrite_connection(const SADDR_46& ap);
+    CALLR  _io();
 private:
     SADDR_46 _rip;
     bool     _hdr_has_open;

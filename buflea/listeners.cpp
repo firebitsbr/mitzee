@@ -153,7 +153,7 @@ again:
             if(pss->listen(prt.pending)==0)
             {
                 GLOGIN("listen: " << prt.port << " "<< prt.socks <<
-                       " addr: " << pbind << "ssl:" << prt.ssli <<"->"<<prt.sslo);
+                       " addr:[" << pbind << "], ssl:" << prt.clientisssl <<"->"<<prt.hostisssl);
                 _ss.push_back(pss);
             }
             else

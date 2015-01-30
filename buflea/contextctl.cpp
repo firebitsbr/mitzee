@@ -47,8 +47,15 @@ CtxCtl::CtxCtl(const ConfPrx::Ports* pconf, tcp_xxx_sock& s):Ctx(pconf, s)
     _tc= 'A';
     _mode=P_CONTORL; //dns ssh
     LOGI("ACL connect from:" << IP2STR(_cliip));
-    Ctx::_init_check_cb((PFCLL)&CtxCtl::_pend);
 }
+
+
+CALLR  CtxCtl::_create_ctx()
+{
+    _pcall=(PFCLL)&CtxCtl::_s_is_connected;
+    return CtxCtl::_s_is_connected();
+}
+
 
 //-----------------------------------------------------------------------------
 CtxCtl::~CtxCtl()
@@ -73,7 +80,7 @@ int  CtxCtl::_close()
     return 0;
 }
 
-CALLR  CtxCtl::_pend()
+CALLR  CtxCtl::_s_is_connected()
 {
     _rec_some();
     size_t  nfs = _hdr.bytes();
@@ -90,6 +97,7 @@ CALLR  CtxCtl::_pend()
 
 bool  CtxCtl::_postprocess()
 {
+    int          dummy;
     std::string  response="N/A";
     char* pb = (char*)_hdr.buf();
     if(pb[0])
@@ -149,7 +157,7 @@ bool  CtxCtl::_postprocess()
                         if(!p.redirect.empty()) //was set
                         {
                             p.redirect = ip;
-                            p.toaddr = fromstringip(ip);
+                            p.toaddr = fromstringip(ip, dummy);
                         }
                     }
                     response="OK";
@@ -163,7 +171,7 @@ bool  CtxCtl::_postprocess()
         case 'G': //http GET send   'http://proxyip:port/$#.#.#.#'  $=B, X, A, R
             if(!::strncmp(pb,"GET / HTTP", 10) || !::strncmp(pb,"GET /M", 6))
             {
-                __tp->dump_metrics(_sock);
+                __tp->dump_metrics(_cli_sock);
             }
             else //parse above docs  GET /$?param
             {
@@ -198,7 +206,7 @@ bool  CtxCtl::_postprocess()
                                     if(!p.redirect.empty()) //was set
                                     {
                                         p.redirect = ip;
-                                        p.toaddr = fromstringip(ip);
+                                        p.toaddr = fromstringip(ip, dummy);
                                     }
                                 }
                                 response="OK";
@@ -211,7 +219,7 @@ bool  CtxCtl::_postprocess()
                         break;
                     case 'Q': // 'GET /Q?x.y.z.k:ppp'  check if is allowed or not
                     {
-                        const SADDR_46 pad = fromstringip(pb+7);
+                        const SADDR_46 pad = fromstringip(pb+7, dummy);
                         if(__db->is_client_allowed(pad))
                         {
                             response="YES";
@@ -252,7 +260,7 @@ bool  CtxCtl::_postprocess()
             break;
         }
     }
-    _sock.send(( char*)response.c_str(),response.length());
+    _cli_sock.send(( char*)response.c_str(),response.length());
     _clear_header();
     return false;
 }

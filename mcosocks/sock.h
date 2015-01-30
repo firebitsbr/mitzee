@@ -319,7 +319,7 @@ protected:
     int             _blocking;
     int             _buffers[2];
     SADDR_46        _ipfixit;
-    SADDR_46	    _local_sin;	   // source
+    SADDR_46	    _local_sin;	        // source
 	SADDR_46	    _remote_sin;          // dest
     static  unsigned long   _tout;
 
@@ -493,7 +493,7 @@ struct bio_unblock
 {
     sock* _sk;
     int   _bl;
-    bio_unblock(sock* sock);
+    bio_unblock(sock* sock, int bl=0);
     ~bio_unblock();
 };
 

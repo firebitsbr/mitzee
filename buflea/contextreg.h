@@ -32,10 +32,14 @@ public:
 protected:
     void  send_exception(const char* desc);
     int   _s_send_reply(u_int8_t code, const char* info=0);
-    CALLR  _pend();
-    int   _close();
-    bool  _postprocess();
-    bool _new_request(const u_int8_t* buff, int sz);
+
+    int    _close();
+    bool   _postprocess();
+    bool   _new_request(const u_int8_t* buff, int sz);
+
+slots
+    CALLR  _s_is_connected();
+    CALLR  _create_ctx();
 private:
 
 };

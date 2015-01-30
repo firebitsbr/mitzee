@@ -39,7 +39,6 @@ Ctx4::Ctx4(const ConfPrx::Ports* pconf, tcp_xxx_sock& s):
 {
     _tc= '4';
     _mode= P_SOCKS4;
-    Ctx::_init_check_cb((PFCLL)&Ctx4::_rec_header);
 }
 
 //----------------------------------------------------------------------------
@@ -48,13 +47,19 @@ Ctx4::~Ctx4()
     //dtor
 }
 
+CALLR  Ctx4::_create_ctx()
+{
+    _pcall=(PFCLL)&Ctx4::_s_is_connected;
+    return _s_is_connected();
+}
+
 //-----------------------------------------------------------------------------
 /*
     [4][1][port,2][ip,4]------------>[PRX]
                         <------------[4][CODE][port,1][ip,4]
     dont support bind for FTP
 */
-CALLR  Ctx4::_rec_header()
+CALLR  Ctx4::_s_is_connected()
 {
     _rec_some();
     size_t  nfs  = _hdr.bytes();
@@ -91,7 +96,7 @@ CALLR  Ctx4::_rec_header()
         return R_CONTINUE;
     }
     _set_rhost(_raddr);
-    return _rock_connect(_rock);
+    return _host_connect(_hst_sock);
 }
 
 //-----------------------------------------------------------------------------
@@ -104,8 +109,8 @@ int  Ctx4::_s_send_reply(u_int8_t code, const char* info)
                                     };
 
     Ctx::_s_send_reply( code, info);
-    SADDR_46 ip4 =  _rock.getsocketaddr();
-    u_int16_t np =  _rock.getsocketport();
+    SADDR_46 ip4 =  _hst_sock.getsocketaddr();
+    u_int16_t np =  _hst_sock.getsocketport();
     const struct
     {
         unsigned char vn;
@@ -117,7 +122,7 @@ int  Ctx4::_s_send_reply(u_int8_t code, const char* info)
         0,errors[code],np, ip4.ip4()
     };
     LOGH("o <- [SOCKS-4]:" << socks_err(code));
-    _sock.sendall((const u_int8_t*)&response, sizeof(response), SS_TOUT);
+    _cli_sock.sendall((const u_int8_t*)&response, sizeof(response), SS_TOUT);
     return 1;
 }
 
@@ -127,11 +132,11 @@ void  Ctx4::send_exception(const char* desc)
 }
 
 //-----------------------------------------------------------------------------
-CALLR  Ctx4::_r_send_header()
+CALLR  Ctx4::_r_is_connected()
 {
     _s_send_reply(SUCCESS);
     _clear_header();
-    return Ctx::_r_send_header();
+    return Ctx::_r_is_connected();
 }
 
 bool Ctx4::_new_request(const u_int8_t* buff, int sz)
@@ -140,7 +145,7 @@ bool Ctx4::_new_request(const u_int8_t* buff, int sz)
 	{
 		_hdr.clear();
 		_hdr.append((const char*)buff, sz);
-		_pcall = (PFCLL)&Ctx4::_rec_header;
+		_pcall = (PFCLL)&Ctx4::_s_is_connected;
 		return true;
 	}
 	return false;

@@ -47,6 +47,7 @@ struct ssl_func ssl_sw[] =
     {"SSL_CTX_set_cipher_list",0},
     {"SSL_CTX_check_private_key",0},
     {"SSL_shutdown",0},
+    {"SSL_pending",0},
     {0,    0}
 };
 
@@ -62,7 +63,7 @@ static struct ssl_func crypto_sw[] =
 };
 
 
-std::string sslNerror(SSL* ctx)
+std::string sslNerror(SSL* ctx, int* serr, int* nerro)
 {
     int             nerr = errno;
     long            err = ERR_get_error();
@@ -80,9 +81,11 @@ std::string sslNerror(SSL* ctx)
     long sslerr = SSL_get_error(ctx,err);
     if(sslerr)
     {
-        ERR_error_string(err, fmt);
+        if(serr)*serr=sslerr;
+        ERR_error_string(sslerr, fmt);
         strerr += fmt;
     }
+    if(nerro)*nerro=nerr;
     sprintf(fmt, ") nerror(%d)", nerr);
     strerr += fmt;
     return strerr;
@@ -109,7 +112,7 @@ static unsigned long ssl_id_callback(void)
     return (unsigned long) pthread_self();
 }
 
-SslCrypt::SslCrypt():_psslCtx(0),_psslCtxCli(0)
+SslCrypt::SslCrypt():_pssl_accept(0),_pssl_connect(0)
 {
 
     if (!load_dll(GCFG->_ssl.ssl_lib.c_str(), ssl_sw) ||
@@ -128,7 +131,7 @@ SslCrypt::SslCrypt():_psslCtx(0),_psslCtxCli(0)
 bool SslCrypt::init_client()
 {
 
-    if ( (_psslCtxCli = SSL_CTX_new(SSLv23_client_method()))==0 )
+    if ( (_pssl_connect = SSL_CTX_new(SSLv23_client_method()))==0 )
     {
         GLOGE("SSL_CTX_new(SSLv23_client_method())" << sslNerror());
         return false;
@@ -141,7 +144,7 @@ bool SslCrypt::init_client()
 
         if(::access(cf,0)==0)
         {
-            if(0==SSL_CTX_use_certificate_file(_psslCtx, cf, SSL_FILETYPE_PEM))
+            if(0==SSL_CTX_use_certificate_file(_pssl_connect, cf, SSL_FILETYPE_PEM))
             {
                 cout << "client:SSL_CTX_use_certificate_file" << cf <<" error: " << sslNerror();
                 return false;
@@ -159,7 +162,7 @@ bool SslCrypt::init_client()
         kchar* pem = GCFG->_ssl.cPrivKey.c_str();
         if(::access(pem,0)==0)
         {
-            if(0==SSL_CTX_use_PrivateKey_file(_psslCtx, pem, SSL_FILETYPE_PEM))
+            if(0==SSL_CTX_use_PrivateKey_file(_pssl_connect, pem, SSL_FILETYPE_PEM))
             {
                 cout << "client:SSL_CTX_use_PrivateKey_file" << pem <<" error: " << sslNerror();
                 return false;
@@ -171,7 +174,7 @@ bool SslCrypt::init_client()
         }
     }
 /*
-    if ( !SSL_CTX_check_private_key(_psslCtx) )
+    if ( !SSL_CTX_check_private_key(_pssl_accept) )
     {
         cout << "CHECK PRIVATE KEY:" << sslNerror();
     }
@@ -183,11 +186,11 @@ bool SslCrypt::init_client()
 bool SslCrypt::init_server()
 {
 
-    if ((_psslCtx = SSL_CTX_new(SSLv23_server_method())) == 0 )
+    if ((_pssl_accept = SSL_CTX_new(SSLv23_server_method())) == 0 )
     {
         GLOGE("SSL_CTX_new(SSLv23_server_method())" << sslNerror());
     }
-    if(0 == _psslCtx)
+    if(0 == _pssl_accept)
     {
         GLOGE("SSL_CTX_new(SSLv23_server_method())" << sslNerror());
         return false;
@@ -200,7 +203,7 @@ bool SslCrypt::init_server()
 
         if(::access(pem,0)==0 )
         {
-            if(0==SSL_CTX_use_certificate_file(_psslCtx, pem, SSL_FILETYPE_PEM))
+            if(0==SSL_CTX_use_certificate_file(_pssl_accept, pem, SSL_FILETYPE_PEM))
             {
                 cout << "server:SSL_CTX_use_certificate_file" << pem <<" error: " << sslNerror();
                 return false;
@@ -219,12 +222,12 @@ bool SslCrypt::init_server()
         kchar* pem = GCFG->_ssl.sPrivKey.c_str();
         if(::access(pem,0)==0)
         {
-            if(0==SSL_CTX_use_PrivateKey_file(_psslCtx, pem, SSL_FILETYPE_PEM))
+            if(0==SSL_CTX_use_PrivateKey_file(_pssl_accept, pem, SSL_FILETYPE_PEM))
             {
                 cout << "server:SSL_CTX_use_certificate_file" << pem <<" error: " << sslNerror();
                 return false;
             }
-            if (!SSL_CTX_check_private_key(_psslCtx))
+            if (!SSL_CTX_check_private_key(_pssl_accept))
             {
                  cout << "server:SSL_CTX_check_private_key" << pem <<" error: " << sslNerror();
                  return false;
@@ -247,7 +250,7 @@ bool SslCrypt::init_server()
         if(::access(chain,0)==0)
         {
 
-            if(0 ==SSL_CTX_use_certificate_chain_file(_psslCtx, chain))
+            if(0 ==SSL_CTX_use_certificate_chain_file(_pssl_accept, chain))
             {
                 cout << "server:SSL_CTX_use_certificate_chain_file" << chain <<" error: " << sslNerror();
                 return false;
@@ -310,15 +313,16 @@ int SslCrypt::load_dll(kchar *dll_name, struct ssl_func *sw)
 
 SslCrypt::~SslCrypt()
 {
-    if(_psslCtx)
+    if(_pssl_accept)
     {
-        SSL_CTX_free(_psslCtx);
+        SSL_CTX_free(_pssl_accept);
     }
 
-    if(_psslCtxCli)
+    if(_pssl_connect)
     {
-        SSL_CTX_free(_psslCtxCli);
+        SSL_CTX_free(_pssl_connect);
     }
+//    ERR_free_strings();
     if(ssl_mutexes)
     {
         for (int i = 0; i < CRYPTO_num_locks(); i++)

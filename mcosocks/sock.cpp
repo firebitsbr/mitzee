@@ -31,8 +31,8 @@ unsigned long       sock::_tout = 2000;
 
 
 //-----------------------------------------------------------------------------
-bio_unblock::bio_unblock(sock* sock):_sk(sock),_bl(_sk->_blocking){
-    sock->set_blocking(0);
+bio_unblock::bio_unblock(sock* sock, int bl):_sk(sock),_bl(_sk->_blocking){
+    sock->set_blocking(bl);
 }
 bio_unblock::~bio_unblock(){
     _sk->set_blocking(_bl);

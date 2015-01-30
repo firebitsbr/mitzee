@@ -44,7 +44,6 @@ CtxHttp::CtxHttp(const ConfPrx::Ports* pconf, tcp_xxx_sock& s):
 {
     _tc= 'H';
     _mode= P_HTTP;
-    Ctx::_init_check_cb((PFCLL)&CtxHttp::_parse_header);
 }
 
 //-----------------------------------------------------------------------------
@@ -52,6 +51,14 @@ CtxHttp::~CtxHttp()
 {
     //dtor
 }
+
+CALLR  CtxHttp::_create_ctx()
+{
+    _pcall=(PFCLL)&CtxHttp::_s_is_connected;
+    return _s_is_connected();
+}
+
+
 //-----------------------------------------------------------------------------
 int  CtxHttp::_get_hdr()
 {
@@ -64,13 +71,13 @@ int  CtxHttp::_get_hdr()
     return 1; //header complette
 }
 
-CALLR  CtxHttp::_parse_header()
+CALLR  CtxHttp::_s_is_connected()
 {
     if(_get_hdr()==0)
         return R_CONTINUE;
 
     assert(!_hdr_has_open);
-    //const bool con = _rock.check_connection();
+    //const bool con = _hst_sock.check_connection();
     if(_hdr._nhost)
     {
         char        host[512]= {0};
@@ -107,11 +114,11 @@ CALLR  CtxHttp::_parse_header()
             if(_rip == _raddr)
             {
                 LOGH("http-hdr ->:"<< IP2STR(_rip) );
-                return _r_send_header();
+                return _r_is_connected();
             } // else rip!=ap
             return _overwrite_connection(_raddr);
         }
-        assert(!_rock.isopen());
+        assert(!_hst_sock.isopen());
 
         if(_is_access_blocked(_raddr, host, referer))
         {
@@ -121,7 +128,7 @@ CALLR  CtxHttp::_parse_header()
 
         _set_rhost(_raddr, host, referer);
         _rip     = _raddr;
-        return _rock_connect(_rock);
+        return _host_connect(_hst_sock);
     }
     else
     {
@@ -129,16 +136,16 @@ CALLR  CtxHttp::_parse_header()
         throw Mex(CANNOT_PARSE_HTTP,__FILE__,__LINE__);
     }
     if(_working)
-        return _r_send_header();
+        return _r_is_connected();
 
     throw Mex(CANNOT_PARSE_HTTP,__FILE__,__LINE__);
 }
 
-CALLR  CtxHttp::_empty_rock()
+CALLR  CtxHttp::_empty_host()
 {
     if(--_tflush>0 )
     {
-        if(_get_from_rock())
+        if(_get_from_host())
         {
             _tflush = 128;
         }
@@ -148,14 +155,14 @@ CALLR  CtxHttp::_empty_rock()
     _working = false;
     _negok = false;
     _hdrsent = false;
-    _destroy_rock();
+    _destroy_host();
     _set_rhost(_rip);
-    return _rock_connect(_rock);
+    return _host_connect(_hst_sock);
 }
 
 
 //-----------------------------------------------------------------------------
-CALLR  CtxHttp::_r_send_header()
+CALLR  CtxHttp::_r_is_connected()
 {
     if(_hdr.bytes())
     {
@@ -166,19 +173,19 @@ CALLR  CtxHttp::_r_send_header()
             //
             // reply connected Proxy connection established
             //
-            _sock.sendall((const u_int8_t*)HTTP_200,  strlen(HTTP_200), SS_TOUT);
+            _cli_sock.sendall((const u_int8_t*)HTTP_200,  strlen(HTTP_200), SS_TOUT);
         }
         else if(_hdr.bytes() != 0) // no open, the proxy is accessed as a web server
         {
             _hdr.prep_doc();
-            _rock.sendall(_hdr.buf(), _hdr.bytes(), SS_TOUT);
+            _hst_sock.sendall(_hdr.buf(), _hdr.bytes(), SS_TOUT);
             LOGT(" SENT HDR TO RADDR: ["<<_hdr.bytes() <<"]\n[" << _hdr.buf() <<"]\n");
         }
         _clear_header();
     }
     if(_working)
         return R_CONTINUE;
-    return Ctx::_r_send_header();
+    return Ctx::_r_is_connected();
 }
 
 //-----------------------------------------------------------------------------
@@ -192,16 +199,16 @@ int  CtxHttp::_s_send_reply(u_int8_t code, const char* info)
     char msg[800];
     sprintf(msg,"%s <html><h1>proxy error: %s (%s)</h1></html>", HTTP_400,
                                                                  socks_err(code), info ? info : "*");
-    _sock.sendall((const u_int8_t*)msg, strlen(msg), SS_TOUT);
+    _cli_sock.sendall((const u_int8_t*)msg, strlen(msg), SS_TOUT);
     return 1;
 }
 
 //-----------------------------------------------------------------------------
-CALLR  CtxHttp::_transfer()
+CALLR  CtxHttp::_io()
 {
     if(_hdr_has_open)
     {
-        return Ctx::_transfer();
+        return Ctx::_io();
     }
     return _sr_http_read_write();
 }
@@ -209,31 +216,31 @@ CALLR  CtxHttp::_transfer()
 //-----------------------------------------------------------------------------
 CALLR  CtxHttp::_sr_http_read_write()
 {
-    if(_sock.set() & 1)
+    if(_cli_sock.set() & 1)
     {
-        if(0==_parse_header())
+        if(0==_s_is_connected())
         {
             return R_CONTINUE;
         }
     }
-    return _get_from_rock();
+    return _get_from_host();
 }
 
-CALLR  CtxHttp::_get_from_rock()
+CALLR  CtxHttp::_get_from_host()
 {
-    if(!_rock.isopen())
+    if(!_hst_sock.isopen())
         return R_CONTINUE; //keep wiating the pending connect
 
     int         rsz;
     u_int8_t*   buff = _pt->buffer(rsz);
 
-    if(_rock.set() & 0x00000001)
+    if(_hst_sock.set() & 0x00000001)
     {
-        rsz = _rock.receive(buff, rsz);
+        rsz = _hst_sock.receive(buff, rsz);
         if(rsz > 0)
         {
             _stats._temp_bytes[BysStat::eIN]+=rsz;
-            _sock.sendall(buff, rsz,  SS_TOUT);
+            _cli_sock.sendall(buff, rsz,  SS_TOUT);
             _stats._temp_bytes[BysStat::eOUT]+=rsz;
         }
     }
@@ -242,10 +249,10 @@ CALLR  CtxHttp::_get_from_rock()
 
 void  CtxHttp::send_exception(const char* desc)
 {
-    if(_sock.isopen() && _sock.is_really_connected())
+    if(_cli_sock.isopen() && _cli_sock.is_really_connected())
     {
-        _sock.sendall((const u_int8_t*)HTTP_200, strlen(HTTP_200),SS_TOUT);
-        _sock.send(desc, strlen(desc));
+        _cli_sock.sendall((const u_int8_t*)HTTP_200, strlen(HTTP_200),SS_TOUT);
+        _cli_sock.send(desc, strlen(desc));
     }
 }
 
@@ -258,7 +265,7 @@ bool CtxHttp::_new_request(const u_int8_t* buff, int bytes)
 	{
 		_clear_header();
 		_hdr.append((const char*)buff, bytes);
-		_pcall = (PFCLL)&CtxHttp::_parse_header;
+		_pcall = (PFCLL)&CtxHttp::_s_is_connected;
 		return true;
 	}
 	return false;
@@ -270,8 +277,8 @@ CALLR  CtxHttp::_overwrite_connection(const SADDR_46& ap)
     LOGT(IP2STR(_cliip) << " -|o- " << IP2STR(_rip));
     _rip    = ap;
     _tflush = 128;
-    _get_from_rock();
-    _pcall=(PFCLL)&CtxHttp::_empty_rock;
+    _get_from_host();
+    _pcall=(PFCLL)&CtxHttp::_empty_host;
     return R_CONTINUE;
 }
 

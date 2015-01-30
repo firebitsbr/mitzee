@@ -24,34 +24,31 @@ int TcpPipe::sendall(const u_int8_t* buff, int length, int tout)
     if(_ssl)
     {
         int   shot, sent=0,trys=10;
-        if(length>GCFG->_pool.buffsize)
-        {
-            tout += 1000 * (length / GCFG->_pool.buffsize);
-        }
 
         while(length>0 && --trys>0)
         {
             shot = SSL_write(_ssl, buff + sent, length);
-            if(shot>0)
+            int serr = SSL_get_error(_ssl,shot);
+
+            switch (serr)
             {
-                sent+=shot;
+				case SSL_ERROR_NONE:
+				case SSL_ERROR_WANT_WRITE:
+				case SSL_ERROR_WANT_READ:
+				case SSL_ERROR_WANT_X509_LOOKUP:
+					break;
+				case SSL_ERROR_SYSCALL:
+				case SSL_ERROR_SSL:
+				case SSL_ERROR_ZERO_RETURN:
+                    trys=-1;
+                    break;
+			}
+			if(shot>0)
+			{
                 length-=shot;
-                usleep(0xFF);
-                continue;
-            }
-            if(shot==0)return length;
-
-            int error = SSL_get_error(_ssl, 0);
-
-            if(error==SSL_ERROR_WANT_WRITE||
-                    error==SSL_ERROR_SSL||
-                    errno==11)
-            {
-                usleep(0xFF);
-                continue;
-            }
-            GLOGE( "SSL_write: Error: [" << sslNerror(_ssl) <<"]");
-            break;
+                sent+=shot;
+			}
+			usleep(0xff);
         }
         return length;
     }
@@ -64,97 +61,106 @@ int TcpPipe::receive(u_int8_t* buff, int length)
     int rd;
     if(_ssl)
     {
+        assert(is_blocking()==1);
         rd = SSL_read(_ssl, buff, length);
-        if(rd>=0) {buff[rd]=0; return rd;}  //either closed or bytes
-
-        int error = SSL_get_error(_ssl, 0);
-
-        if(error == SSL_ERROR_WANT_READ||
-           error == SSL_ERROR_SSL ||
-           errno == 11)
+        if(rd>0)
         {
-            return -1; // keep getting
+            buff[rd]=0;    // ok
+            return rd;
         }
-        GLOGE( "SSL read Error: [" << sslNerror(_ssl) <<"]");
+again:
+        int serr= SSL_get_error(_ssl,rd);
+        switch (serr)
+        {
+        case SSL_ERROR_NONE:
+            if (SSL_pending(_ssl))
+            {
+                usleep(0xff);
+                goto again;
+            }
+            break;
+        case SSL_ERROR_WANT_WRITE:
+        case SSL_ERROR_WANT_READ:
+        case SSL_ERROR_WANT_X509_LOOKUP:
+            return -1;
+        case SSL_ERROR_SYSCALL:
+        case SSL_ERROR_SSL:
+            break;
+        case SSL_ERROR_ZERO_RETURN:
+            return 1;
+        }
         return 0;
     }
-
     rd = tcp_cli_sock::receive(buff, length, 0, 0);
     if(rd>0) buff[rd]=0;
     return rd; //return 0 connclosed, -1 no bytes, >0 bytes received
 }
 
-int TcpPipe::ssl_connect(const Ctx* pc)
-{
-    assert(_ssl);
 
-    if(-1==SSL_connect(_ssl))
+
+
+
+bool TcpPipe::ssl_pre_accept(const Ctx* pc)
+{
+    if(0==_ssl)
     {
-        int error = SSL_get_error(_ssl, 0);
-        if  (error == SSL_ERROR_WANT_READ ||
-             error == SSL_ERROR_WANT_WRITE ||
-             error == SSL_ERROR_SSL ||
-             errno == 11)
-        {
-            return 1; //keep going
-        }
-        return 0; //cannot connect
+        _ssl = SSL_new(pc->_pcli_isssl);
+        SSL_set_fd(_ssl, socket());
+        set_blocking(1);
+        return true;
+    }
+    return false;
+}
+
+int TcpPipe::ssl_accept(const Ctx* pc)
+{
+    int r = SSL_accept(_ssl);
+    int serr= SSL_get_error(_ssl,r);
+    switch (serr)
+    {
+        case SSL_ERROR_NONE:
+            return 1;
+        case SSL_ERROR_WANT_WRITE:
+        case SSL_ERROR_WANT_READ:
+        case SSL_ERROR_WANT_X509_LOOKUP:
+            return -1;
+        case SSL_ERROR_SYSCALL:
+        case SSL_ERROR_SSL:
+        case SSL_ERROR_ZERO_RETURN:
+            return 0;
     }
     return 1;
 }
 
-
-bool TcpPipe::setconnected(const Ctx* pc)
+bool TcpPipe::ssl_pre_connect(const Ctx* pc)
 {
-    if(pc->_pcsl_ctx)
+    if(0==_ssl)
     {
-        if(!_create_ssl(pc->_pcsl_ctx))
-            return false;
+        _ssl = SSL_new(pc->_phost_isssl);
+        if(_ssl)
+        {
+            SSL_set_fd(_ssl, socket());
+            set_blocking(1);
+            return true;
+        }
     }
-    tcp_cli_sock::setconnected();
-    return true;
-}
-
-bool TcpPipe::setaccepted(const Ctx* pc)
-{
-    if(pc->_pssl_ctx)
-    {
-        if(!_create_ssl(pc->_pssl_ctx))
-            return false;
-    }
-    return true;
-}
-
-bool TcpPipe::_create_ssl(SSL_CTX* pctx)
-{
-    assert(_ssl==0);
-    _ssl = SSL_new(pctx);
-    if(_ssl)
-        SSL_set_fd(_ssl, socket());
-    return _ssl!=0;
+    return false;
 }
 
 
-
-int TcpPipe::ssl_accept(const Ctx* pc)
+int TcpPipe::ssl_connect(const Ctx* pc)
 {
     assert(_ssl);
-    //set_blocking(1);
-    if(SSL_accept(_ssl)<=0)
+    assert(is_blocking()==1);
+    int rc = SSL_connect(_ssl);
+    if(rc<=0)
     {
-        int error = SSL_get_error(_ssl, 0);
-        if  (error == SSL_ERROR_WANT_READ ||
-             error == SSL_ERROR_WANT_WRITE||
-             error == SSL_ERROR_SSL ||
-             errno == 11)
-        {
-            return -1; //keep going
-        }
-        GLOGE("SSL_Accept: " << sslNerror(_ssl));
-        return 0; //cannot connect
+        int se,ne;
+        string s = sslNerror(_ssl,&se,&ne);
+        GLOGE( "SSL_connect Error: [" << s <<"]");
+        if(se==5 && ne==0)return 0;
+        return -1;
     }
-    return 1; //connected
+    tcp_cli_sock::setconnected();
+    return 1;
 }
-
-
-

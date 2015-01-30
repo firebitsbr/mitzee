@@ -46,13 +46,18 @@ CtsReg::CtsReg(const ConfPrx::Ports* pconf, tcp_xxx_sock& s):Ctx(pconf, s)
     _tc= 'A';
     _mode=P_CONTORL; //dns ssh
     LOGI("REG connect from:" << IP2STR(_cliip));
-    Ctx::_init_check_cb((PFCLL)&CtsReg::_pend);
 }
 
 //-----------------------------------------------------------------------------
 CtsReg::~CtsReg()
 {
     //dtor
+}
+
+CALLR  CtsReg::_create_ctx()
+{
+    _pcall=(PFCLL)&CtsReg::_s_is_connected;
+    return _s_is_connected();
 }
 
 void CtsReg::send_exception(const char* desc)
@@ -72,7 +77,7 @@ int  CtsReg::_close()
     return 0;
 }
 
-CALLR  CtsReg::_pend()
+CALLR  CtsReg::_s_is_connected()
 {
     int  lr = _rec_some();
     size_t  nfs = _hdr.bytes();
@@ -93,7 +98,7 @@ bool  CtsReg::_postprocess()
     //
     // add tto payers
     GLOGI(_hdr.buf());
-    _sock.sendall((const uint8_t*)"SOCKET CONNECT OK",17,  SS_TOUT);
+    _cli_sock.sendall((const uint8_t*)"SOCKET CONNECT OK",17,  SS_TOUT);
     return false;
 }
 

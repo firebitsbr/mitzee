@@ -44,7 +44,6 @@ CtxPasstru::CtxPasstru(const ConfPrx::Ports* pconf, tcp_xxx_sock& s):
 {
     _tc= 'P';
     _mode= P_PASSTRU;
-    Ctx::_init_check_cb((PFCLL)&CtxPasstru::_overwrite_addr);
 }
 
 //-----------------------------------------------------------------------------
@@ -53,24 +52,32 @@ CtxPasstru::~CtxPasstru()
     //dtor
 }
 
+
+CALLR  CtxPasstru::_create_ctx()
+{
+    _pcall=(PFCLL)&CtxPasstru::_s_is_connected;
+    return _s_is_connected();
+}
+
+
 //-----------------------------------------------------------------------------
 // wait for  all the header
-CALLR  CtxPasstru::_overwrite_addr()
+CALLR  CtxPasstru::_s_is_connected()
 {
     if(R_KILL==_overwrite_hosts())return R_KILL;
-    return _rock_connect(_rock);
+    return _host_connect(_hst_sock);
 }
 
 
-CALLR  CtxPasstru::_r_send_header()
+CALLR  CtxPasstru::_r_is_connected()
 {
-    _pcall=(PFCLL)&CtxPasstru::_transfer;
-    return R_CONTINUE;
+    _pcall=(PFCLL)&CtxPasstru::_io;
+    return CtxPasstru::_io();
 }
 
-CALLR CtxPasstru::_transfer()
+CALLR CtxPasstru::_io()
 {
-    return Ctx::_transfer();
+    return Ctx::_io();
 }
 
 

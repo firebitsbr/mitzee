@@ -50,14 +50,20 @@ ConfPrx::~ConfPrx()
 }
 
 
-SADDR_46  fromstringip(const std::string& s)
+SADDR_46  fromstringip(const std::string& s, int& hostisssl)
 {
 
     string tmp = s;
+    int    nport = 80;
     if(tmp.find("http://") == 0)
         tmp = s.substr(7);
+    else if(tmp.find("https://") == 0)
+    {
+        hostisssl=1;
+        tmp = s.substr(8);
+        nport = 443;
+    }
 
-    int    nport = 80;
     size_t port = tmp.find(':');
     size_t doc = tmp.find('/');
     if(port!=string::npos)
@@ -147,11 +153,11 @@ void ConfPrx::_assign( const char* pred, const char* val, int line)
                 _glb.sessiontime *= 60;
                 _glb.dnsssltout *= 60;
 
-
+                int dummy;
                 if(!_glb.authurl.empty())
-                    _glb.authurl_ip = fromstringip(_glb.authurl);
+                    _glb.authurl_ip = fromstringip(_glb.authurl, dummy );
                 else
-                    _glb.authurl_ip = fromstringip("127.0.0.1:80");
+                    _glb.authurl_ip = fromstringip("127.0.0.1:80", dummy);
 
                 if(!_glb.tickfile.empty())
                 {
@@ -175,8 +181,8 @@ void ConfPrx::_assign( const char* pred, const char* val, int line)
 //            AUTO, RESERVED_ACL, , PASSTRU_SSL, HTTP, SOCKS5, SOCKS4,SERVER
             BIND(_ports,socks);
             BIND(_ports,admin);
-            BIND(_ports,ssli);
-            BIND(_ports,sslo);
+            BIND(_ports,clientisssl);
+            BIND(_ports,hostisssl);
             BIND(_ports, openacl);
             BIND(_ports, authtoken);
 
@@ -195,7 +201,7 @@ void ConfPrx::_assign( const char* pred, const char* val, int line)
                 {
                     if(!_ports.redirect.empty())
                     {
-                        _ports.toaddr=fromstringip(_ports.redirect.c_str());
+                        _ports.toaddr=fromstringip(_ports.redirect.c_str(), _ports.hostisssl);
                         GLOGD("Port:" << _ports.port << " forward to " << _ports.toaddr.c_str() <<
                         ":" << _ports.toaddr.port());
                     }
@@ -262,18 +268,7 @@ void ConfPrx::_assign( const char* pred, const char* val, int line)
                 fix_path(_ssl.cPrivKey);
                 fix_path(_ssl.cCert);
                 fix_path(_ssl.cCsr);
-                /*
-                if(_ssl.certificate.empty() || _ssl.certificate=="auto")
-                {
-                   //generate a autosigned cert
-                   char destcert[512];
-                   sprintf(destcert,"%scerts/mycert.pem", _glb.cache.c_str());
-                   char cmd[1024];
-                   sprintf(cmd,"openssl req -x509 -nodes -days 365 -newkey rsa:1024 "
-                               "-keyout %s -out %s",destcert,destcert);
-                   system(cmd);
-                }
-                */
+
             }
         }
     }

@@ -37,16 +37,16 @@ public:
     bool init_client();
 
     int load_dll(const char *dll_name, struct ssl_func *sw);
-    SSL_CTX * srv_ctx()const{ return _psslCtx;}
-    SSL_CTX * cli_ctx()const{ return _psslCtxCli;}
+    SSL_CTX * accept_ctx()const{ return _pssl_accept;}
+    SSL_CTX * connect_ctx()const{ return _pssl_connect;}
 private:
-    SSL_CTX *_psslCtx;
-    SSL_CTX *_psslCtxCli;
+    SSL_CTX *_pssl_accept;
+    SSL_CTX *_pssl_connect;
     size_t _mutsize;
 };
 
 extern struct ssl_func ssl_sw[];
-std::string sslNerror(SSL* p=0);
+std::string sslNerror(SSL* p=0, int* e=0, int* r=0);
 
 #define SSL_ERROR_NONE          0
 #define SSL_ERROR_SSL           1
@@ -91,5 +91,6 @@ std::string sslNerror(SSL* p=0);
 #define SSL_CTX_set_cipher_list (* (int (*)(SSL_CTX *, const char *)) ssl_sw[18].ptr)
 #define SSL_CTX_check_private_key (* (int (*)(SSL_CTX *)) ssl_sw[19].ptr)
 #define SSL_shutdown (* (int (*)(SSL *)) ssl_sw[20].ptr)
+#define SSL_pending (* (int (*)(SSL *)) ssl_sw[21].ptr)
 #endif // SSLCRYPT_H
 

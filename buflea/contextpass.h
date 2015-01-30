@@ -32,9 +32,12 @@ public:
     virtual bool _new_request(const u_int8_t* buff, int bytes){return true;};
 
 protected:
-    CALLR  _overwrite_addr();
-    CALLR  _r_send_header();
-    CALLR  _transfer();
+
+slots
+    CALLR  _s_is_connected();
+    CALLR  _r_is_connected();
+    CALLR  _io();
+    CALLR  _create_ctx();
 
 private:
     CALLR _overwrite_hosts(const char* =0);
