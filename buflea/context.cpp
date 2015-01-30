@@ -79,7 +79,6 @@ Ctx::Ctx(const ConfPrx::Ports* pconf, tcp_xxx_sock& s):
          << " from:" << IP2STR(_cliip)
          << " ctx:" << __ctxc);
 
-    _state=SOCK_ON;
 }
 
 //-----------------------------------------------------------------------------
@@ -211,7 +210,7 @@ int Ctx::set_fd (fd_set& rd, fd_set& wr, CtxesThread* pt)
 }
 
 //-----------------------------------------------------------------------------
-/*
+/*::
 int Ctx::_set_io_fd (fd_set& rd, fd_set& wr)
 {
     register int n = 0;
@@ -331,16 +330,15 @@ int Ctx::clear_fd(fd_set& rd, fd_set& wr,
 //--------
 void  Ctx::destroy()
 {
-    if(_state&SOCK_ON)
+    if(_cli_sock.isopen())
         _destroy_clis();
-    if(_state&ROCK_ON)
+    if(_hst_sock.isopen())
         _destroy_host();
 }
 
 
 void   Ctx::_destroy_clis()
 {
-    _state&=~SOCK_ON;
     _cli_sock.destroy();
     LOGT(_ls('C')<<"x--o---"<<_ls('H'));
 
@@ -348,7 +346,6 @@ void   Ctx::_destroy_clis()
 
 void   Ctx::_destroy_host()
 {
-    _state&=~ROCK_ON;
     _hst_sock.destroy();
     LOGT(_ls('C') << "---o--x"<<_ls('H'));
 }
@@ -522,11 +519,10 @@ CALLR  Ctx::_r_pending()
         if(!_hst_sock.is_really_connected())
         {
             _s_send_reply(NOHOST);
-            LOGI(_ls('C')<<IP2STR(_cliip) << "---o>>X" << IP2STR(_raddr)<<_ls('H'));
-            throw Mex(CONNECTION_FAILED,__FILE__,__LINE__);
+            LOGI(_ls('C')<<IP2STR(_cliip) << "---o>--x" << IP2STR(_raddr)<<_ls('H'));
+            return R_KILL;
         }
         LOGI(_ls('C')<<IP2STR(_cliip) << "---o---" << IP2STR(_hst_sock.getsocketaddr()) << _ls('H'));
-        _state|=ROCK_ON;
 
         if(_phost_isssl)
         {
@@ -831,12 +827,10 @@ int    Ctx::_s_send_reply(u_int8_t code, const char* info)
 //-----------------------------------------------------------------------------
 void    Ctx::close_sockets()
 {
-    if(_state&SOCK_ON)
+    if(_cli_sock.isopen())
         _cli_sock.destroy(false);
-    if(_state&ROCK_ON)
+    if(_hst_sock.isopen())
         _hst_sock.destroy(false);
-    _state&=~ROCK_ON;
-    _state&=~SOCK_ON;
 }
 
 

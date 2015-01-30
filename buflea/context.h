@@ -210,7 +210,6 @@ protected:
     bool               _getissued;
     string             _reason;
     bool               _des;
-    int                _state;
 };
 
 
