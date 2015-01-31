@@ -198,7 +198,7 @@ void Listeners::stop_thread()
     {
         OsThread::signal_to_stop();
         //printf("%s\n",__PRETTY_FUNCTION__);
-        usleep(0xFFFF);
+        sleep(1);
         OsThread::stop_thread();
     }
 
@@ -210,21 +210,29 @@ void Listeners::stop_thread()
 //
 void Listeners::thread_main()
 {
+    int     looop=0;
     fd_set  rd;
     int     ndfs;// = _count + 1;
     timeval tv = {0,16384};
     time_t  tnow = time(NULL);
     int     conspesec = 0;
-    int     spin=0;
     ++__alivethrds;
 
     GLOGI("listeners starts");
     while(!_bstop && __alive)
     {
+
+        if((++looop&0xFF)==0xFF && access("/tmp/buflea.stop",0)==0)
+        {
+            unlink("/tmp/buflea.stop");
+            GLOGIN ("STOPPING SERVER DUE /tmp/buflea.stop");
+            break;
+        }
+
         usleep(0xFF);
         ndfs = 0;
         FD_ZERO(&rd);
-        // vector<SrvSock*>::iterator it = _ss.begin();
+
         for (auto it : _ss)
         {
             if(!it->isopen())goto DONE;
@@ -285,8 +293,6 @@ void Listeners::thread_main()
             FD_CLR(it->socket(), &rd);
 
         }//for
-
-
     }//while alive
 DONE:
     GLOGD("Listener Thread exits");

@@ -47,11 +47,6 @@ int  __alivethrds=0;
 void ControlC (int i)
 {
     __alive = false;
-    sleep(5);
-    if(__alivethrds)
-    {
-        system("kill -kill $(pidof buflea)");
-    }
 }
 
 //---------------------------------------------------------------------------------------
@@ -131,8 +126,8 @@ int main(int nargs, char * vargs[])
         __db = 0;
         __dnsssl=0;
     } while(0);
-    GLOGI("all objects gone \n");
-
+    unlink("/tmp/buflea.stop");
+    GLOGI("Destroying. Exitpoint: thread count:"<< __alivethrds);
     return 0;
 }
 

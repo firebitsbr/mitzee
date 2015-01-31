@@ -183,7 +183,6 @@ protected:
     mutex               _lmutex;
     PFCLL               _pcall;
     CtxesThread        *_pt;
-    const ConfPrx::Ports  *_pcon;
     const ConfPrx::Ports  *_pconf;
     tcp_xxx_sock       _cli_sock;
     TcpPipe            _hst_sock;

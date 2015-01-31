@@ -67,6 +67,19 @@ static struct ssl_func crypto_sw[] =
     {0,    0}
 };
 
+static const char* __sslstr[32]={
+                "SSL_ERROR_NONE",
+                "SSL_ERROR_SSL",
+                "SSL_ERROR_WANT_READ",
+                "SSL_ERROR_WANT_WRITE",
+                "SSL_ERROR_WANT_X509_LOOKUP",
+                "SSL_ERROR_SYSCALL",
+                "SSL_ERROR_ZERO_RETURN",
+                "SSL_ERROR_WANT_CONNECT",
+                "SSL_ERROR_WANT_ACCEPT",
+                "OUT_OF_BOUNDS",
+};
+
 
 std::string sslNerror(SSL* ctx, int* serr, int* nerro)
 {
@@ -89,6 +102,8 @@ std::string sslNerror(SSL* ctx, int* serr, int* nerro)
         if(serr)*serr=sslerr;
         ERR_error_string(sslerr, fmt);
         strerr += fmt;
+        strerr += ",";
+        strerr += __sslstr[sslerr <= SSL_ERROR_WANT_ACCEPT ? sslerr :  SSL_OUT_OF_BOUNDS];
     }
     if(nerro)*nerro=nerr;
     sprintf(fmt, ") nerror(%d)", nerr);

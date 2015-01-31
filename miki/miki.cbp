@@ -46,6 +46,7 @@
 			<Add library="pthread" />
 		</Linker>
 		<Unit filename="../../../bin/miki/miki.conf" />
+		<Unit filename="../bin/miki.conf" />
 		<Unit filename="../mcoinclude/consts.h" />
 		<Unit filename="../mcoinclude/errorstrings.h" />
 		<Unit filename="../mcoinclude/matypes.h" />

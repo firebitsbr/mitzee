@@ -58,9 +58,6 @@ Ctx::Ctx(const ConfPrx::Ports* pconf, tcp_xxx_sock& s):
     _des(false)
 {
     _pactive = this;
-    _cli_sock.set_ctx(this);
-    _hst_sock.set_ctx(this);
-    //Ctx
     _tc = 'X';
     _blog = GCFG->_glb.blog;
     _cliip = _cli_sock.getsocketaddr();

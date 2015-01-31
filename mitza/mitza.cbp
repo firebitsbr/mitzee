@@ -41,6 +41,8 @@
 			<Add library="htmlcxx" />
 		</Linker>
 		<Unit filename="../../../../../var/www/dblocal.php/" />
+		<Unit filename="../bin/mitza-deps.sh" />
+		<Unit filename="../bin/mitza.conf" />
 		<Unit filename="CMakeLists.txt" />
 		<Unit filename="README" />
 		<Unit filename="bin/mitza.config" />

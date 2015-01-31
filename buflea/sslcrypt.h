@@ -57,7 +57,7 @@ std::string sslNerror(SSL* p=0, int* e=0, int* r=0);
 #define SSL_ERROR_ZERO_RETURN       6
 #define SSL_ERROR_WANT_CONNECT      7
 #define SSL_ERROR_WANT_ACCEPT       8
-
+#define SSL_OUT_OF_BOUNDS       9
 
 #define SSL_free (* (void (*)(SSL *)) ssl_sw[0].ptr)
 #define SSL_accept (* (int (*)(SSL *)) ssl_sw[1].ptr)

@@ -61,13 +61,13 @@ public:
     bool ssl_pre_connect(const Ctx* pc);
     int  ssl_connect(const Ctx* pc);
     int  ssl_accept(const Ctx* pc);
-    void set_ctx(const Ctx* pc){_pc=pc;}
 
+private:
+    int _handle_ssl_error(int serr, int nerr, const char* op)const;
 
 private:
     SSL     *_ssl;
     bool    _gothdr;
-    const   Ctx* _pc;
 public:
     SADDR_46 _raddr;
 };

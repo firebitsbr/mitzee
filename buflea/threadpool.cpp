@@ -88,7 +88,7 @@ ThreadPool::~ThreadPool()
     }
     _pool.clear();
 
-    GLOGI("all threads destroyed: thread count:"<< _alive);
+
 }
 
 //-----------------------------------------------------------------------------
@@ -163,12 +163,7 @@ void ThreadPool::thread_main()
             _comit_stats_to_file(now, diff);
             GCFG->check_log_size();
 
-            if(access("/tmp/buflea.stop",0)==0)
-            {
-                unlink("/tmp/buflea.stop");
-                GLOGIN ("STOPPING SERVER DUE /tmp/buflea.stop");
-                __alive = false;
-            }
+
         }
         if(k % 5 == 0)
         {
@@ -179,7 +174,7 @@ void ThreadPool::thread_main()
     }
 
     GLOGD("Thread pool exits");
-    _check_threads(0);
+    //_check_threads(0);
     _comit_stats_to_file(now, 10);
     unlink("/tmp/buflea.stop");
     __alive=false;
