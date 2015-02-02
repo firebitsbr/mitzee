@@ -54,6 +54,7 @@ public:
             path = _glb.runfrom + path;
         }
     }
+    void refresh_domains();
 protected:
     bool finalize();
     void _assign( const char* pred, const char* val, int line);
@@ -124,7 +125,7 @@ public:
         string  cPrivKey;
         string  cCert;
         string  cCsr;
-        string  version;
+        int     version;
 
     } _ssl;
 
@@ -191,6 +192,6 @@ public:
 
 //-----------------------------------------------------------------------------------
 extern ConfPrx* GCFG;
-extern SADDR_46  fromstringip(const std::string& s, int& ssl);
+extern SADDR_46  fromstringip(const std::string& s);
 
 #endif //_CONFIGPRX_H_

@@ -50,7 +50,7 @@ ConfPrx::~ConfPrx()
 }
 
 
-SADDR_46  fromstringip(const std::string& s, int& hostisssl)
+SADDR_46  fromstringip(const std::string& s)
 {
 
     string tmp = s;
@@ -134,13 +134,20 @@ void ConfPrx::_assign( const char* pred, const char* val, int line)
                     t.close();
                 }
                 _glb.blog=0;
-                _glb.blog |= _glb.slog.find('I') == string::npos ? 0 : 0x1;
-                _glb.blog |= _glb.slog.find('W') == string::npos ? 0 : 0x2;
-                _glb.blog |= _glb.slog.find('E') == string::npos ? 0 : 0x4;
-                _glb.blog |= _glb.slog.find('T') == string::npos ? 0 : 0x8;
-                _glb.blog |= _glb.slog.find('D') == string::npos ? 0 : 0x10;
-                _glb.blog |= _glb.slog.find('X') == string::npos ? 0 : 0x20;
-                _glb.blog |= _glb.slog.find('H') == string::npos ? 0 : 0x40;
+                if(_glb.slog=="A")
+                {
+                    _glb.blog=0xFFFFFFFF;
+                }
+                else
+                {
+                    _glb.blog |= _glb.slog.find('I') == string::npos ? 0 : 0x1;
+                    _glb.blog |= _glb.slog.find('W') == string::npos ? 0 : 0x2;
+                    _glb.blog |= _glb.slog.find('E') == string::npos ? 0 : 0x4;
+                    _glb.blog |= _glb.slog.find('T') == string::npos ? 0 : 0x8;
+                    _glb.blog |= _glb.slog.find('D') == string::npos ? 0 : 0x10;
+                    _glb.blog |= _glb.slog.find('X') == string::npos ? 0 : 0x20;
+                    _glb.blog |= _glb.slog.find('H') == string::npos ? 0 : 0x40;
+                }
                 _blog = _glb.blog;
 
                 for(auto & f : _glb.jumpip)
@@ -152,11 +159,10 @@ void ConfPrx::_assign( const char* pred, const char* val, int line)
                 _glb.sessiontime *= 60;
                 _glb.dnsssltout *= 60;
 
-                int dummy;
                 if(!_glb.authurl.empty())
-                    _glb.authurl_ip = fromstringip(_glb.authurl, dummy );
+                    _glb.authurl_ip = fromstringip(_glb.authurl );
                 else
-                    _glb.authurl_ip = fromstringip("127.0.0.1:80", dummy);
+                    _glb.authurl_ip = fromstringip("127.0.0.1:80");
 
                 if(!_glb.tickfile.empty())
                 {
@@ -177,7 +183,6 @@ void ConfPrx::_assign( const char* pred, const char* val, int line)
             BIND(_ports,port);
             BIND(_ports,dstport);
             BIND(_ports,blocking);
-//            AUTO, RESERVED_ACL, , PASSTRU_SSL, HTTP, SOCKS5, SOCKS4,SERVER
             BIND(_ports,socks);
             BIND(_ports,admin);
             BIND(_ports,clientisssl);
@@ -200,9 +205,8 @@ void ConfPrx::_assign( const char* pred, const char* val, int line)
                 {
                     if(!_ports.redirect.empty())
                     {
-                        _ports.toaddr=fromstringip(_ports.redirect.c_str(), _ports.hostisssl);
-                        GLOGD("Port:" << _ports.port << " forward to " << _ports.toaddr.c_str() <<
-                        ":" << _ports.toaddr.port());
+                        _ports.toaddr=fromstringip(_ports.redirect.c_str());
+                        GLOGD("Port:" << _ports.port << " forward to " << _ports.toaddr.c_str() << ":" << _ports.toaddr.port());
                     }
                 }
 
@@ -288,5 +292,20 @@ bool ConfPrx::finalize()
 }
 
 
+void    ConfPrx::refresh_domains()
+{
+    //
+    // roll up ips if more tha one oon same domain
+    //
+    auto  i =  _listeners.begin();
+    for(; i!= _listeners.end(); ++i)
+    {
+        if(!i->redirect.empty() && i->redirect.find("http")!=string::npos )
+        {
+            i->toaddr = fromstringip(i->redirect);
+            GLOGD("Port:" <<  i->port << " forward to " <<  i->toaddr.c_str() << ":" << _ports.toaddr.port());
+        }
+    }
 
+}
 

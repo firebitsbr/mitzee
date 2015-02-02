@@ -65,14 +65,16 @@ bool Listeners::initSsl()
 {
     if(0 == _pssl)
     {
-        _pssl = new SslCrypt();
-        if(!_pssl->init_server())
+        _pssl = new SslCrypt(GCFG->_ssl.ssl_lib.c_str(), GCFG->_ssl.crypto_lib.c_str(), GCFG->_ssl.version);
+
+
+        if(!_pssl->init_server(GCFG->_ssl.sCert.c_str(), GCFG->_ssl.sPrivKey.c_str(),GCFG->_ssl.sCaCert.c_str(),0))
         {
             delete _pssl;
             _pssl = 0;
             return false;
         }
-        if(!_pssl->init_client())
+        if(!_pssl->init_client(GCFG->_ssl.cCert.c_str(),GCFG->_ssl.cPrivKey.c_str(), 0))
         {
             delete _pssl;
             _pssl = 0;
@@ -110,17 +112,16 @@ int  Listeners::start_thread()
     {
         initSsl();
     }
+
     GLOGI("\n");
 again:
     _clear();
     std::set<ConfPrx::Ports>::const_iterator sb = GCFG->_listeners.begin();
     for(; sb!= GCFG->_listeners.end() &&__alive && check>0; sb++)
     {
-        const ConfPrx::Ports& prt = *(sb);
-
-        SrvSock* pss = new SrvSock(&prt);
-
-        const char* pbind = !prt.bindaddr.empty() ? prt.bindaddr.c_str() : 0;
+        const ConfPrx::Ports&   prt     = *(sb);
+        SrvSock*                pss     = new SrvSock(&prt);
+        const char*             pbind   = !prt.bindaddr.empty() ? prt.bindaddr.c_str() : 0;
 
         if(-1==pss->create(prt.port, SO_REUSEADDR, pbind))
         {
@@ -222,7 +223,7 @@ void Listeners::thread_main()
     while(!_bstop && __alive)
     {
 
-        if((++looop&0xFF)==0xFF && access("/tmp/buflea.stop",0)==0)
+        if((++looop&0x1FF)==0x1FF && access("/tmp/buflea.stop",0)==0)
         {
             unlink("/tmp/buflea.stop");
             GLOGIN ("STOPPING SERVER DUE /tmp/buflea.stop");
@@ -360,7 +361,7 @@ void Listeners::_put_inqueue(tcp_xxx_sock& s, int every_sec, const SrvSock* psrv
 void    Listeners::metrics(std::stringstream& str, SinOut& bpss)const
 {
     GLOGD("1"<<"Listeners");
-    vector<SrvSock*>::const_iterator i = _ss.begin();
+    auto i = _ss.begin();
     str << "<tr><th colspan='5'>Listeners ports:";
     for(; i!= _ss.end(); ++i)
     {
@@ -391,5 +392,4 @@ Ctx* Listeners::_fabric(const string& sockver,  const ConfPrx::Ports* ports, tcp
         pctx = new CtsReg(ports, s);
     return pctx;
 }
-
 

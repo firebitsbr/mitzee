@@ -52,9 +52,10 @@ void    DnsHtps::queue_host(const SADDR_46& ipcli, DnsCommon& dest)
 
     AutoLock __a(&_m);
 
-    dest.now = time(0);
+    dest.now       = time(0);
+    dest.clientpub = ipcli.ip4();
     std::map<uint64_t, DnsCommon>   el; el[0]=dest;
-    SADDR_46                        ca(htonl(dest.client));
+    SADDR_46                        ca(ipcli.ip4());   // htonl(dest.client));
     _clients[ca] = el;
     GLOGX("DNS: Storing host <- [" << ca.c_str() <<  "]=" << dest.hostname << "] ");
 }

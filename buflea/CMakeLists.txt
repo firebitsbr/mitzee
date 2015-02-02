@@ -45,11 +45,11 @@ ADD_EXECUTABLE(buflea configprx.cpp
                     dnsthread.cpp
                     listeners.cpp
                     main.cpp
-                    sslcrypt.cpp
                     tcppipe.cpp
                     threadpool.cpp
                     tinyclasses.cpp
                     httphdr.cpp
+                    ../mcoinclude/sslcrypt.cpp
                     ../mcoinclude/config.cpp
                     ../mcoinclude/minidb.cpp )
 

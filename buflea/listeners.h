@@ -46,8 +46,8 @@ public:
     int isPublic()const{return _pconfig->openacl;}
     const ConfPrx::Ports* getConfig()const{return _pconfig;}
 private:
-    size_t       _cons;
-    size_t       _acons;
+    size_t          _cons;
+    size_t          _acons;
     const ConfPrx::Ports* _pconfig;
 };
 
@@ -74,7 +74,6 @@ private:
     void    thread_main();
     void    _clear();
     Ctx*    _fabric(const string& sockver, const ConfPrx::Ports* ports, tcp_xxx_sock& s);
-
 private:
 
     const DbAccess*     _pdb;

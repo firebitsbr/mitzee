@@ -1,0 +1,187 @@
+# depslib dependency file v1.0
+1421794180 source:/home/marius/CPP/GUGLE/src/mitzee/miki/config.cpp
+	<assert.h>
+	<iostream>
+	<stdarg.h>
+	<limits.h>
+	<sock.h>
+	"config.h"
+	<strutils.h>
+	<stdlib.h>
+
+1422573817 /home/marius/CPP/GUGLE/src/mitzee/mcosocks/sock.h
+	<os.h>
+	<sys/socket.h>
+	<resolv.h>
+	<sys/select.h>
+	<arpa/inet.h>
+	<sys/ioctl.h>
+	<sys/time.h>
+	<netdb.h>
+	<stdlib.h>
+	<string.h>
+	<string>
+	<fstream>
+	<math.h>
+
+1421556356 /home/marius/CPP/GUGLE/src/mitzee/mcoinclude/os.h
+	<errno.h>
+	<unistd.h>
+	<assert.h>
+	<pthread.h>
+	<semaphore.h>
+	<stdio.h>
+	<inttypes.h>
+	<wchar.h>
+
+1421775226 /home/marius/CPP/GUGLE/src/mitzee/miki/config.h
+	"os.h"
+	<sys/types.h>
+	<sys/stat.h>
+	<unistd.h>
+	<iostream>
+	<stdio.h>
+	<string>
+	<sstream>
+	<map>
+	<set>
+	<vector>
+	<stdlib.h>
+	<string.h>
+
+1421556360 /home/marius/CPP/GUGLE/src/mitzee/mcoinclude/strutils.h
+	<matypes.h>
+	<stdarg.h>
+	<stdio.h>
+	<ctype.h>
+	<string.h>
+	<fstream>
+	<sstream>
+	<consts.h>
+
+1422848783 /home/marius/CPP/GUGLE/src/mitzee/mcoinclude/matypes.h
+	<stddef.h>
+	<os.h>
+	<sock.h>
+
+1421556360 /home/marius/CPP/GUGLE/src/mitzee/mcoinclude/consts.h
+	<os.h>
+	<matypes.h>
+	<string.h>
+
+1421556780 source:/home/marius/CPP/GUGLE/src/mitzee/miki/main.cpp
+	"theapp.h"
+	"config.h"
+	"message.h"
+	"watcher.h"
+	<minidb.h>
+
+1422848882 /home/marius/CPP/GUGLE/src/mitzee/miki/theapp.h
+	<fcntl.h>
+	<iostream>
+	<signal.h>
+	<iostream>
+	<sock.h>
+	<map>
+	<strutils.h>
+	"udpsock.h"
+	"watcher.h"
+	<minidb.h>
+	<sslcrypt.h>
+
+1421556578 /home/marius/CPP/GUGLE/src/mitzee/miki/udpsock.h
+	<fcntl.h>
+	<iostream>
+	<signal.h>
+	<iostream>
+	<sock.h>
+
+1422847327 /home/marius/CPP/GUGLE/src/mitzee/miki/watcher.h
+	<string>
+	<set>
+	<map>
+	<vector>
+	<sock.h>
+	"message.h"
+	"config.h"
+
+1421723187 /home/marius/CPP/GUGLE/src/mitzee/miki/message.h
+	<sys/types.h>
+	<string.h>
+	<string>
+	<vector>
+	"arpa/nameser_compat.h"
+
+1421778612 /home/marius/CPP/GUGLE/src/mitzee/mcoinclude/minidb.h
+	<os.h>
+	<sock.h>
+	<strutils.h>
+	<sys/stat.h>
+	<iostream>
+	<fstream>
+	<string.h>
+	<matypes.h>
+	<map>
+	<vector>
+	<config.h>
+	<minidb.h>
+
+1421556360 /home/marius/CPP/GUGLE/src/mitzee/mcoinclude/config.h
+	<os.h>
+	<sys/types.h>
+	<sys/stat.h>
+	<unistd.h>
+	<iostream>
+	<stdio.h>
+	<string>
+	<sstream>
+	<map>
+	<set>
+	<vector>
+	<sock.h>
+	<errorstrings.h>
+	"strutils.h"
+
+1421556360 /home/marius/CPP/GUGLE/src/mitzee/mcoinclude/errorstrings.h
+	<consts.h>
+
+1421729233 source:/home/marius/CPP/GUGLE/src/mitzee/miki/message.cpp
+	<stdio.h>
+	<sock.h>
+	<strutils.h>
+	"message.h"
+	"watcher.h"
+	<consts.h>
+	"config.h"
+	"theapp.h"
+
+1422848910 source:/home/marius/CPP/GUGLE/src/mitzee/miki/theapp.cpp
+	"theapp.h"
+
+1421727382 source:/home/marius/CPP/GUGLE/src/mitzee/miki/udpsock.cpp
+	"udpsock.h"
+	"config.h"
+
+1421794254 source:/home/marius/CPP/GUGLE/src/mitzee/miki/watcher.cpp
+	<iostream>
+	<unistd.h>
+	"strutils.h"
+	"config.h"
+	"watcher.h"
+	"theapp.h"
+
+1422837650 source:/home/marius/CPP/GUGLE/src/mitzee/mcoinclude/minidb.cpp
+	<iostream>
+	<sock.h>
+	<minidb.h>
+	<config.h>
+
+1422835990 source:/home/marius/CPP/GUGLE/src/mitzee/mcoinclude/sslcrypt.cpp
+	<dlfcn.h>
+	<os.h>
+	<sslcrypt.h>
+	<config.h>
+
+1422835954 /home/marius/CPP/GUGLE/src/mitzee/mcoinclude/sslcrypt.h
+	<string>
+

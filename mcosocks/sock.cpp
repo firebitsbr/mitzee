@@ -537,13 +537,16 @@ tcp_cli_sock& tcp_cli_sock::operator=(const tcp_cli_sock& s)
 
 bool tcp_cli_sock::is_really_connected()
 {
-    struct sockaddr saddr;
-    socklen_t sz = 0;// ; = sizeof(_remote_sin);
-    if(0 == getpeername(_thesock, (struct sockaddr*)&saddr , &sz))
+    if(_thesock>0)
     {
-        //::memcpy(&_remote_sin, &saddr, sizeof(_remote_sin));
-        _connected=1;
-        return true;
+        struct      sockaddr saddr;
+        socklen_t   sz = 0;           // ; = sizeof(_remote_sin);
+        if(0 == getpeername(_thesock, (struct sockaddr*)&saddr , &sz))
+        {
+            //::memcpy(&_remote_sin, &saddr, sizeof(_remote_sin));
+            _connected=1;
+            return true;
+        }
     }
     _connected=0;
     return false;

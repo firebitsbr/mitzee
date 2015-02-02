@@ -31,7 +31,7 @@ set(CMAKE_CXX_COMPILER "g++")
 set(CMAKE_CXX_FLAGS "-std=c++0x -Wall -fexceptions -fpermissive -D__USE_MISC")
 
 
-ADD_EXECUTABLE(miki config.cpp main.cpp message.cpp watcher.cpp theapp.cpp udpsock.cpp ../mcoinclude/minidb.cpp)
+ADD_EXECUTABLE(miki config.cpp main.cpp message.cpp watcher.cpp theapp.cpp udpsock.cpp ../mcoinclude/minidb.cpp ../mcoinclude/sslcrypt.cpp)
 
 
 include_directories (../mcosocks ../mcoinclude)

@@ -80,12 +80,12 @@ public:
     void    dump_metrics(TcpPipe& s);
 private:
     void  _check_threads(time_t now);
-    bool _pre_thread_foo();
-    void _post_thread_foo();
-    void _comit_stats_to_file(time_t t , time_t d);
-    void _check_log_size();
-    bool _pool_socket(udp_sock& u, fd_set& r);
-    void _reply_metrics(udp_sock& s, SA_46& sin);
+    bool  _pre_thread_foo();
+    void  _post_thread_foo();
+    void  _comit_stats_to_file(time_t t , time_t d);
+    void  _check_log_size();
+    bool  _pool_socket(udp_sock& u, fd_set& r);
+    void  _reply_metrics(udp_sock& s, SA_46& sin);
 public:
     mutex                       _m;
     mutex                       _hctxcount;

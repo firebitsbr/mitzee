@@ -23,7 +23,7 @@
 
 extern bool __alive;
 
-Watcher::Watcher():_u_dnsidx(0),_errors(0),_seq(0)
+Watcher::Watcher():_u_dnsidx(0),_errors(0),_seq(0),_lastactivity(0)
 {
 }
 
@@ -35,17 +35,21 @@ Watcher::~Watcher()
 
 void Watcher::thread_main()
 {
-    time_t now = 0;
+    time_t last = 0;
     _reconnow = false;
 
     while(!is_stopped() && __alive)
     {
-        if(time(0) - now > 15 || _reconnow) //every 15 seconds
+        time_t now = time(0);
+
+        if(now - last > 10 && now-_lastactivity<120)
         {
             if(!PCFG->_srv._prx_addr.empty())
+            {
                 _keep_alive();
+            }
             PCFG->check_log_size();
-            now = time(0);
+            last = now;
             _reconnow=false;
         }
         if(!_reconnow)
@@ -106,12 +110,13 @@ bool Watcher::https_notify_proxy( Message& m, int c, const SADDR_46& uip)
         GLOGE("???? cannot notify proxy. address not configured");
         return false; //no notifications
     }
-    if(_try_connect(false)==false)
+    if(_try_connect(true)==false)
     {
         GLOGE("Connection to proxy is not openned yet");
         return false;
     }
-    bool            b = false;
+
+    bool b = false;
     if(c == 0) //client message
     {
         for(auto & it : m._responses)
@@ -132,10 +137,14 @@ bool Watcher::https_notify_proxy( Message& m, int c, const SADDR_46& uip)
                 ::strcpy(dns.hostname,a.name);
 
                 GLOGI("[D]->[P]" << "C: " << IP2STR(htonl(dns.client)) << " IP:" << IP2STR(htonl(dns.domainip)) << "->" << IP2STR(dns.prxip));
+
+                AutoLock   __a(&_m);
                 if(_prxsock.send((char*)&dns, sizeof(dns))!=sizeof(dns))
                 {
-                    GLOGE("Error usending to proxy\n");
+                    _prxsock.destroy();
+                    GLOGE("Error sending to proxy\n");
                 }
+                _lastactivity=time(0);
                 b = true;           //one name is OK
                 break;
             }
@@ -161,10 +170,14 @@ bool Watcher::https_notify_proxy( Message& m, int c, const SADDR_46& uip)
                 ::strcpy(dns.hostname, q.name);
 
                 GLOGI("[D]->[P]" << "C: " << IP2STR(htonl(dns.client)) << " IP:" << IP2STR(htonl(dns.domainip)) << "->" << IP2STR(dns.prxip));
+
+                AutoLock  __a(&_m);
                 if(_prxsock.send((char*)&dns, sizeof(dns))!=sizeof(dns))
                 {
+                    _prxsock.destroy();
                     GLOGE("Error usending to proxy\n");
                 }
+                _lastactivity=time(0);
                 b = true;           //one name is OK
                 break;
             }
@@ -192,40 +205,38 @@ bool     Watcher::is_dns_addr(const SA_46& inaddr)
 
 void   Watcher::_keep_alive()
 {
-    if(_try_connect(true))
+    AutoLock        __a(&_m);
+
+    if(_prxsock.is_really_connected())
     {
-        AutoLock        __a(&_m);
         int bytes = _prxsock.sendall("########",8); // keep connection
         if(bytes!=0)
         {
             _prxsock.destroy();
             GLOGE(": "<< "destroyng connect " << PCFG->_srv._prx_addr.c_str() << ":" <<  PCFG->_srv._prx_addr.port() << "\n");
-            _reconnow=true;
         }
     }
-    //GLOGI("pinging proxy sock");
+    else
+    {
+        GLOGW("proxy socket is not connected");
+    }
 }
-
-
 
 bool   Watcher::_try_connect(bool doit)
 {
-    AutoLock        __a(&_m);
-
-    if(!_prxsock.isopen())
+    _prxsock.destroy();
+    if(_prxsock.raw_connect(PCFG->_srv._prx_addr, 8)==-1)
     {
-        if(doit)
-        {
-            _prxsock.destroy();
-            if(_prxsock.raw_connect(PCFG->_srv._prx_addr, 4)==-1)
-            {
-                GLOGE(": "<< "cannot connect " << PCFG->_srv._prx_addr.c_str() << ":" <<  PCFG->_srv._prx_addr.port() << "\n");
-                return false;
-            }
-            GLOGI("Connection established to proxy notification port");
-            return true;
-        }
+        GLOGE(": "<< "cannot connect " << PCFG->_srv._prx_addr.c_str() << ":" <<  PCFG->_srv._prx_addr.port() << "\n");
         return false;
     }
+    _lastactivity=time(0);
+    GLOGI("Connection established to proxy notification port");
     return true;
 }
+
+
+
+
+
+

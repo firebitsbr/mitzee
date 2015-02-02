@@ -19,6 +19,7 @@
 #define      BEGIN_SEQ                100
 Watcher*     theapp::__pw           = 0;
 u_int32_t    theapp::__dns_tout     = 5; // 5 seconds
+int          theapp::__sessionprx   = 600; // 5 seconds
 int          theapp::__gerrors      = 0;
 static int   DNS_DEFPORT            = 53;
 extern bool __alive;
@@ -52,14 +53,18 @@ theapp::~theapp()
 
 int theapp::run()
 {
-    time_t          now = time(0);
+
+    time_t          now=0, tick;
+    time_t          ses=0;
     Message         m;
 
+    _register_subscriber();                                  // delete unrespoded queries
     _tp.start_thread();
     sleep(2);
 
     while(__alive)
     {
+        tick = time(0);
         if(!_buzy_socket.ensure())
             continue;
 
@@ -69,13 +74,19 @@ int theapp::run()
         }
         else
         {
-            if(time(0) - now > __dns_tout)
+            if(tick - now > __dns_tout)
             {
-                now = time(0);
+                now = tick;
                 _flush(now);                                  // delete unrespoded queries
+            }
+            if(tick - ses > __sessionprx)
+            {
+                ses = tick;
+                _register_subscriber();                                  // delete unrespoded queries
             }
             usleep(0xFFF);
         }
+
     }
     return 0;
 }
@@ -229,3 +240,7 @@ void theapp::_srv_send(const SADDR_46& inaddr, Message& m)
 }
 
 
+void theapp::_register_subscriber()
+{
+
+}

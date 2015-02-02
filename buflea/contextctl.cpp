@@ -97,26 +97,38 @@ CALLR  CtxCtl::_s_is_connected()
 
 bool  CtxCtl::_postprocess()
 {
-    int          dummy;
     std::string  response="N/A";
     char* pb = (char*)_hdr.buf();
     if(pb[0])
     {
         response="OK";
         GLOGI("--> ACL " << pb );
-
-        switch(pb[0])
+        char fc=pb[0];
+        if(!::strncmp(pb,"GET",3))
         {
-        case '#': //raw send 'L'
+            if(!::strncmp(pb,"GET / ", 6))
+            {
+                __tp->dump_metrics(_cli_sock);
+            }
+            else
+            {
+                fc=pb[5];
+            }
+        }
+
+        switch(fc)
+        {
+        case '#':
             return true;
             break;
-        case 'L': //raw send 'L'
+        case 'R':
             __db->reload();
             break;
-        case 'B': // raw SEND A/Rw.x.y.z.:ppp
-        case 'X': // raw SEND A/Rw.x.y.z.:ppp
-        case 'A': // raw SEND A/Rw.x.y.z.:ppp
-        case 'R': //raw send 'R'
+        case 'B':
+        case 'b':
+        case 'A':
+        case 'a':
+            GCFG->refresh_domains();
             __db->instertto(string(pb+1));
             break;
         case 'D': // Raw SEND   <__packed__ DnsCommon>
@@ -126,14 +138,14 @@ bool  CtxCtl::_postprocess()
                 DnsCommon* pc = reinterpret_cast<DnsCommon*>(pb);
                 __dnsssl->queue_host(_cliip, *pc);
                 // add to session as well.
-                std::string ip("A");
+                std::string ip("S");
                 ip+=IP2STR(htonl(pc->client));
                 GLOGI("DNS for client:" << ip << " [ to connect to ] "  << IP2STR(pc->domainip));
                 ip+=":0";
                 __db->instertto(ip);
             }
             return true;
-        case 'Q': // Raw SEND    U.x.y.z:PPP
+        case '?': // Raw SEND    U.x.y.z:PPP
         {
             const SADDR_46* pad = reinterpret_cast<const SADDR_46*>(pb+1);
             if(__db->is_client_allowed(*pad))
@@ -149,111 +161,36 @@ bool  CtxCtl::_postprocess()
         case 'T': // '/Tx.y.z.k.ppp' addr of next proxy. dynamically chnage the next proxy ip and port
             {
                 std::string ip = pb+1;
-                if(ip.find(".")!=string::npos || ip.find(":")!=string::npos)
+                if(ip.find(".")!=string::npos && ip.find(":")!=string::npos && ip.find(",")!=string::npos)
                 {
+                    uint32_t port = ::atoi(ip.substr(0,ip.find(",")).c_str());
+                    std::string newip    = ip.substr(ip.find(",")+1);
+
                     for(auto & it : GCFG->_listeners)
                     {
                         ConfPrx::Ports& p = (ConfPrx::Ports&)it;
-                        if(!p.redirect.empty()) //was set
+
+                        if(p.toaddr.port()==port) //was set
                         {
                             p.redirect = ip;
-                            p.toaddr = fromstringip(ip, dummy);
+                            p.toaddr = fromstringip(ip);
+                            response="OK";
+                            break;
                         }
                     }
-                    response="OK";
                 }
-                else
-                {
+                if(response!="OK")
                     response="FAIL";
-                }
             }
             break;
-        case 'G': //http GET send   'http://proxyip:port/$#.#.#.#'  $=B, X, A, R
-            if(!::strncmp(pb,"GET / HTTP", 10) || !::strncmp(pb,"GET /M", 6))
-            {
-                __tp->dump_metrics(_cli_sock);
-            }
-            else //parse above docs  GET /$?param
-            {
-                char* eol =(char*)::strchr(pb,'\r');
-                if(eol)
-                {
-                    *eol=0;
-
-                    eol =(char*)::strchr(pb+5,' ');
-                    if(eol)
-                        *eol=0;
-
-                    switch(pb[5])
-                    {
-                    case 'L':   // 'GET / HTTP'
-                        __db->reload();
-                        break;
-                    case 'A': // 'GET /Ax.y.z.k.ppp' add/remove ip in session
-                    case 'R': // 'GET /Rx.y.z.k.ppp' add/remove ip in session
-                    case 'B': // 'GET /Bx.y.z.k.ppp' add/remove ip in banned
-                    case 'X': // 'GET /Xx.y.z.k.ppp' add/remove ip in banned
-                        __db->instertto(string(pb+5));
-                        break;
-                    case 'T': // 'GET /T?x.y.z.k:ppp' addr of next proxy
-                        {
-                            std::string ip = pb+7;
-                            if(ip.find(".")!=string::npos || ip.find(":")!=string::npos)
-                            {
-                                for(auto & it : GCFG->_listeners)
-                                {
-                                    ConfPrx::Ports& p = (ConfPrx::Ports&)it;
-                                    if(!p.redirect.empty()) //was set
-                                    {
-                                        p.redirect = ip;
-                                        p.toaddr = fromstringip(ip, dummy);
-                                    }
-                                }
-                                response="OK";
-                            }
-                            else
-                            {
-                                response="FAIL";
-                            }
-                        }
-                        break;
-                    case 'Q': // 'GET /Q?x.y.z.k:ppp'  check if is allowed or not
-                    {
-                        const SADDR_46 pad = fromstringip(pb+7, dummy);
-                        if(__db->is_client_allowed(pad))
-                        {
-                            response="YES";
-                        }
-                        else
-                        {
-                            response = "NO";
-                        }
-                    }
-                    break;
-                    case 'D':  // set for transparent proxy the host where we connect
-                    {
-                        // ?D=C.L.I.EIP,H.O.S.TIP|hostname:HOSTPORT,
-/*
-                        int32_t     sequence;
-                        time_t      now;
-                        u_int32_t   client;
-                        u_int32_t   hostip;
-                        u_int16_t   port;
-                        char        hostname[128];
-                        u_int16_t   hostport;
-*/
-                    }
-                    break;
-                    default:
-                        response="N/A";
-                        break;
-                    }
-                }
-                else
-                {
-                    response="N/A";
-                }
-            }
+        case 'H': //help
+            response += "<pre>Options:\n";
+            response+= "A/a:IP adds/removes IP to current 3 hour session\n";
+            response+= "B/b:IP adds/removes user to banned\n";
+            response+= "S/s:IP adds/reomoves user from subscribers \n";
+            response+= "H/h:hIP adds/removes host to host list (deny/access) by settings\n";
+            response+= "T:LISTENER-PORT,IP-OR-DOMAIN:PORT\n Replaces configured forwarder listener port wit this forward IP.";
+            response+= "?:IP\n Checks if ip is allowed\n</pre>";
             break;
         default:
             response="N/A";

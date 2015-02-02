@@ -17,6 +17,8 @@
 #ifndef SSLCRYPT_H
 #define SSLCRYPT_H
 
+#include <string>
+
 // Snatched from OpenSSL includes. I put the prototypes here to be independent
 // from the OpenSSL source installation. Having this, mongoose + SSL can be
 // built on any system with binary SSL libraries installed.
@@ -31,10 +33,10 @@ struct ssl_func {
 class SslCrypt
 {
 public:
-    SslCrypt();
+    SslCrypt(const char* lib1, const char* lib2, int version);
     ~SslCrypt();
-    bool init_server();
-    bool init_client();
+    bool init_server(const char* ,const char* ,const char* ,const char* );
+    bool init_client(const char* ,const char* ,const char* );
 
     int load_dll(const char *dll_name, struct ssl_func *sw);
     SSL_CTX * accept_ctx()const{ return _pssl_accept;}
@@ -43,6 +45,7 @@ private:
     SSL_CTX *_pssl_accept;
     SSL_CTX *_pssl_connect;
     size_t _mutsize;
+    int    _version;
 };
 
 extern struct ssl_func ssl_sw[];
@@ -92,11 +95,11 @@ std::string sslNerror(SSL* p=0, int* e=0, int* r=0);
 #define SSL_CTX_check_private_key (* (int (*)(SSL_CTX *)) ssl_sw[19].ptr)
 #define SSL_shutdown (* (int (*)(SSL *)) ssl_sw[20].ptr)
 #define SSL_pending (* (int (*)(SSL *)) ssl_sw[21].ptr)
-#define OpenSSL_add_ssl_algorithms (* (int(*)(void)) ssl_sw[22].ptr)
-#define SSLv3_server_method (* (SSL_METHOD * (*)(void))  ssl_sw[23].ptr)
-#define SSLv2_server_method (* (SSL_METHOD * (*)(void))  ssl_sw[24].ptr)
-#define SSLv3_client_method (* (SSL_METHOD * (*)(void))  ssl_sw[25].ptr)
-#define SSLv2_client_method (* (SSL_METHOD * (*)(void))  ssl_sw[26].ptr)
+//#define OpenSSL_add_ssl_algorithms (* (int(*)(void)) ssl_sw[22].ptr)
+//#define SSLv3_server_method (* (SSL_METHOD * (*)(void))  ssl_sw[23].ptr)
+//#define SSLv2_server_method (* (SSL_METHOD * (*)(void))  ssl_sw[24].ptr)
+//#define SSLv3_client_method (* (SSL_METHOD * (*)(void))  ssl_sw[25].ptr)
+//#define SSLv2_client_method (* (SSL_METHOD * (*)(void))  ssl_sw[26].ptr)
 
 #endif // SSLCRYPT_H
 

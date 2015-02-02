@@ -113,7 +113,7 @@ struct SADDR_46 : public SA_46
 
     }
     SADDR_46(const SA_46& sa){::memcpy(this, &sa, sizeof(*this));}
-    SADDR_46& operator =(const SADDR_46& r){
+    SADDR_46& operator=(const SADDR_46& r){
         ::memcpy(this, &r, sizeof(*this));
         ::strcpy(_sip,inet_ntoa((struct in_addr)this->sin_addr));
         return *this;

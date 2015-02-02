@@ -27,7 +27,8 @@ struct DnsCommon
     char        header;     //'D
     int32_t     sequence;   // ++
     time_t      now;        // time
-    u_int32_t   client;     // client ip on DNS
+    u_int32_t   client;     // client ip on DNS (this can be internal IP if dns runs on personal net)
+    u_int32_t   clientpub;  // client ip on PROXY
     u_int32_t   prxip;      // prx that is new
     u_int32_t   domainip;   // ip that was replaced
     char        hostname[128];

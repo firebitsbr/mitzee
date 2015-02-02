@@ -27,19 +27,20 @@
 #include "udpsock.h"
 #include "watcher.h"
 #include <minidb.h>
+#include <sslcrypt.h>
 
 
 class theapp
 {
 public:
+    static Watcher*     __pw;
+    static u_int32_t    __dns_tout;
+    static int          __gerrors;
+    static int          __sessionprx;
+public:
     theapp();
     virtual ~theapp();
     static void ControlC (int i);
-    static Watcher*     __pw;
-
-    static u_int32_t    __dns_tout;
-    static int          __gerrors;
-
     int run();
 
 protected:
@@ -48,8 +49,9 @@ protected:
     void _cli_send(const SADDR_46& inaddr, Message& m);
     void _srv_send(const SADDR_46& inaddr, Message& m);
     void _cli_send_fromcache(const SADDR_46& inaddr, Message& m);
-private:
+    void _register_subscriber();
 
+private:
     std::map<u_int16_t, Context>  _ctexes;
     udpsock                       _buzy_socket;
     Watcher                       _tp;

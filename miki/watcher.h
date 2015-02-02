@@ -84,6 +84,7 @@ private:
     int                         _errors;
     uint32_t                    _seq;
     bool                        _reconnow;
+    time_t                      _lastactivity;
 };
 
 extern Watcher* __pw;

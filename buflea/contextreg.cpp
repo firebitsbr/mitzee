@@ -43,7 +43,7 @@
 //-----------------------------------------------------------------------------
 CtsReg::CtsReg(const ConfPrx::Ports* pconf, tcp_xxx_sock& s):Ctx(pconf, s)
 {
-    _tc= 'A';
+    _tc= 'R';
     _mode=P_CONTORL; //dns ssh
     LOGI("REG connect from:" << IP2STR(_cliip));
 }
@@ -62,7 +62,6 @@ CALLR  CtsReg::_create_ctx()
 
 void CtsReg::send_exception(const char* desc)
 {
-
 }
 
 int CtsReg::_s_send_reply(u_int8_t code, const char* info)
@@ -94,11 +93,14 @@ CALLR  CtsReg::_s_is_connected()
 
 bool  CtsReg::_postprocess()
 {
-    // GET /R?PUB:x.x.x.x,PRIV:y.y.y.y HTTP 1.1
-    //
-    // add tto payers
-    GLOGI(_hdr.buf());
-    _cli_sock.sendall((const uint8_t*)"SOCKET CONNECT OK",17,  SS_TOUT);
+    const uint8_t* pb = _hdr.buf();
+    if(pb[0]=='S' || pb[0]=='s')
+    {
+        /**
+        custom data from DNS. removed for security reasons
+        */
+        __db->instertto(string((const char*)(pb+1)));
+    }
     return false;
 }
 

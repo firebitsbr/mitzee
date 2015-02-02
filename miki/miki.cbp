@@ -44,6 +44,7 @@
 		<Linker>
 			<Add library="../lib/libmcosock.a" />
 			<Add library="pthread" />
+			<Add library="dl" />
 		</Linker>
 		<Unit filename="../../../bin/miki/miki.conf" />
 		<Unit filename="../bin/miki.conf" />
@@ -54,6 +55,8 @@
 		<Unit filename="../mcoinclude/minidb.h" />
 		<Unit filename="../mcoinclude/modiface.h" />
 		<Unit filename="../mcoinclude/os.h" />
+		<Unit filename="../mcoinclude/sslcrypt.cpp" />
+		<Unit filename="../mcoinclude/sslcrypt.h" />
 		<Unit filename="../mcoinclude/strutils.h" />
 		<Unit filename="CMakeLists.txt" />
 		<Unit filename="config.cpp" />

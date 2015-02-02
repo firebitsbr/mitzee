@@ -117,8 +117,13 @@ const string& DbAccess::dnsgetname(const SADDR_46& ip46)
         //hold on to xxx.zzz
         pname+=strlen(name)-1;
         int dots=0;
-        while(pname>name){
-            if(*pname=='.' && ++dots==2){pname++; break;};
+        while(pname>name)
+        {
+            if(*pname=='.' && ++dots==2)
+            {
+                pname++;
+                break;
+            };
             --pname;
         }
 
@@ -239,55 +244,63 @@ void DbAccess::instertto(const string& data, bool permanent)
         {
             sin = sock::sip2ip(token.substr(1).c_str());
 
-            GLOGI("DB SOURCE IP +/-: " << token);
+            GLOGI("DB  IP[ +/-: [" << token <<"]");
 
-            if(sin.port()==0)   // source (CLIENTS), NO PORT JUST IP's
+            switch(token[0])
             {
-                if(token[0]=='A')
+            case 'A':
+                remove_bounce(sin, false);
+                if(_insession_ips.add_ta(sin ,c, this))
+                {
+                    GLOGI("source ips added: " << token);
+                    this->on_record_changed('A',sin);
+                }
+                break;
+            case 'a':
+                if(_insession_ips.remove_ta(sin, this))
+                {
+                    GLOGI("source ips removed: " << token);
+                    this->on_record_changed('R',sin);
+                }
+                break;
+            case 'B':
+                remove_bounce(sin, false);
+                _banned_ips.insert((const SADDR_46&)sin);
+                GLOGI("banned ips added: " << token);
+                break;
+            case 'b':
+                if(_banned_ips.find(sin) != _banned_ips.end())
                 {
                     remove_bounce(sin, false);
-                    if(_insession_ips.add_ta(sin ,c, this))
-                    {
-                        GLOGI("source ips added: " << token);
-                        this->on_record_changed('A',sin);
-                    }
+                    _banned_ips.erase(sin);
+                    GLOGI("banned ips removed: " << token);
                 }
-                else  if(token[0]=='R')
+                break;
+            case 'S':
+                remove_bounce(sin, false);
+                _subscribers.insert((const SADDR_46&)sin);
+                GLOGI("subscribers ips added: " << token);
+                break;
+            case 's':
+                if(_banned_ips.find(sin) != _banned_ips.end())
                 {
-                    if(_insession_ips.remove_ta(sin, this))
-                    {
-                        GLOGI("source ips removed: " << token);
-                        this->on_record_changed('R',sin);
-                    }
+                    _subscribers.erase(sin);
+                    GLOGI("subscribers ips removed: " << token);
                 }
-                else  if(token[0]=='B')
-                {
-                    remove_bounce(sin, false);
-                    _banned_ips.insert((const SADDR_46&)sin);
-                    GLOGI("banned ips added: " << token);
-
-
-                }
-                else  if(token[0]=='X')
-                {
-                    if(_banned_ips.find(sin) != _banned_ips.end())
-                    {
-                        _banned_ips.erase(sin);
-                        GLOGI("banned ips removed: " << token);
-                    }
-                }
-            }
-            else     //hosts  (DESTINATIONS) come with www or service PORT
+            case 'H':
             {
                 const string& dname =  DbAccess::dnsgetname(sin);
-                if(token[0]=='A')
-                {
-                    _dest_ips.insert(dname);
-                }
-                else
-                {
-                    _dest_ips.erase(dname);
-                }
+                _dest_ips.insert(dname);
+            }
+            break;
+            case 'h':
+            {
+                const string& dname =  DbAccess::dnsgetname(sin);
+                _dest_ips.erase(dname);
+            }
+            break;
+            default:
+                break;
             }
         }
     }
@@ -543,13 +556,12 @@ void DbAccess::metrics(std::stringstream& str, SinOut&  bpss)const
         {
             since =_now-b.second.t;
             str <<"<tr class='acls'><th colspan='3'>sessions</th><th>" <<
-                    IP2STR(b.first) << "</th><td>" << (int)since << " secs ago</td></tr>\n";
+                IP2STR(b.first) << "</th><td>" << (int)since << " secs ago</td></tr>\n";
         }
     }
 
     if(_bouncing._tadr.size())
     {
-
         for(auto const& b1 :  _bouncing._tadr)
         {
             str <<"<tr class='bounc'><th  colspan='3'>bouncing</th><th>" <<IP2STR(b1.first) << "</th><td>";//
@@ -563,19 +575,16 @@ void DbAccess::metrics(std::stringstream& str, SinOut&  bpss)const
 
     if(_reverse_dns._tadr.size())
     {
-
         for( auto const &  b2 : _reverse_dns._tadr)
         {
             str <<"<tr class='revsn'><th  colspan='3'>reverse dns</th><td>" <<
-                    IP2STR(b2.first) << "</th><td>" <<
-                    b2.second.c_str() << "</td></tr>\n";
+                IP2STR(b2.first) << "</th><td>" <<
+                b2.second.c_str() << "</td></tr>\n";
         }
     }
 
     if(_subscribers.size())
     {
-
-
         for(auto const &  b3 : _subscribers)
         {
             str <<"<tr class='subs'><th  colspan='4'>subscribers</th><td>"<< IP2STR(b3) << "</td></tr>\n";
@@ -584,8 +593,6 @@ void DbAccess::metrics(std::stringstream& str, SinOut&  bpss)const
 
     if(_banned_ips.size())
     {
-
-
         for(auto const &  b4 : _banned_ips)
         {
             str <<"<tr class'band'><th colspan='4'>banned</th><td>"<< IP2STR(b4) << "</td></tr>\n";
@@ -686,8 +693,8 @@ void DbAccess::thread_main()
 
         if(_insession_ips.count() > _maxrecs)
             _src_timeouts(-1);
-  //      if(_dest_ips.size()>_maxrecs)
-  //          _dst_timeouts(-1);
+        //      if(_dest_ips.size()>_maxrecs)
+        //          _dst_timeouts(-1);
         if( _dns.count() >  _maxrecs)
             _dns_timouts(-1);
         if(_reverse_dns.count()>_maxrecs)
