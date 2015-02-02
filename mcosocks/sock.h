@@ -108,7 +108,8 @@ struct SADDR_46 : public SA_46
     SADDR_46(const SADDR_46& r){::memcpy(this, &r, sizeof(*this));}
 
     SADDR_46(const char* r, u_int16_t port=0, uint32_t mask=0xFFFFFFFF){
-        from_string(r, port, mask);
+
+        from_string(r,  port, mask);
        ::strcpy(_sip,inet_ntoa((struct in_addr)this->sin_addr));
 
     }
@@ -122,13 +123,20 @@ struct SADDR_46 : public SA_46
     inline int rsz()const{return sizeof(SA_46);}
     void addr_htonl(){sin_addr.s_addr = htonl(sin_addr.s_addr);}
     void port_htons(){sin_port = htons(sin_port);}
-    void from_string(const char* r, u_int16_t port=0, uint32_t mask=0xFFFFFFFF)
+    void from_string( const char* r, u_int16_t port=0, uint32_t mask=0xFFFFFFFF)
     {
+        char l[128]; ::strcpy(l,r);
+        char* pp = ::strstr((char*)l,":");
+        if(pp){
+            *pp=0;
+            port=::atoi(pp+1);
+        }
+
         char* pm = 0;
-        if((pm = (char*)strchr(r,'/')) != 0) //has range ip
+        if((pm = (char*)strchr(l,'/')) != 0) //has range ip
         {
             *pm++=0;
-            sin_addr.s_addr = inet_addr(r);
+            sin_addr.s_addr = inet_addr(l);
             sin_port = htons(port);
             sin_family=AF_INET;
             int msk = pow(2,atoi(pm))-1;
@@ -136,7 +144,7 @@ struct SADDR_46 : public SA_46
         }
         else
         {
-            sin_addr.s_addr = inet_addr(r);
+            sin_addr.s_addr = inet_addr(l);
             sin_port = htons(port);
             sin_family=AF_INET;
             _mask = mask;

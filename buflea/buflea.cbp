@@ -62,6 +62,8 @@
 		<Unit filename="../mcoinclude/minidb.h" />
 		<Unit filename="../mcoinclude/modiface.h" />
 		<Unit filename="../mcoinclude/os.h" />
+		<Unit filename="../mcoinclude/sslcrypt.cpp" />
+		<Unit filename="../mcoinclude/sslcrypt.h" />
 		<Unit filename="../mcoinclude/strutils.h" />
 		<Unit filename="CMakeLists.txt" />
 		<Unit filename="certs.txt" />
@@ -97,8 +99,6 @@
 		<Unit filename="main.h" />
 		<Unit filename="makecerts.sh" />
 		<Unit filename="readme.txt" />
-		<Unit filename="sslcrypt.cpp" />
-		<Unit filename="sslcrypt.h" />
 		<Unit filename="tcppipe.cpp" />
 		<Unit filename="tcppipe.h" />
 		<Unit filename="threadpool.cpp" />

@@ -114,7 +114,7 @@ public:
 
     struct Ssl
     {
-        Ssl():ssl_lib("libssl.so"),crypto_lib("libcrypto.so") {}
+        Ssl(){}//:ssl_lib("libssl.so"),crypto_lib("libcrypto.so") {}
 
         string  ssl_lib;
         string  crypto_lib;

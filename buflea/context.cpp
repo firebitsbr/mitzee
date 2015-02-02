@@ -380,13 +380,9 @@ int  Ctx::_rec_some()
 bool Ctx::_is_access_blocked(const SADDR_46& addr, const char* host, const char* refh)
 {
     // no acl's at all
-    if(_pconf->openacl==1)
+    if(_pconf->openacl==1 || __db->is_admin(addr))
     {
-#if 0
-     testing db
-     string sr="-127.0.0.1:0";
-     __db->updatedb(sr);
-#endif // 0
+        GLOGD(addr.c_str());
         return false;
     }
     const int hrule = GCFG->_glb.hostsfilerule; // 0 hosts in list are deniable, 1 ire allowable,

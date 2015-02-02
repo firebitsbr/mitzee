@@ -343,9 +343,13 @@ void DbAccess::_load()
         {
             line.clear();
             std::getline (ifs2, line);
-            GLOGI("adding subscriber:" << line);
+
             if(line.length()>4)
-                _subscribers.insert(SADDR_46(line.c_str(),0));
+            {
+                SADDR_46 sb(line.c_str(),0);
+                GLOGI("adding subscriber:" << sb.c_str());
+                _subscribers.insert(sb);
+            }
         }
         ifs2.close();
         GLOGI("Loading: " << _ssubscribers << ":" << _subscribers.size());
