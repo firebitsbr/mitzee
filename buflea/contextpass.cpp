@@ -65,7 +65,7 @@ CALLR  CtxPasstru::_create_ctx()
 CALLR  CtxPasstru::_s_is_connected()
 {
     if(R_KILL==_overwrite_hosts())return R_KILL;
-    return _host_connect(_hst_sock);
+    return _host_connect(_r_socket);
 }
 
 

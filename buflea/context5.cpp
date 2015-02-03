@@ -103,7 +103,7 @@ CALLR  Ctx5::_s_is_connected()
         }
     }
 done:
-    if(_cli_sock.sendall(response, 2, SS_TOUT)!=0)
+    if(_c_socket.sendall(response, 2, SS_TOUT)!=0)
     {
         _destroy_clis();
         throw Mex(CLIENT_CLOSED,__FILE__,__LINE__);
@@ -180,7 +180,7 @@ CALLR  Ctx5::_negociate_header()
     LOGH("o -> [SOCKS-5]: Open-IP: "<<_raddr.c_str());
     _set_rhost(_raddr);
 
-    return _host_connect(_hst_sock);
+    return _host_connect(_r_socket);
 }
 
 //-----------------------------------------------------------------------------
@@ -191,8 +191,8 @@ int  Ctx5::_s_send_reply(u_int8_t code, const char* info)
 
     Ctx::_s_send_reply( code, info);
 
-    SADDR_46 ip4 =  _hst_sock.getsocketaddr();
-    u_int16_t np =  _hst_sock.getsocketport();
+    SADDR_46 ip4 =  _r_socket.getsocketaddr();
+    u_int16_t np =  _r_socket.getsocketport();
 
     const struct
     {
@@ -206,7 +206,7 @@ int  Ctx5::_s_send_reply(u_int8_t code, const char* info)
     {0x5, errors[code], 0, DN_IPV4, ip4.ip4(), np};
 
     LOGH("o <- [SOCKS-5]:" << socks_err(code));
-    _cli_sock.sendall((const u_int8_t*)&response, sizeof(response), SS_TOUT);
+    _c_socket.sendall((const u_int8_t*)&response, sizeof(response), SS_TOUT);
     return 1;
 }
 

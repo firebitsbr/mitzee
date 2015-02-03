@@ -32,9 +32,12 @@
 #include "configprx.h"
 
 //-----------------------------------------------------------------------------
+DnsHtps*    __dnsssl;
+
 //-----------------------------------------------------------------------------
 DnsHtps::DnsHtps(int records):_maxrecs(records)
 {
+    assert(__dnsssl==0);
     __dnsssl=this;
     /* load ssl guess file */
 }

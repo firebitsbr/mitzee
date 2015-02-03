@@ -25,6 +25,41 @@
 
 extern bool __alive;
 
+DbAccess*   __db;
+
+static SADDR_46  fromstringip(const std::string& s, size_t& nport, std::string& domain, std::string& doc)
+{
+    // ggg.com:7777/asd.php
+    // ggg.com/asd.php
+    // ggg.com:7777/sdfsd/asd.php
+    // ggg.com/sdfsd/asd.php
+
+    string tmp = s;
+    nport = 80;
+
+    if(tmp.find("http://") == 0)
+        tmp = s.substr(7);
+    else if(tmp.find("https://") == 0)
+        tmp = s.substr(8);
+
+    size_t path   = tmp.find_first_of('/');
+    size_t port   = tmp.find_first_of(':');
+    if(port!=string::npos)
+    {
+        nport = ::atoi(tmp.substr(port+1, path).c_str());
+        domain = tmp.substr(0,port);
+    }
+    else
+    {
+        domain = tmp.substr(0,path);
+    }
+    doc = tmp.substr( path+1);
+
+    SADDR_46 rv = sock::dnsgetip(domain.c_str(), 0, nport);
+    rv.set_port(nport);
+    return rv;
+}
+
 
 //-----------------------------------------------------------------------------
 DbAccess::DbAccess(time_t sessiontime,
@@ -34,7 +69,8 @@ DbAccess::DbAccess(time_t sessiontime,
                    const std::string& admins,
                    const std::string& usercontrol,
                    const std::string& reloadacls,
-                   const std::string& hostsfile):_reload(false),
+                   const std::string& hostsfile,
+                   int hfr):_reload(false),
     _reloading(false),
     _sessiontime(sessiontime),
     _maxrecs(maxrecs),
@@ -43,8 +79,10 @@ DbAccess::DbAccess(time_t sessiontime,
     _sadmins(admins),
     _susercontrol(usercontrol),
     _reloadacls(reloadacls),
-    _shosts(hostsfile)
+    _shosts(hostsfile),
+    _hostsfilerule(hfr)
 {
+    assert(__db==0);
     _now = time(0);
     __db=this;
 }
@@ -242,7 +280,8 @@ void DbAccess::instertto(const string& data, bool permanent)
             break;
         if(token[1] != 0)
         {
-            sin = sock::sip2ip(token.substr(1).c_str());
+            if(isdigit(token.at(1)))
+                sin = sock::sip2ip(token.substr(1).c_str());
 
             GLOGI("DB  IP[ +/-: [" << token <<"]");
 
@@ -282,23 +321,33 @@ void DbAccess::instertto(const string& data, bool permanent)
                 GLOGI("subscribers ips added: " << token);
                 break;
             case 's':
-                if(_banned_ips.find(sin) != _banned_ips.end())
+                if(_subscribers.find(sin) != _subscribers.end())
                 {
                     _subscribers.erase(sin);
                     GLOGI("subscribers ips removed: " << token);
                 }
             case 'H':
-            {
-                const string& dname =  DbAccess::dnsgetname(sin);
-                _dest_ips.insert(dname);
-            }
-            break;
+                {
+                    if(isdigit(token[1]))
+                    {
+                        const string& dn =  dnsgetname(sin);
+                        _dest_ips.insert(dn);
+                    }
+                    else
+                        _dest_ips.insert(token.substr(1));//_shosts
+                }
+                break;
             case 'h':
-            {
-                const string& dname =  DbAccess::dnsgetname(sin);
-                _dest_ips.erase(dname);
-            }
-            break;
+                {
+                    if(isdigit(token[1]))
+                    {
+                        const string& dn =  dnsgetname(sin);
+                        _dest_ips.insert(dn);
+                    }
+                    else
+                        _dest_ips.erase(token.substr(1));
+                }
+                break;
             default:
                 break;
             }
@@ -365,7 +414,7 @@ void DbAccess::_load()
             line.clear();
             std::getline (ifs3, line);
             if(line.length()<4) continue;
-            // 2014-08-28 05:48:50: A/R86.173.247.177:
+            // 2014-08-28 05:48:50: A/a86.173.247.177:
             if(line.find(':')!=string::npos && line.find('A')!=string::npos)
             {
                 size_t sep = line.find_last_of(' ');
@@ -417,13 +466,13 @@ void DbAccess::_load()
 
             if((line[0]>='a' && line[0]<='z') || (line[0]>='A' && line[0]<='Z') )
             {
-                GLOGI("adding remote host:" << line);
+                GLOGI("Adding remote host:" << line);
                 _dest_ips.insert(line);
             }
             else
             {
                 const string& dname =  DbAccess::dnsgetname(SADDR_46(line.c_str(),0));
-                GLOGI("adding remote  host:" << dname);
+                GLOGI("Removed remote host:" << dname);
                 _dest_ips.insert(dname);
             }
         }
@@ -437,7 +486,6 @@ void DbAccess::_load()
 void DbAccess::add_subscriber(const SADDR_46& ip)
 {
     AutoLock __al(&_mqueue);
-
     _subscribers.insert(ip);
 }
 
@@ -473,39 +521,6 @@ bool DbAccess::is_banned(const SADDR_46& sad)const
     return _banned_ips.find(sad)!=_banned_ips.end();
 }
 
-
-static SADDR_46  fromstringip(const std::string& s, size_t& nport, std::string& domain, std::string& doc)
-{
-    // ggg.com:7777/asd.php
-    // ggg.com/asd.php
-    // ggg.com:7777/sdfsd/asd.php
-    // ggg.com/sdfsd/asd.php
-
-    string tmp = s;
-    nport = 80;
-
-    if(tmp.find("http://") == 0)
-        tmp = s.substr(7);
-    else if(tmp.find("https://") == 0)
-        tmp = s.substr(8);
-
-    size_t path   = tmp.find_first_of('/');
-    size_t port   = tmp.find_first_of(':');
-    if(port!=string::npos)
-    {
-        nport = ::atoi(tmp.substr(port+1, path).c_str());
-        domain = tmp.substr(0,port);
-    }
-    else
-    {
-        domain = tmp.substr(0,path);
-    }
-    doc = tmp.substr( path+1);
-
-    SADDR_46 rv = sock::dnsgetip(domain.c_str(), 0, nport);
-    rv.set_port(nport);
-    return rv;
-}
 
 
 void  DbAccess::on_record_changed(char plusminus, const SADDR_46& raddr)
@@ -548,7 +563,7 @@ void  DbAccess::on_record_changed(char plusminus, const SADDR_46& raddr)
 }
 
 
-void DbAccess::metrics(std::stringstream& str, SinOut&  bpss)const
+void DbAccess::metrics(std::stringstream& str, SinOut&  bpss, const std::string& hname)const
 {
     AutoLock __al(&_mqueue);
     time_t  since;
@@ -559,8 +574,10 @@ void DbAccess::metrics(std::stringstream& str, SinOut&  bpss)const
         for(auto const& b :  _insession_ips._tadr)
         {
             since =_now-b.second.t;
-            str <<"<tr class='acls'><th colspan='3'>sessions</th><th>" <<
-                IP2STR(b.first) << "</th><td>" << (int)since << " secs ago</td></tr>\n";
+            str <<"<tr class='acls'><th colspan='3'>session</th><th>" <<
+                IP2STR(b.first) <<
+                "<a  href='http://"<<hname<<"/"<<"a"  << IP2STR(b.first) << "'>X</a>" <<
+                "</th><td>" << (int)since << " secs ago</td></tr>\n";
         }
     }
 
@@ -568,7 +585,9 @@ void DbAccess::metrics(std::stringstream& str, SinOut&  bpss)const
     {
         for(auto const& b1 :  _bouncing._tadr)
         {
-            str <<"<tr class='bounc'><th  colspan='3'>bouncing</th><th>" <<IP2STR(b1.first) << "</th><td>";//
+            str <<"<tr class='bounc'><th  colspan='3'>bouncing</th><th>" <<IP2STR(b1.first) <<
+            "<a href='http://"<<hname<<"/"<<"b"  << IP2STR(b1.first) << "'>X</a>" <<
+            "</th><td>";//
             if(b1.second.data.istore>=BOUNCE_BLOCKED)
                 str <<"BLOCKED</td></tr>\n";
             else
@@ -591,7 +610,9 @@ void DbAccess::metrics(std::stringstream& str, SinOut&  bpss)const
     {
         for(auto const &  b3 : _subscribers)
         {
-            str <<"<tr class='subs'><th  colspan='4'>subscribers</th><td>"<< IP2STR(b3) << "</td></tr>\n";
+            str <<"<tr class='subs'><th  colspan='4'>subscribers</th><td>"<< IP2STR(b3) <<
+            "<a  href='http://"<<hname<<"/"<<"s"  << IP2STR(b3) << "'>X</a>" <<
+            "</td></tr>\n";
         }
     }
 
@@ -599,7 +620,26 @@ void DbAccess::metrics(std::stringstream& str, SinOut&  bpss)const
     {
         for(auto const &  b4 : _banned_ips)
         {
-            str <<"<tr class'band'><th colspan='4'>banned</th><td>"<< IP2STR(b4) << "</td></tr>\n";
+            str <<"<tr class='band'><th colspan='4'>banned</th><td>"<< IP2STR(b4) <<
+            "<a  href='http://"<<hname<<"/"<<"b"  << IP2STR(b4) << "'>X</a>" <<
+             "</td></tr>\n";
+        }
+    }
+
+    if(_dest_ips.size())
+    {
+        if(_hostsfilerule=='1')
+            str <<"<tr class='band'><th colspan='5'>hosts alow</th></tr>";
+        else if(_hostsfilerule=='0')
+            str <<"<tr class='band'><th colspan='5'>hosts deny</th></tr>";
+        else
+            str <<"<tr class='band'><th colspan='5'>hosts no rule</th></tr>";
+
+        for(auto const &  b5 : _dest_ips)
+        {
+            str <<"<tr class='band'><th colspan='4'>host</th><td>"<< b5 <<
+            "<a  href='http://"<<hname<<"/"<<"h"  << b5 << "'>X</a>" <<
+            "</td></tr>\n";
         }
     }
 }

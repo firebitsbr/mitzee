@@ -55,7 +55,6 @@ private:
     int                                                 _maxrecs;
 };
 
-
-
+extern DnsHtps*    __dnsssl;
 
 #endif //

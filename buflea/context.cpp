@@ -27,6 +27,7 @@
 #include "ctxthread.h"
 #include "listeners.h"
 #include "minidb.h"
+
 //-----------------------------------------------------------------------------
 #define LOCAL_SZ 8912
 
@@ -40,7 +41,7 @@ Ctx::Ctx(const ConfPrx::Ports* pconf, tcp_xxx_sock& s):
     _pcall(&Ctx::_ctx_init),
     _pt(0),
     _pconf(pconf),
-    _cli_sock(s),
+    _c_socket(s),
     _mode(P_NONE),
     _blog(0),
     _last_time(0),
@@ -60,7 +61,7 @@ Ctx::Ctx(const ConfPrx::Ports* pconf, tcp_xxx_sock& s):
     _pactive = this;
     _tc = 'X';
     _blog = GCFG->_glb.blog;
-    _cliip = _cli_sock.getsocketaddr();
+    _cliip = _c_socket.getsocketaddr();
     _cliip.set_port(0); // to satisty = op when saving and searching
 
     do
@@ -110,16 +111,26 @@ CALLR  Ctx::_ctx_init()
 {
     if(_pconf->hostisssl || _pconf->clientisssl)
     {
-        if(!ssl_bind(_pconf->clientisssl ? __pl->sslglob()->accept_ctx() : 0,
-                     _pconf->hostisssl ? __pl->sslglob()->connect_ctx() : 0))
+        if(__pl->sslglob()==0)
         {
-            GLOGW("Cannot bind ssl sockets");
+            GLOGE("CONTEXT is SSL but ssl lib was not loaded");
+            return R_KILL;
+        }
+        else
+        {
+            if(!ssl_bind(_pconf->clientisssl ? __pl->sslglob()->accept_ctx() : 0,
+                         _pconf->hostisssl ? __pl->sslglob()->connect_ctx() : 0))
+            {
+                GLOGW("Cannot bind ssl sockets");
+            }
         }
     }
     if(_pcli_isssl)
     {
-        if(!_cli_sock.ssl_pre_accept(this))
+        if(!_c_socket.ssl_pre_accept(this))
             return R_KILL;
+
+        LOGI(_ls('C')<<IP2STR(_cliip) << "--(o   " << IP2STR(_r_socket.getsocketaddr()) << _ls('H'));
         _pcall = &Ctx::_ssl_accept;
         return _ssl_accept();
     }
@@ -129,9 +140,9 @@ CALLR  Ctx::_ctx_init()
 
 CALLR   Ctx::_ssl_accept()
 {
-    if(_cli_sock.set())
+    if(_c_socket.set())
     {
-        int rv = _cli_sock.ssl_accept(this);
+        int rv = _c_socket.ssl_accept(this);
         if(rv==0) return R_KILL;
         if(rv==-1)return R_CONTINUE;
         return _create_ctx();
@@ -142,14 +153,14 @@ CALLR   Ctx::_ssl_accept()
 
 CALLR      Ctx::_ssl_connect()
 {
-    if(_cli_sock.set())
+    if(_c_socket.set())
     {
-        int rv = _hst_sock.ssl_connect(this);
+        int rv = _r_socket.ssl_connect(this);
         if(rv==0) return R_KILL;
         if(rv==-1)return R_CONTINUE;
         _pcall=(PFCLL)&Ctx::_r_is_connected;
     }
-    return R_CONTINUE;
+    return R_DONE;
 }
 
 
@@ -163,7 +174,7 @@ bool   Ctx::ssl_bind(SSL_CTX* psl, SSL_CTX* pcl)
 /*
     if(_pcli_isssl)
     {
-        return _cli_sock.ssl_accept(this);
+        return _c_socket.ssl_accept(this);
     }
 */
 
@@ -213,8 +224,8 @@ int Ctx::_set_io_fd (fd_set& rd, fd_set& wr)
     register int n = 0;
     register int s;
 
-    s = _cli_sock.socket();
-    if(_cli_sock.isopen())   //rec
+    s = _c_socket.socket();
+    if(_c_socket.isopen())   //rec
     {
 
         if(_sen_buff->can_read())
@@ -222,9 +233,9 @@ int Ctx::_set_io_fd (fd_set& rd, fd_set& wr)
         FD_SET(s, &wr);
         n = max(s,n);
     }
-    if(_hst_sock.isopen())   //sent
+    if(_r_socket.isopen())   //sent
     {
-        s = _hst_sock.socket();
+        s = _r_socket.socket();
 
         if(_rec_buff->can_read())
             FD_SET(s, &rd);
@@ -239,19 +250,19 @@ int Ctx::_set_io_fd (fd_set& rd, fd_set& wr)
 int Ctx::_set_fd (fd_set& rd, fd_set& wr)
 {
     register int n = 0;
-    register int s = _cli_sock.socket();
-    _cli_sock.reset();
+    register int s = _c_socket.socket();
+    _c_socket.reset();
 
-    if(_cli_sock.isopen())   //rec
+    if(_c_socket.isopen())   //rec
     {
         FD_SET(s, &rd);
         FD_SET(s, &wr);
         n=max(s,n);
     }
-    _hst_sock.reset();
-    if(_hst_sock.isopen())   //sent
+    _r_socket.reset();
+    if(_r_socket.isopen())   //sent
     {
-        s = _hst_sock.socket();
+        s = _r_socket.socket();
         FD_SET(s, &rd);
         FD_SET(s, &wr);
         n=max(s,n);
@@ -262,19 +273,19 @@ int Ctx::_set_fd (fd_set& rd, fd_set& wr)
 //-----------------------------------------------------------------------------
 int  Ctx::is_fd_set(fd_set& rd, fd_set& wr)
 {
-    register int s = _cli_sock.socket();
+    register int s = _c_socket.socket();
     if(s>0)
     {
-        _cli_sock.set((FD_ISSET(s, &rd) ? 0x1 : 0));
-        _cli_sock.set((FD_ISSET(s, &wr) ? 0x2 : 0));
+        _c_socket.set((FD_ISSET(s, &rd) ? 0x1 : 0));
+        _c_socket.set((FD_ISSET(s, &wr) ? 0x2 : 0));
     }
-    s   = _hst_sock.socket();
+    s   = _r_socket.socket();
     if(s > 0)
     {
-        _hst_sock.set((FD_ISSET(s, &rd) ? 0x1 : 0));
-        _hst_sock.set((FD_ISSET(s, &wr) ? 0x2 : 0));
+        _r_socket.set((FD_ISSET(s, &rd) ? 0x1 : 0));
+        _r_socket.set((FD_ISSET(s, &wr) ? 0x2 : 0));
     }
-    return (_hst_sock.set()|_cli_sock.set());
+    return (_r_socket.set()|_c_socket.set());
 }
 
 //-----------------------------------------------------------------------------
@@ -283,8 +294,8 @@ int Ctx::clear_fd(fd_set& rd, fd_set& wr,
                       int ctxIndex)
 {
     register int done = 0;
-    register int s = _cli_sock.socket();
-    _cli_sock.reset();
+    register int s = _c_socket.socket();
+    _c_socket.reset();
     if(s > 0)
     {
 
@@ -294,8 +305,8 @@ int Ctx::clear_fd(fd_set& rd, fd_set& wr,
         done=1;
     }
 
-    int r = _hst_sock.socket();
-    _hst_sock.reset();
+    int r = _r_socket.socket();
+    _r_socket.reset();
     if(r > 0)
     {
 
@@ -314,7 +325,7 @@ int Ctx::clear_fd(fd_set& rd, fd_set& wr,
     {
         if(s > 0)
         {
-            if(!_working)   //cound not get over protocol negiociation
+            if(!_working)   //cound not get over protocol
             {
                 _s_send_reply(TTLERR);
             }
@@ -327,33 +338,33 @@ int Ctx::clear_fd(fd_set& rd, fd_set& wr,
 //--------
 void  Ctx::destroy()
 {
-    if(_cli_sock.isopen())
+    if(_c_socket.isopen())
         _destroy_clis();
-    if(_hst_sock.isopen())
+    if(_r_socket.isopen())
         _destroy_host();
 }
 
 
 void   Ctx::_destroy_clis()
 {
-    _cli_sock.destroy();
+    _c_socket.destroy();
     LOGT(_ls('C')<<"x--o---"<<_ls('H'));
 
 }
 
 void   Ctx::_destroy_host()
 {
-    _hst_sock.destroy();
+    _r_socket.destroy();
     LOGT(_ls('C') << "---o--x"<<_ls('H'));
 }
 
 int  Ctx::_rec_some()
 {
-    if(_cli_sock.set() & 0x00000001)
+    if(_c_socket.set() & 0x00000001)
     {
         u_int8_t loco[2048];
 
-        int sz = _cli_sock.receive(loco, sizeof(loco)-1);
+        int sz = _c_socket.receive(loco, sizeof(loco)-1);
         if(sz==0)return 0; //socket closed
         if(sz > 0)
         {
@@ -405,7 +416,9 @@ bool Ctx::_is_access_blocked(const SADDR_46& addr, const char* host, const char*
             bool b = __db->is_host_allowed(host);
             if((hrule==0 && b) ||  (hrule==1 && !b))
             {
-                return _deny_dest_host("\n-HOST-blocked\n");
+                string msg = "Host:_"; msg += host; msg += "_is_blocked_by_proxy_host_rules";
+                return _go_redirect(msg.c_str());
+                //return _deny_dest_host("\n-HOST-blocked\n");
             }
         }
         else
@@ -413,7 +426,9 @@ bool Ctx::_is_access_blocked(const SADDR_46& addr, const char* host, const char*
             bool b = __db->is_host_allowed(addr);
             if((hrule==0 && b) ||  (hrule==1 && !b))
             {
-                return _deny_dest_host("\n-HOST-blocked\n");
+                string msg = "Host:_"; msg += addr.c_str(); msg += "_is_blocked_by_proxy_host_rules";
+                return _go_redirect(msg.c_str());
+                //return _deny_dest_host("\n-HOST-blocked\n");
             }
         }
     }
@@ -445,8 +460,7 @@ CALLR Ctx::_redirecting()
             LOGH("header:[\n" << _hdr.buf() << "\n]");
         }
     }
-    r_redirect();   //  does not return
-    return R_KILL;  //  never reached
+    return _r_redirect();   //  does not return
 }
 
 //-----------------------------------------------------------------------------
@@ -454,20 +468,20 @@ int  Ctx::_deny_dest_host(const char* fbd)
 {
     int         k = 16;
     u_int8_t    dontcare[64];
-    bio_unblock bub(&_cli_sock);
+    bio_unblock bub(&_c_socket);
 
-    while(_cli_sock.receive(dontcare, sizeof(dontcare))>0 && --k)
+    while(_c_socket.receive(dontcare, sizeof(dontcare))>0 && --k)
         usleep(0x1F);
 
     stringstream ost;
     ost << HTTP_400;
-    _cli_sock.sendall((const u_int8_t*)ost.str().c_str(), ost.str().length(), SS_TOUT);
+    _c_socket.sendall((const u_int8_t*)ost.str().c_str(), ost.str().length(), SS_TOUT);
     throw Mex(BLOCKED_HOST,__FILE__,__LINE__);
     return 0; //not reached
 }
 
 //-----------------------------------------------------------------------------
-int  Ctx::r_redirect()
+CALLR  Ctx::_r_redirect()
 {
     char host[256] = {0};
     if(_hdr._nhost)
@@ -486,7 +500,6 @@ int  Ctx::r_redirect()
 
     stringstream ost;
 
-    _reason.clear();
     int rv =  __db->check_bounce(_cliip);
     if(rv == -1)
     {
@@ -496,26 +509,25 @@ int  Ctx::r_redirect()
     {
         _reason="Failed-gotcha.";
     }
-
     _get_redirect_doc(ost, host);
-    _cli_sock.sendall((const u_int8_t*)ost.str().c_str(), ost.str().length(),SS_TOUT);
+    _c_socket.sendall((const u_int8_t*)ost.str().c_str(), ost.str().length(),SS_TOUT);
+    _reason.clear();
     _clear_header();
-
-    throw Mex(CONTEXT_DONE, __FILE__, __LINE__);
+    return R_KILL;
 }
 
 //-----------------------------------------------------------------------------
 CALLR  Ctx::_r_pending()
 {
-    if(_hst_sock.set() & 0x2)
+    if(_r_socket.set() & 0x2)
     {
-        if(!_hst_sock.is_really_connected())
+        if(!_r_socket.is_really_connected())
         {
             _s_send_reply(NOHOST);
             LOGI(_ls('C')<<IP2STR(_cliip) << "---o>--x" << IP2STR(_raddr)<<_ls('H'));
             return R_KILL;
         }
-        LOGI(_ls('C')<<IP2STR(_cliip) << "---o---" << IP2STR(_hst_sock.getsocketaddr()) << _ls('H'));
+        LOGI(_ls('C')<<IP2STR(_cliip) << "---o---" << IP2STR(_r_socket.getsocketaddr()) << _ls('H'));
 
         if(_phost_isssl)
         {
@@ -533,7 +545,7 @@ CALLR  Ctx::_r_pending()
 //-----------------------------------------------------------------------------
 CALLR  Ctx::_r_is_connected()
 {
-    _hst_sock.tcp_cli_sock::setconnected();
+    _r_socket.tcp_cli_sock::setconnected();
     _working = true;
     _negok   = true;
     _pcall   = (PFCLL)&Ctx::_io;
@@ -569,7 +581,7 @@ bool Ctx::_was_idling(time_t delay, int isfirstone)
 //-----------------------------------------------------------------------------
 CALLR  Ctx::_cli2host( u_int8_t* buff, int rsz)
 {
-    int sz = _cli_sock.receive(buff, rsz);
+    int sz = _c_socket.receive(buff, rsz);
     if(sz>0)
     {
         if(_working && _new_request(buff, sz))
@@ -578,7 +590,7 @@ CALLR  Ctx::_cli2host( u_int8_t* buff, int rsz)
             _reuse_context();
             throw (R_CONTINUE);
         }
-        int ssz=_hst_sock.sendall(buff, sz, SS_TOUT);
+        int ssz=_r_socket.sendall(buff, sz, SS_TOUT);
         if(ssz>0)
             return R_KILL;
 
@@ -610,10 +622,10 @@ CALLR  Ctx::_cli2host( u_int8_t* buff, int rsz)
 //-----------------------------------------------------------------------------
 CALLR  Ctx::_host2cli(u_int8_t* buff, int rsz)
 {
-    int sz = _hst_sock.receive(buff, rsz);
+    int sz = _r_socket.receive(buff, rsz);
     if(sz>0)
     {
-        int ssz =_cli_sock.sendall(buff, sz, SS_TOUT);
+        int ssz =_c_socket.sendall(buff, sz, SS_TOUT);
         if(0==ssz)
         {
             LOGT(_ls('C')<<(sz-ssz) << "<--o<--"<<_ls('H')<<(sz));
@@ -646,19 +658,18 @@ CALLR  Ctx::_io()
     int         rsz = 0;
     u_int8_t*   buff = _pt->buffer(rsz);
 
-    if(_cli_sock.set() & 0x00000001)
+    if(_c_socket.set() & 0x00000001)
     {
         if(_cli2host(buff,rsz)==R_KILL)
             return R_KILL;
+        return R_CONTINUE;
     }
-    if(_hst_sock.set() & 0x00000001)
+    if(_r_socket.set() & 0x00000001)
     {
         if(_host2cli(buff, rsz)==R_KILL)
             return R_KILL;
+        return R_CONTINUE;
     }
-
-
-
     return R_CONTINUE;
 }
 
@@ -708,6 +719,7 @@ CALLR  Ctx::_host_connect(TcpPipe& rock)
     {
         if(!rock.ssl_pre_connect(this))
             return R_KILL;
+        LOGI(_ls('C')<<IP2STR(_cliip) << "---o--)" << IP2STR(_r_socket.getsocketaddr()) << _ls('H'));
     }
     if(rock.isconnecting())
     {
@@ -755,13 +767,13 @@ void    Ctx::_set_rhost(const SADDR_46& addr, const char* host, const char* refe
             const SADDR_46& r = (*f).second;
             GLOGD("Jumping host IP: (dns) " << _raddr.c_str() << ":" << _raddr.port() <<"-->"<< r.c_str() << ":"<<r.port());
             _raddr = r;
-            _hst_sock.raw_sethost(r);
+            _r_socket.raw_sethost(r);
         }
     }
     else
     {
         _raddr=addr;
-        _hst_sock.raw_sethost(addr);
+        _r_socket.raw_sethost(addr);
     }
 }
 
@@ -820,10 +832,10 @@ int    Ctx::_s_send_reply(u_int8_t code, const char* info)
 //-----------------------------------------------------------------------------
 void    Ctx::close_sockets()
 {
-    if(_cli_sock.isopen())
-        _cli_sock.destroy(false);
-    if(_hst_sock.isopen())
-        _hst_sock.destroy(false);
+    if(_c_socket.isopen())
+        _c_socket.destroy(false);
+    if(_r_socket.isopen())
+        _r_socket.destroy(false);
 }
 
 

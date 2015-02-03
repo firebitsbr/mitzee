@@ -181,10 +181,8 @@ void ConfPrx::_assign( const char* pred, const char* val, int line)
             BIND(_ports,pending);
             BIND(_ports,bindaddr);
             BIND(_ports,port);
-            BIND(_ports,dstport);
             BIND(_ports,blocking);
             BIND(_ports,socks);
-            BIND(_ports,admin);
             BIND(_ports,clientisssl);
             BIND(_ports,hostisssl);
             BIND(_ports, openacl);
@@ -261,6 +259,8 @@ void ConfPrx::_assign( const char* pred, const char* val, int line)
 
             _bind(lpred, "cli_certificate_key_file",_ssl.cPrivKey, val);
             _bind(lpred, "cli_certificate_file",_ssl.cCert, val);
+
+            _bind(lpred, "ca_certificate_file",_ssl.sCaCert, val);
             BIND(_ssl, version);
 
             if(lpred[0]=='}')

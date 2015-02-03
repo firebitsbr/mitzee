@@ -127,7 +127,6 @@ public:
     bool    was_active(time_t delay);
     void    fill_buffer(const SocksHdr& h){_hdr = h;}
     void    fill_buffer(const uint8_t* p, int l){_hdr.append((const char*)p,(size_t)l);}
-    int     r_redirect();
     CALLR   spin();
     CtxesThread*   pthread_ctx(){return _pt;}
     const   ConfPrx::Ports*  pconf()const{return  _pconf;};
@@ -139,7 +138,7 @@ public:
     void    inc(){++_refs;}
     void    dec(){--_refs;}
 	bool    isdead(){
-            return !_cli_sock.isopen() && !_hst_sock.isopen();
+            return !_c_socket.isopen() && !_r_socket.isopen();
 	}
 	void    close_sockets();
 protected:
@@ -176,6 +175,7 @@ private:
     CALLR   _ctx_init();
     CALLR   _cli2host(u_int8_t* pb, int len);
     CALLR   _host2cli(u_int8_t* pb, int len);
+    CALLR    _r_redirect();
     CALLR   _ssl_accept();
     CALLR   _ssl_connect();
 
@@ -184,8 +184,8 @@ protected:
     PFCLL               _pcall;
     CtxesThread        *_pt;
     const ConfPrx::Ports  *_pconf;
-    tcp_xxx_sock       _cli_sock;
-    TcpPipe            _hst_sock;
+    tcp_xxx_sock       _c_socket;
+    TcpPipe            _r_socket;
     int                _mode;
     size_t             _blog;
     time_t             _last_time;
@@ -214,49 +214,43 @@ protected:
 
 //----------------------------------------------------------------------------
 #define spacein(t_)  (sizeof(t_)-1)
+
 #ifdef DEBUG
 
 #define LOGI(x) if(_blog & 0x1) \
 do{\
-    std::cout << str_time() <<" I:"<<_tc<<" [ctx:"<<this->_unicid<<"]: " << x << "\n"; _check_log_size();\
-    _logcntn << str_time() <<" I:"<<_tc<<" [ctx:"<<this->_unicid<<"]: " << x << "\n"; _check_log_size();\
+    std::cout << str_time() <<" I:"<<_tc<<" [ctx:"<<this->_unicid<<"]: " << x << "\n"; \
 }while(0);
 
 #define LOGW(x) if(_blog & 0x2) \
 do{\
-    std::cout << str_time() <<" W:"<<_tc<<" [ctx:"<<this->_unicid<<"]: " << x << "\n"; _check_log_size();\
-    _logcntn << str_time() <<" W:"<<_tc<<" [ctx:"<<this->_unicid<<"]: " << x << "\n"; _check_log_size();\
+    std::cout << str_time() <<" W:"<<_tc<<" [ctx:"<<this->_unicid<<"]: " << x << "\n"; \
 }while(0);
 
 //-----------------------------------------------------------------------------
 #define LOGE(x) if(_blog & 0x4) \
 do{\
     std::cout << str_time() <<" E:"<<_tc<<":[ctx:"<<this->_unicid<<"]: " << x << "\n";\
-    _logcntn << str_time() <<" E:"<<_tc<<":[ctx:"<<this->_unicid<<"]: " << x << "\n";\
 }while(0);
 
 #define LOGT(x) if(_blog & 0x8) \
 do{\
-    std::cout << str_time() <<" T:"<<_tc<<":[ctx:"<<this->_unicid<<"]: " << x << "\n"; _check_log_size();\
-    _logcntn << str_time() <<" T:"<<_tc<<":[ctx:"<<this->_unicid<<"]: " << x << "\n"; _check_log_size();\
+    std::cout << str_time() <<" T:"<<_tc<<":[ctx:"<<this->_unicid<<"]: " << x << "\n"; \
 }while(0);
 
 #define LOGD(x) if(_blog & 0x10) \
 do{\
-    std::cout << str_time() <<" D:"<<_tc<<":[ctx:"<<this->_unicid<<"]: " << x << "\n"; _check_log_size();\
-    _logcntn << str_time() <<" D:"<<_tc<<":[ctx:"<<this->_unicid<<"]: " << x << "\n"; _check_log_size();\
+    std::cout << str_time() <<" D:"<<_tc<<":[ctx:"<<this->_unicid<<"]: " << x << "\n"; \
 }while(0);
 
 #define LOGX(x) if(_blog & 0x20) \
 do{\
-    std::cout << str_time() <<" X:"<<_tc<<":[ctx:"<<this->_unicid<<"]: " << x << "\n"; _check_log_size();\
-    _logcntn<< str_time() <<" X:"<<_tc<<":[ctx:"<<this->_unicid<<"]: " << x << "\n"; _check_log_size();\
+    std::cout << str_time() <<" X:"<<_tc<<":[ctx:"<<this->_unicid<<"]: " << x << "\n";\
 }while(0);
 
 #define LOGH(x) if(_blog & 0x40) \
 do{\
-    std::cout << str_time() <<" H:"<<_tc<<":[ctx:"<<this->_unicid<<"]: " << x << "\n"; _check_log_size();\
-    _logcntn<< str_time() <<" H:"<<_tc<<":[ctx:"<<this->_unicid<<"]: " << x << "\n"; _check_log_size();\
+    std::cout << str_time() <<" H:"<<_tc<<":[ctx:"<<this->_unicid<<"]: " << x << "\n";\
 }while(0);
 
 #else

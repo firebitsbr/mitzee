@@ -226,7 +226,8 @@ public:
                    const std::string& admins,
                    const std::string& usercontrol,
                    const std::string& reloadacls,
-                   const std::string& shosts);
+                   const std::string& shosts,
+                   int hrule);
 
     ~DbAccess() {__db=0;};
 
@@ -249,7 +250,7 @@ public:
     bool        is_banned(const SADDR_46& ip)const; // rejected at listen time
     bool        has_bounced_max(const SADDR_46& sad)const;
     void        on_record_changed(char plusminus, const SADDR_46& raddr);
-    void        metrics(std::stringstream& str, SinOut&  bpss)const;
+    void        metrics(std::stringstream& str, SinOut&  bpss, const std::string& hname)const;
     void        reload(){_reload=true;}
     int         check_bounce(const SADDR_46& ip);
     void        remove_bounce(const SADDR_46& ip, bool lock=false);
@@ -280,7 +281,7 @@ private:
     const string&                            _susercontrol;
     const string&                            _reloadacls;
     const string&                            _shosts;
-
+    int                                      _hostsfilerule;
 
     TMap<string,   StorItem<SADDR_46> >      _dns;           // dnsses
     TMap<SADDR_46, StorItem<string> >        _reverse_dns;   // dest ips
@@ -291,10 +292,10 @@ private:
     set<SADDR_46>                            _banned_ips;
     set<SADDR_46>                            _admin_ips;
     set<SADDR_46>                            _subscribers;
-    SADDR_46                                 _cachedip;
-    bool                                     _cachedretval;
-    SADDR_46                                 _cachedipH;
-    bool                                     _cachedretvalH;
+//    SADDR_46                                 _cachedip;
+//    bool                                     _cachedretval;
+//    SADDR_46                                 _cachedipH;
+//    bool                                     _cachedretvalH;
 };
 
 

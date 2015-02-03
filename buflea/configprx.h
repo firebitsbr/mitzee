@@ -22,7 +22,7 @@
 
 
 //#############################################################################
-#define __VERSION  "Buflea-Proxy-4.0.0"
+#define __VERSION  "Buflea-Proxy-4.1.0"
 //#############################################################################
 
 //-----------------------------------------------------------------------------
@@ -71,9 +71,9 @@ public:
 
     struct Listener
     {
-        Listener():nlogbytes(1024),sessiontime(30),dnsssltout(10),bouncemax(6),
-                    blog(0x00),
-                    slog("IWETDX"),
+        Listener():nlogbytes(256),sessiontime(300),dnsssltout(100),bouncemax(24),
+                    blog(0x2),
+                    slog("WE"),
                     users("acl/users.txt"),
                     hosts("acl/denyhosts.txt"),
                     tickfile("_hearthbeat"),
@@ -83,17 +83,17 @@ public:
                     openacl(0)  //deny list of hosts by defaulr
         {}
 
-        size_t          nlogbytes;   // max of log cache before flusing to file
-        size_t          sessiontime;     // database cache time
+        size_t          nlogbytes;      // max of log cache before flusing to file
+        size_t          sessiontime;    // database cache time
         size_t          dnsssltout;     // database cache time
-        size_t          bouncemax;   // database cache time
-        size_t          blog;        // log flags Info Warning Error Ttrace/raffic Ddebug eXxtra
+        size_t          bouncemax;      // database cache time
+        size_t          blog;           // log flags Info Warning Error Ttrace/raffic Ddebug eXxtra
         size_t          droptout;
         string          signature;
         string          signaturegz;
         SADDR_46        authurl_ip;     // authurl IP. web site
         string          slog;           // log pplaceholder. calc the pblog flags
-        string          authurl;       // authurl entry. we calc the next ip from it
+        string          authurl;        // authurl entry. we calc the next ip from it
         string          usercontrol;        // notiffy user sessiontime add, and user session expire
         string          reloadacls;
         string          hostsfile;
@@ -140,7 +140,6 @@ public:
             pending=8;
             bindaddr="*";
             port=8083;
-            dstport=80;
             socks="SOCKS5";
             clientisssl=0;
             hostisssl=0;
@@ -156,10 +155,8 @@ public:
         int       pending;
         string    bindaddr;
         size_t    port;
-        size_t    dstport;
         string    socks;
         size_t    blocking;
-        int       admin;
         int       clientisssl;
         int       hostisssl;
         int       openacl;     // 1, proxies everyting, no bans

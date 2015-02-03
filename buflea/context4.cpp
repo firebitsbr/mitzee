@@ -96,7 +96,7 @@ CALLR  Ctx4::_s_is_connected()
         return R_CONTINUE;
     }
     _set_rhost(_raddr);
-    return _host_connect(_hst_sock);
+    return _host_connect(_r_socket);
 }
 
 //-----------------------------------------------------------------------------
@@ -109,8 +109,8 @@ int  Ctx4::_s_send_reply(u_int8_t code, const char* info)
                                     };
 
     Ctx::_s_send_reply( code, info);
-    SADDR_46 ip4 =  _hst_sock.getsocketaddr();
-    u_int16_t np =  _hst_sock.getsocketport();
+    SADDR_46 ip4 =  _r_socket.getsocketaddr();
+    u_int16_t np =  _r_socket.getsocketport();
     const struct
     {
         unsigned char vn;
@@ -122,7 +122,7 @@ int  Ctx4::_s_send_reply(u_int8_t code, const char* info)
         0,errors[code],np, ip4.ip4()
     };
     LOGH("o <- [SOCKS-4]:" << socks_err(code));
-    _cli_sock.sendall((const u_int8_t*)&response, sizeof(response), SS_TOUT);
+    _c_socket.sendall((const u_int8_t*)&response, sizeof(response), SS_TOUT);
     return 1;
 }
 

@@ -170,57 +170,64 @@ bool SslCrypt::init_server(const char* cert,
         GLOGE("SSL_CTX_new(SSLv23_server_method())" << sslNerror());
         return false;
     }
-    if(::access(cert,0)==0 )
+    if(cert)
     {
-        if(0==SSL_CTX_use_certificate_file(_pssl_accept, cert, SSL_FILETYPE_PEM))
+        if(::access(cert,0)==0 )
         {
-            cout << "server:SSL_CTX_use_certificate_file" << cert <<" error: " << sslNerror();
-            return false;
+            if(0==SSL_CTX_use_certificate_file(_pssl_accept, cert, SSL_FILETYPE_PEM))
+            {
+                cout << "server:SSL_CTX_use_certificate_file" << cert <<" error: " << sslNerror();
+                return false;
+            }
         }
-    }
-    else
-    {
-        GLOGW("File: " << cert << " not found");
+        else
+        {
+            GLOGW("File: " << cert << " not found");
+        }
     }
 
-
-    if(::access(key,0)==0)
+    if(key)
     {
-        if(0==SSL_CTX_use_PrivateKey_file(_pssl_accept, key, SSL_FILETYPE_PEM))
+        if(::access(key,0)==0)
         {
-            cout << "server:SSL_CTX_use_certificate_file" << key <<" error: " << sslNerror();
-            return false;
+            if(0==SSL_CTX_use_PrivateKey_file(_pssl_accept, key, SSL_FILETYPE_PEM))
+            {
+                cout << "server:SSL_CTX_use_certificate_file" << key <<" error: " << sslNerror();
+                return false;
+            }
+        /*
+            if (!SSL_CTX_check_private_key(_pssl_accept))
+            {
+                 cout << "server:SSL_CTX_check_private_key" << pem <<" error: " << sslNerror();
+                 return false;
+            }
+    */
         }
-    /*
-        if (!SSL_CTX_check_private_key(_pssl_accept))
+        else
         {
-             cout << "server:SSL_CTX_check_private_key" << pem <<" error: " << sslNerror();
-             return false;
+            GLOGW("File: " << key << " not found");
         }
-*/
-    }
-    else
-    {
-        GLOGW("File: " << key << " not found");
     }
 
     //SSL_CTX_load_and_set_client_CA_file(SSL_CTX *ctx, const char *file)
-
-    if(::access(chaincert,0)==0)
+    if(chaincert)
     {
-        if(0 ==SSL_CTX_use_certificate_chain_file(_pssl_accept, chaincert))
+        if(::access(chaincert,0)==0)
         {
-            cout << "server:SSL_CTX_use_certificate_chain_file" << chaincert <<" error: " << sslNerror();
-            return false;
+            if(0 ==SSL_CTX_use_certificate_chain_file(_pssl_accept, chaincert))
+            {
+                cout << "server:SSL_CTX_use_certificate_chain_file" << chaincert <<" error: " << sslNerror();
+                return false;
+            }
+            else
+            {
+                GLOGW("File: " << chaincert << " not found");
+            }
         }
         else
         {
             GLOGW("File: " << chaincert << " not found");
         }
-    }
-    else
-    {
-        GLOGW("File: " << chaincert << " not found");
     }
 
     _mutsize = sizeof(pthread_mutex_t) * CRYPTO_num_locks();
@@ -261,31 +268,36 @@ bool SslCrypt::init_client(const char* cert,const char* key,const char* cacert)
         return false;
     }
 
-
-    if(::access(cert,0)==0)
+    if(cert)
     {
-        if(0==SSL_CTX_use_certificate_file(_pssl_connect, cert, SSL_FILETYPE_PEM))
+        if(::access(cert,0)==0)
         {
-            cout << "client:SSL_CTX_use_certificate_file" << cert <<" error: " << sslNerror();
-            return false;
+            if(0==SSL_CTX_use_certificate_file(_pssl_connect, cert, SSL_FILETYPE_PEM))
+            {
+                cout << "client:SSL_CTX_use_certificate_file" << cert <<" error: " << sslNerror();
+                return false;
+            }
+        }
+        else
+        {
+            GLOGW("File: " << cert << " not found");
         }
     }
-    else
-    {
-        GLOGW("File: " << cert << " not found");
-    }
 
-    if(::access(key,0)==0)
+    if(key)
     {
-        if(0==SSL_CTX_use_PrivateKey_file(_pssl_connect, key, SSL_FILETYPE_PEM))
+        if(::access(key,0)==0)
         {
-            cout << "client:SSL_CTX_use_PrivateKey_file" << key <<" error: " << sslNerror();
-            return false;
+            if(0==SSL_CTX_use_PrivateKey_file(_pssl_connect, key, SSL_FILETYPE_PEM))
+            {
+                cout << "client:SSL_CTX_use_PrivateKey_file" << key <<" error: " << sslNerror();
+                return false;
+            }
         }
-    }
-    else
-    {
-        GLOGW("File: " << key << " not found");
+        else
+        {
+            GLOGW("File: " << key << " not found");
+        }
     }
 /*
     if ( !SSL_CTX_check_private_key(_pssl_connect) )

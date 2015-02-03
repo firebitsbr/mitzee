@@ -40,11 +40,12 @@ using namespace std;
 
 //-----------------------------------------------------------------------------
 extern bool __alive;
-
+Listeners*  __pl;
 //-----------------------------------------------------------------------------
 Listeners::Listeners(ThreadPool* pa, const DbAccess*   pdb):_pdb(pdb),_mainThread(false),_sanity(true),
     _cons(0),_pssl(0),_rejected(false)
 {
+    assert(__pl==0);
     __pl=this;
     _pqa = pa->get_q();
 }
@@ -141,6 +142,7 @@ again:
         else
         {
 
+
             if(GCFG->_pool.socketsize > 0)
             {
                 pss->set_option(SO_SNDBUF, GCFG->_pool.socketsize/4);
@@ -153,6 +155,7 @@ again:
             pbind = pbind ? pbind : "*";
             if(pss->listen(prt.pending)==0)
             {
+
                 GLOGIN("listen: " << prt.port << " "<< prt.socks <<
                        " addr:[" << pbind << "], ssl:" << prt.clientisssl <<"->"<<prt.hostisssl);
                 _ss.push_back(pss);
@@ -312,10 +315,10 @@ void Listeners::_put_inqueue(tcp_xxx_sock& s, int every_sec, const SrvSock* psrv
 
     if(ports->openacl==0)
     {
-        if(_previp != IP2STR(saddr))
+        if(!_previp.isequal(IP2STR(saddr),false))
         {
             GLOGD("c->p: " << IP2STR(s.getsocketaddr()));
-            _previp=IP2STR(saddr);
+            _previp=saddr;
             _rejected=_pdb->is_banned(saddr);
             if(_rejected)
             {
@@ -330,7 +333,6 @@ void Listeners::_put_inqueue(tcp_xxx_sock& s, int every_sec, const SrvSock* psrv
         if(_rejected)
         {
             s.destroy();
-            _previp="*";
             return;
         }
     }
@@ -353,7 +355,7 @@ void Listeners::_put_inqueue(tcp_xxx_sock& s, int every_sec, const SrvSock* psrv
     }
     else
     {
-        GLOGE(" no context was created for thi port");
+        GLOGE(" no context was created for this port. ckeck logs");
     }
 }
 
@@ -372,24 +374,30 @@ void    Listeners::metrics(std::stringstream& str, SinOut& bpss)const
 
 Ctx* Listeners::_fabric(const string& sockver,  const ConfPrx::Ports* ports, tcp_xxx_sock& s)
 {
-//if(ports->openacl==0  ||__db->is_admin(s.getsocketaddr()) || __db->is_subscribed(s.getsocketaddr()))
-
     Ctx* pctx = 0;
 
     if(sockver=="HTTP")
-            pctx = new CtxHttp(ports, s);
-    else if(sockver=="DNSSOCK")
-            pctx = new CtxDns(ports, s);
-    else if( sockver=="CONTROL")
-            pctx = new CtxCtl(ports, s);
-    else if(sockver=="SOCKS4")                   // 4
+         pctx = new CtxHttp(ports, s);
+    else if(sockver=="SOCKS4")                          // 4
         pctx = new Ctx4(ports, s);
     else if(sockver=="SOCKS5")                          // 5
         pctx = new Ctx5(ports, s);
-    else if(sockver=="PASSTRU")
-        pctx = new CtxPasstru(ports, s);
     else if(sockver=="REGISTER")
-        pctx = new CtsReg(ports, s);
+         pctx = new CtsReg(ports, s);
+
+    if(ports->openacl==1 ||
+       __db->is_admin(s.getsocketaddr()) ||
+       __db->is_subscribed(s.getsocketaddr()))
+    {
+        if( sockver=="CONTROL" && __db->is_admin(s.getsocketaddr()))
+            pctx = new CtxCtl(ports, s);
+        else if(sockver=="PASSTRU")
+            pctx = new CtxPasstru(ports, s);
+        else if(sockver=="DNSSOCK")
+            pctx = new CtxDns(ports, s);
+    }
     return pctx;
 }
+
+
 

@@ -1092,7 +1092,7 @@
 	<config.h>
 	<strutils.h>
 
-1421556360 /home/marius/CPP/GUGLE/src/mitzee/mcoinclude/config.h
+1422980917 /home/marius/CPP/GUGLE/src/mitzee/mcoinclude/config.h
 	<os.h>
 	<sys/types.h>
 	<sys/stat.h>
@@ -1108,7 +1108,7 @@
 	<errorstrings.h>
 	"strutils.h"
 
-1421556356 /home/marius/CPP/GUGLE/src/mitzee/mcoinclude/os.h
+1422979486 /home/marius/CPP/GUGLE/src/mitzee/mcoinclude/os.h
 	<errno.h>
 	<unistd.h>
 	<assert.h>
@@ -1118,7 +1118,7 @@
 	<inttypes.h>
 	<wchar.h>
 
-1422855231 /home/marius/CPP/GUGLE/src/mitzee/mcosocks/sock.h
+1422889852 /home/marius/CPP/GUGLE/src/mitzee/mcosocks/sock.h
 	<os.h>
 	<sys/socket.h>
 	<resolv.h>
@@ -1156,13 +1156,13 @@
 	<sstream>
 	<consts.h>
 
-1422854818 source:/home/marius/CPP/GUGLE/src/mitzee/mcoinclude/minidb.cpp
+1422984352 source:/home/marius/CPP/GUGLE/src/mitzee/mcoinclude/minidb.cpp
 	<iostream>
 	<sock.h>
 	<minidb.h>
 	<config.h>
 
-1421778612 /home/marius/CPP/GUGLE/src/mitzee/mcoinclude/minidb.h
+1422976763 /home/marius/CPP/GUGLE/src/mitzee/mcoinclude/minidb.h
 	<os.h>
 	<sock.h>
 	<strutils.h>
@@ -1176,7 +1176,7 @@
 	<config.h>
 	<minidb.h>
 
-1422851463 source:/home/marius/CPP/GUGLE/src/mitzee/buflea/configprx.cpp
+1422899223 source:/home/marius/CPP/GUGLE/src/mitzee/buflea/configprx.cpp
 	<assert.h>
 	<iostream>
 	<stdarg.h>
@@ -1184,10 +1184,10 @@
 	<strutils.h>
 	"configprx.h"
 
-1422853205 /home/marius/CPP/GUGLE/src/mitzee/buflea/configprx.h
+1422902110 /home/marius/CPP/GUGLE/src/mitzee/buflea/configprx.h
 	<config.h>
 
-1422854164 source:/home/marius/CPP/GUGLE/src/mitzee/buflea/context.cpp
+1422986787 source:/home/marius/CPP/GUGLE/src/mitzee/buflea/context.cpp
 	<assert.h>
 	<iostream>
 	<sstream>
@@ -1202,11 +1202,11 @@
 	"listeners.h"
 	"minidb.h"
 
-1422469148 /home/marius/CPP/GUGLE/src/mitzee/buflea/main.h
+1422978666 /home/marius/CPP/GUGLE/src/mitzee/buflea/main.h
 	<dlfcn.h>
 	<os.h>
 
-1422730342 /home/marius/CPP/GUGLE/src/mitzee/buflea/context.h
+1422898130 /home/marius/CPP/GUGLE/src/mitzee/buflea/context.h
 	<string>
 	<map>
 	<vector>
@@ -1236,7 +1236,7 @@
 	"threadpool.h"
 	"sslcrypt.h"
 
-1422849353 /home/marius/CPP/GUGLE/src/mitzee/buflea/threadpool.h
+1422918481 /home/marius/CPP/GUGLE/src/mitzee/buflea/threadpool.h
 	<sstream>
 	<set>
 	<os.h>
@@ -1272,7 +1272,7 @@
 	"tinyclasses.h"
 	"ctxqueue.h"
 
-1422850476 /home/marius/CPP/GUGLE/src/mitzee/buflea/listeners.h
+1422978699 /home/marius/CPP/GUGLE/src/mitzee/buflea/listeners.h
 	<string>
 	<vector>
 	<sock.h>
@@ -1281,7 +1281,7 @@
 	"context.h"
 	"sslcrypt.h"
 
-1422572618 source:/home/marius/CPP/GUGLE/src/mitzee/buflea/context4.cpp
+1422897532 source:/home/marius/CPP/GUGLE/src/mitzee/buflea/context4.cpp
 	<assert.h>
 	<iostream>
 	<sstream>
@@ -1299,7 +1299,7 @@
 1422572437 /home/marius/CPP/GUGLE/src/mitzee/buflea/context4.h
 	"context.h"
 
-1422572626 source:/home/marius/CPP/GUGLE/src/mitzee/buflea/context5.cpp
+1422897532 source:/home/marius/CPP/GUGLE/src/mitzee/buflea/context5.cpp
 	<assert.h>
 	<iostream>
 	<sstream>
@@ -1318,7 +1318,7 @@
 1422572434 /home/marius/CPP/GUGLE/src/mitzee/buflea/context5.h
 	"context.h"
 
-1422851759 source:/home/marius/CPP/GUGLE/src/mitzee/buflea/contextctl.cpp
+1422983882 source:/home/marius/CPP/GUGLE/src/mitzee/buflea/contextctl.cpp
 	<assert.h>
 	<iostream>
 	<sstream>
@@ -1334,11 +1334,12 @@
 	"listeners.h"
 	"contextctl.h"
 	"dnsthread.h"
+	"tasker.h"
 
 1422572456 /home/marius/CPP/GUGLE/src/mitzee/buflea/contextctl.h
 	<string>
 
-1422849327 /home/marius/CPP/GUGLE/src/mitzee/buflea/dnsthread.h
+1422979028 /home/marius/CPP/GUGLE/src/mitzee/buflea/dnsthread.h
 	<sstream>
 	<set>
 	<os.h>
@@ -1353,7 +1354,7 @@
 	"ctxqueue.h"
 	"minidb.h"
 
-1422572639 source:/home/marius/CPP/GUGLE/src/mitzee/buflea/contextdns.cpp
+1422897532 source:/home/marius/CPP/GUGLE/src/mitzee/buflea/contextdns.cpp
 	<assert.h>
 	<iostream>
 	<sstream>
@@ -1373,7 +1374,7 @@
 1422572476 /home/marius/CPP/GUGLE/src/mitzee/buflea/contextdns.h
 	<list>
 
-1422572645 source:/home/marius/CPP/GUGLE/src/mitzee/buflea/contexthttp.cpp
+1422897532 source:/home/marius/CPP/GUGLE/src/mitzee/buflea/contexthttp.cpp
 	<assert.h>
 	<iostream>
 	<sstream>
@@ -1392,7 +1393,7 @@
 1422572533 /home/marius/CPP/GUGLE/src/mitzee/buflea/contexthttp.h
 	<list>
 
-1422573652 source:/home/marius/CPP/GUGLE/src/mitzee/buflea/contextpass.cpp
+1422897532 source:/home/marius/CPP/GUGLE/src/mitzee/buflea/contextpass.cpp
 	<assert.h>
 	<iostream>
 	<sstream>
@@ -1435,7 +1436,7 @@
 	"ctxqueue.h"
 	"context.h"
 
-1422481424 source:/home/marius/CPP/GUGLE/src/mitzee/buflea/ctxthread.cpp
+1422986977 source:/home/marius/CPP/GUGLE/src/mitzee/buflea/ctxthread.cpp
 	<assert.h>
 	<algorithm>
 	<consts.h>
@@ -1448,7 +1449,7 @@
 	"context.h"
 	<strutils.h>
 
-1422849113 source:/home/marius/CPP/GUGLE/src/mitzee/buflea/dnsthread.cpp
+1422979601 source:/home/marius/CPP/GUGLE/src/mitzee/buflea/dnsthread.cpp
 	<assert.h>
 	<iostream>
 	<sstream>
@@ -1468,7 +1469,7 @@
 1422743330 source:/home/marius/CPP/GUGLE/src/mitzee/buflea/httphdr.cpp
 	"context.h"
 
-1422851689 source:/home/marius/CPP/GUGLE/src/mitzee/buflea/listeners.cpp
+1422983430 source:/home/marius/CPP/GUGLE/src/mitzee/buflea/listeners.cpp
 	<map>
 	<assert.h>
 	<iostream>
@@ -1491,7 +1492,7 @@
 	"contextreg.h"
 	"tcppipe.h"
 
-1422738915 source:/home/marius/CPP/GUGLE/src/mitzee/buflea/main.cpp
+1422979696 source:/home/marius/CPP/GUGLE/src/mitzee/buflea/main.cpp
 	<errno.h>
 	<termios.h>
 	<unistd.h>
@@ -1508,6 +1509,7 @@
 	"threadpool.h"
 	"dnsthread.h"
 	"modules.h"
+	"tasker.h"
 	<strutils.h>
 
 1378931121 /home/marius/CPP/GUGLE/src/mitzee/buflea/modules.h
@@ -1532,7 +1534,7 @@
 	"configprx.h"
 	"context.h"
 
-1422738873 source:/home/marius/CPP/GUGLE/src/mitzee/buflea/threadpool.cpp
+1422986414 source:/home/marius/CPP/GUGLE/src/mitzee/buflea/threadpool.cpp
 	<assert.h>
 	<iostream>
 	<sstream>
@@ -1559,9 +1561,16 @@
 1422851228 /home/marius/CPP/GUGLE/src/mitzee/mcoinclude/sslcrypt.h
 	<string>
 
-1422851225 source:/home/marius/CPP/GUGLE/src/mitzee/mcoinclude/sslcrypt.cpp
+1422981292 source:/home/marius/CPP/GUGLE/src/mitzee/mcoinclude/sslcrypt.cpp
 	<dlfcn.h>
 	<os.h>
 	<sslcrypt.h>
 	<config.h>
+
+1422979129 /home/marius/CPP/GUGLE/src/mitzee/buflea/tasker.h
+	<os.h>
+
+1422983275 source:/home/marius/CPP/GUGLE/src/mitzee/buflea/tasker.cpp
+	"tasker.h"
+	"configprx.h"
 

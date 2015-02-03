@@ -69,11 +69,13 @@ public:
     bool    san(){ return _sanity;}
     void    metrics(std::stringstream& str, SinOut& bpss)const;
     SslCrypt* sslglob(){return  _pssl;}
+
 private:
     void    _put_inqueue(tcp_xxx_sock& s, int every_sec, const SrvSock* psrv);
     void    thread_main();
     void    _clear();
     Ctx*    _fabric(const string& sockver, const ConfPrx::Ports* ports, tcp_xxx_sock& s);
+
 private:
 
     const DbAccess*     _pdb;
@@ -84,9 +86,13 @@ private:
     vector<SrvSock*>    _ss;
     CtxQueue*           _pqa;
     mutex               _m;
-    std::string         _previp;
+    SADDR_46            _previp;
     bool                _rejected;
+
 };
+
+extern Listeners*  __pl;
+
 
 //extern Ctx   __dynamic_ctx_exit;
 #endif // LISTENERS_H

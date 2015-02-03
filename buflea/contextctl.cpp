@@ -32,6 +32,7 @@
 #include "listeners.h"
 #include "contextctl.h"
 #include "dnsthread.h"
+#include "tasker.h"
 
 
 /*
@@ -99,22 +100,26 @@ bool  CtxCtl::_postprocess()
 {
     std::string  response="N/A";
     char* pb = (char*)_hdr.buf();
+    std::string hostname ="localhost";
+
     if(pb[0])
     {
+        _hdr.parse();
+        hostname = _hdr.get_host();
+
         response="OK";
         GLOGI("--> ACL " << pb );
         char fc=pb[0];
         if(!::strncmp(pb,"GET",3))
         {
-            if(!::strncmp(pb,"GET / ", 6))
+            if(::strncmp(pb,"GET / ", 6))
             {
-                __tp->dump_metrics(_cli_sock);
-            }
-            else
-            {
-                fc=pb[5];
+                pb+=5;
+                fc=*pb;
             }
         }
+        char* eofl = strchr(pb,' ');
+        if(eofl)*eofl=0;
 
         switch(fc)
         {
@@ -128,8 +133,12 @@ bool  CtxCtl::_postprocess()
         case 'b':
         case 'A':
         case 'a':
-            GCFG->refresh_domains();
-            __db->instertto(string(pb+1));
+        case 'H':
+        case 'h':
+        case 'S':
+        case 's':
+            __task->schedule(tasker::eREDNS_REDIRECTS);
+            __db->instertto(string(pb));
             break;
         case 'D': // Raw SEND   <__packed__ DnsCommon>
             {
@@ -143,6 +152,7 @@ bool  CtxCtl::_postprocess()
                 GLOGI("DNS for client:" << ip << " [ to connect to ] "  << IP2STR(pc->domainip));
                 ip+=":0";
                 __db->instertto(ip);
+                response="OK";
             }
             return true;
         case '?': // Raw SEND    U.x.y.z:PPP
@@ -150,7 +160,7 @@ bool  CtxCtl::_postprocess()
             const SADDR_46* pad = reinterpret_cast<const SADDR_46*>(pb+1);
             if(__db->is_client_allowed(*pad))
             {
-                response="YES";
+                response="OK";
             }
             else
             {
@@ -183,21 +193,24 @@ bool  CtxCtl::_postprocess()
                     response="FAIL";
             }
             break;
-        case 'H': //help
-            response += "<pre>Options:\n";
-            response+= "A/a:IP adds/removes IP to current 3 hour session\n";
-            response+= "B/b:IP adds/removes user to banned\n";
-            response+= "S/s:IP adds/reomoves user from subscribers \n";
-            response+= "H/h:hIP adds/removes host to host list (deny/access) by settings\n";
-            response+= "T:LISTENER-PORT,IP-OR-DOMAIN:PORT\n Replaces configured forwarder listener port wit this forward IP.";
+        case 'L': //help
+            response += "<pre><\n><b>Options:</b>\n";
+            response+= "A/a:IP  Adds/removes IP to current 3 hour session\n";
+            response+= "B/b:IP  Adds/removes user to banned\n";
+            response+= "S/s:IP  Adds/reomoves user from subscribers \n";
+            response+= "R       Reloads acl files \n";
+            response+= "L       Help \n";
+            response+= "H/h:hIP Adds/removes host to host list (deny/access) by settings\n";
+            response+= "T:CFG_PORT,REDIR_IP:PORT\n  Replaces configured forwarder listener port wit this forward IP.";
             response+= "?:IP\n Checks if ip is allowed\n</pre>";
             break;
         default:
-            response="N/A";
             break;
         }
     }
-    _cli_sock.send(( char*)response.c_str(),response.length());
+
+    __tp->dump_metrics(_c_socket, hostname);
+    _c_socket.send(( char*)response.c_str(),response.length());
     _clear_header();
     return false;
 }

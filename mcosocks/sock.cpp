@@ -50,13 +50,24 @@ void sock::Init()
 SADDR_46 sock::sip2ip(const char* sip, u_int16_t port)
 {
     int a,b,c,d,e=port;
-    if(4<=sscanf(sip,"%u.%u.%u.%u:%d",&a,&b,&c,&d,&e))
+
+    if(!isdigit(sip[0]))
+        return SADDR_46((u_int32_t)0, 0);
+    if(strchr(sip,':') && 5==::sscanf(sip,"%u.%u.%u.%u:%d",&a,&b,&c,&d,&e))
     {
-        a&=0xff;
-        b&=0xff;
-        c&=0xff;
-        d&=0xff;
-        return SADDR_46(u_int32_t(a<<24|b<<16|c<<8|d), (u_int16_t)e);
+            a&=0xff;
+            b&=0xff;
+            c&=0xff;
+            d&=0xff;
+            return SADDR_46(u_int32_t(a<<24|b<<16|c<<8|d), (u_int16_t)e);
+    }
+    if(4==::sscanf(sip,"%u.%u.%u.%u",&a,&b,&c,&d))
+    {
+            a&=0xff;
+            b&=0xff;
+            c&=0xff;
+            d&=0xff;
+            return SADDR_46(u_int32_t(a<<24|b<<16|c<<8|d), 0);
     }
     return SADDR_46((u_int32_t)0, 0);
 }

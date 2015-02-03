@@ -33,20 +33,20 @@
 #include "minidb.h"
 
 //-----------------------------------------------------------------------------
-extern Listeners* __pl;
-extern ThreadPool* __tp;
+ThreadPool*     __tp;
 
 //-----------------------------------------------------------------------------
 ThreadPool::ThreadPool(bool sync): _sync(sync),
     _alive(0),_max_clients(0)
 {
+    assert(__tp==0);
     __tp=this;
     _count   = GCFG->_pool.min_threads;
     _maxcount = GCFG->_pool.max_threads;
     _max_clients = GCFG->_pool.clients_perthread;
 
     ::fix(_count, (size_t)1, (size_t)THREADS_CNT);
-    ::fix(_maxcount, (size_t)1, (size_t)MAX_THREADS);
+    ::fix(_maxcount, (size_t)_count, (size_t)MAX_THREADS);
     ::fix(_max_clients, (size_t)1, (size_t)MAX_CTXES);
 
 }
@@ -181,8 +181,10 @@ void ThreadPool::thread_main()
     --__alivethrds;
 }
 
+//dangerous dont call it
 void ThreadPool::_check_threads(time_t now)
 {
+
     AutoLock a(&_m);
 
     for(auto const& thread : _pool)
@@ -375,13 +377,13 @@ void    ThreadPool::accumulate_log(stringstream& ost, const SADDR_46& cliip)
 }
 
 
-void ThreadPool::dump_metrics(TcpPipe& s)
+void ThreadPool::dump_metrics(TcpPipe& s, const std::string& hname)
 {
     std::stringstream   chunk;
 
     GLOGD("1"<<"ThreadPool");
 
-    this->metrics(chunk);
+    this->metrics(chunk,hname);
     s.send(chunk.str().c_str(), chunk.str().length());
 
     GLOGD("2"<<"ThreadPool");
@@ -393,17 +395,26 @@ void ThreadPool::_reply_metrics(udp_sock& s, SA_46& sin)
     std::stringstream   chunk;
 
     chunk <<"<pre>\n";
-    this->metrics(chunk);
+    this->metrics(chunk,"");
     chunk <<"</pre>\n";
     s.send(chunk.str().c_str(), chunk.str().length(), sin);
 }
 
-void    ThreadPool::metrics(std::stringstream& str)const
+void    ThreadPool::metrics(std::stringstream& str, const std::string& hname)const
 {
     str<<"HTTP/1.1 200 OK\r\n";
     str<<"Content-Type: text/html;charset=utf-8\r\n\r\n";
-    str<<"<meta http-equiv='refresh' content='30'>\n";
-    str<<"<table border='1' width='70%' cellpadding='0' cellspacing'0'>\n";
+//    str<<"<meta http-equiv='refresh' content='30'>\n";
+
+    str<<"<style> th, td {border-width: 0 0 1px 1px;border-style: solid;border-color: #600;}\n";
+    str<<"th{background-color: #EFC;}\n";
+    str<<"</style>\n";
+
+
+
+
+
+    str<<"<table>\n";
     SinOut  bpss;
 
     GLOGD("1"<<"ThreadPool");
@@ -411,11 +422,11 @@ void    ThreadPool::metrics(std::stringstream& str)const
     if(__pl)
         __pl->metrics(str, bpss);
 
-    __db->metrics(str, bpss);
+    __db->metrics(str, bpss, hname);
 
     GLOGD("2"<<"ThreadPool");
 
-    str << "<tr><th colspan='4'>Thread pool</th><th>" << _pool.size() << "</th></tr>\n";
+    str << "<tr><th colspan='4''>Thread pool</th><th>" << _pool.size() << "</th></tr>\n";
     vector<CtxesThread*>::const_iterator i = _pool.begin();
     for(; i!= _pool.end(); ++i)
     {

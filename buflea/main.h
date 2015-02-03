@@ -25,11 +25,8 @@
 class Listeners;
 class ThreadPool;
 class DnsHtps;
-extern Listeners*  __pl;
-extern ThreadPool* __tp;
-extern DnsHtps*  __dnsssl;
-extern bool __alive;
-extern int  __alivethrds;
+extern bool        __alive;
+extern int         __alivethrds;
 //-----------------------------------------------------------------------------
 
 struct Uid{

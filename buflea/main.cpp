@@ -31,6 +31,7 @@
 #include "threadpool.h"
 #include "dnsthread.h"
 #include "modules.h"
+#include "tasker.h"
 #include <strutils.h>
 
 //-----------------------------------------------------------------------------
@@ -41,9 +42,12 @@ const static char * __USR_LOCK    = "/tmp/buflea.lock";
 const static char * __SYS_LOCK    = "/var/run/buflea.lock";
 inline const char* LockFile(){ return getuid() == 0 ? __SYS_LOCK : __USR_LOCK;}
 static bool         __owner = false;
+
 //-----------------------------------------------------------------------------
 bool __alive = true;
 int  __alivethrds=0;
+
+//-----------------------------------------------------------------------------
 void ControlC (int i)
 {
     __alive = false;
@@ -59,10 +63,7 @@ void ControlP (int i)
 int single_instance_dmn(int nargs, char* vargs[]);
 
 //-----------------------------------------------------------------------------
-Listeners*  __pl;
-ThreadPool* __tp;
-DbAccess*   __db;
-DnsHtps*    __dnsssl;
+
 struct GLobalOi{
     ~GLobalOi(){
         if(__owner){
@@ -70,7 +71,10 @@ struct GLobalOi{
             ::unlink(LockFile());
         }
     }
-}          __oi;
+    void use(){
+        std::cout << "using obj oi\n";
+    };
+}   __oi;
 
 //-----------------------------------------------------------------------------
 int main(int nargs, char * vargs[])
@@ -99,12 +103,17 @@ int main(int nargs, char * vargs[])
                         f._glb.admins,
                         f._glb.usercontrol,
                         f._glb.reloadacls,
-                        f._glb.hostsfile);
+                        f._glb.hostsfile,
+                        f._glb.hostsfilerule);
 
+        tasker      task;
         ThreadPool  tpa(false);
         Listeners   thel(&tpa, &db);
         DnsHtps     thedns(f._glb.domrecs);
+        GLobalOi*   po = &__oi;
 
+        po->use();
+        task.start_thread();
         tpa.create();
         if(tpa.start_thread()!=0 || db.start_thread()!=0)
         {
@@ -120,10 +129,8 @@ int main(int nargs, char * vargs[])
         thel._listen_spin();
 
         db.signal_to_stop();
+        task.signal_to_stop();
 
-        __tp = 0;
-        __pl = 0;
-        __db = 0;
         __dnsssl=0;
     } while(0);
     unlink("/tmp/buflea.stop");

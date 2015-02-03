@@ -76,8 +76,8 @@ public:
     void    stop_thread();
     void    signal_to_stop();
     void    thread_main();
-    void    metrics(std::stringstream& str)const;
-    void    dump_metrics(TcpPipe& s);
+    void    metrics(std::stringstream& str, const std::string& hname)const;
+    void    dump_metrics(TcpPipe& s, const std::string& hname);
 private:
     void  _check_threads(time_t now);
     bool  _pre_thread_foo();

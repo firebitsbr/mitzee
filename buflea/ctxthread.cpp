@@ -213,15 +213,18 @@ void CtxesThread::thread_main()
                 if(can)
                 {
                     rv = _pctxs[k]->spin();
-                    if(rv == R_CONTINUE)
+                    switch(rv)
                     {
-                        last_activ_select = time(0);
-                        delete_oldies=false;
-                    }
-                    else if(rv == R_KILL)
-                    {
-                        _pctxs[k]->destroy();
-                        delete_oldies=true;
+                        case R_CONTINUE:
+                            last_activ_select = time(0);
+                            delete_oldies=false;
+                            break;
+                        case R_KILL:
+                            _pctxs[k]->destroy();
+                        case R_DONE:
+                        default:
+                            delete_oldies=true;
+                            break;
                     }
                 }
             }//for spin
@@ -231,7 +234,7 @@ void CtxesThread::thread_main()
             usleep(0x1FF);
         }
         //
-        // delete closed connection and finshed contexts
+        // delete closed connection and finshed/timouts contexts
         //
         int ksz = _pctxs.size();
         for (int k =0; k < ksz; ++k)

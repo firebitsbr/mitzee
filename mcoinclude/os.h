@@ -418,7 +418,6 @@ template < typename T, class P>struct AutoCall
     P _p;
 };
 
-
 #define _PLATFORM_ "LINUX"
 #endif // !__OS_H__
 

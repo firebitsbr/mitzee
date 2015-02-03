@@ -77,7 +77,7 @@ CALLR  CtxHttp::_s_is_connected()
         return R_CONTINUE;
 
     assert(!_hdr_has_open);
-    //const bool con = _hst_sock.check_connection();
+    //const bool con = _r_socket.check_connection();
     if(_hdr._nhost)
     {
         char        host[512]= {0};
@@ -118,7 +118,7 @@ CALLR  CtxHttp::_s_is_connected()
             } // else rip!=ap
             return _overwrite_connection(_raddr);
         }
-        assert(!_hst_sock.isopen());
+        assert(!_r_socket.isopen());
 
         if(_is_access_blocked(_raddr, host, referer))
         {
@@ -128,7 +128,7 @@ CALLR  CtxHttp::_s_is_connected()
 
         _set_rhost(_raddr, host, referer);
         _rip     = _raddr;
-        return _host_connect(_hst_sock);
+        return _host_connect(_r_socket);
     }
     else
     {
@@ -157,7 +157,7 @@ CALLR  CtxHttp::_empty_host()
     _hdrsent = false;
     _destroy_host();
     _set_rhost(_rip);
-    return _host_connect(_hst_sock);
+    return _host_connect(_r_socket);
 }
 
 
@@ -173,12 +173,12 @@ CALLR  CtxHttp::_r_is_connected()
             //
             // reply connected Proxy connection established
             //
-            _cli_sock.sendall((const u_int8_t*)HTTP_200,  strlen(HTTP_200), SS_TOUT);
+            _c_socket.sendall((const u_int8_t*)HTTP_200,  strlen(HTTP_200), SS_TOUT);
         }
         else if(_hdr.bytes() != 0) // no open, the proxy is accessed as a web server
         {
             _hdr.prep_doc();
-            _hst_sock.sendall(_hdr.buf(), _hdr.bytes(), SS_TOUT);
+            _r_socket.sendall(_hdr.buf(), _hdr.bytes(), SS_TOUT);
             LOGT(" SENT HDR TO RADDR: ["<<_hdr.bytes() <<"]\n[" << _hdr.buf() <<"]\n");
         }
         _clear_header();
@@ -199,7 +199,7 @@ int  CtxHttp::_s_send_reply(u_int8_t code, const char* info)
     char msg[800];
     sprintf(msg,"%s <html><h1>proxy error: %s (%s)</h1></html>", HTTP_400,
                                                                  socks_err(code), info ? info : "*");
-    _cli_sock.sendall((const u_int8_t*)msg, strlen(msg), SS_TOUT);
+    _c_socket.sendall((const u_int8_t*)msg, strlen(msg), SS_TOUT);
     return 1;
 }
 
@@ -216,7 +216,7 @@ CALLR  CtxHttp::_io()
 //-----------------------------------------------------------------------------
 CALLR  CtxHttp::_sr_http_read_write()
 {
-    if(_cli_sock.set() & 1)
+    if(_c_socket.set() & 1)
     {
         if(0==_s_is_connected())
         {
@@ -228,19 +228,19 @@ CALLR  CtxHttp::_sr_http_read_write()
 
 CALLR  CtxHttp::_get_from_host()
 {
-    if(!_hst_sock.isopen())
+    if(!_r_socket.isopen())
         return R_CONTINUE; //keep wiating the pending connect
 
     int         rsz;
     u_int8_t*   buff = _pt->buffer(rsz);
 
-    if(_hst_sock.set() & 0x00000001)
+    if(_r_socket.set() & 0x00000001)
     {
-        rsz = _hst_sock.receive(buff, rsz);
+        rsz = _r_socket.receive(buff, rsz);
         if(rsz > 0)
         {
             _stats._temp_bytes[BysStat::eIN]+=rsz;
-            _cli_sock.sendall(buff, rsz,  SS_TOUT);
+            _c_socket.sendall(buff, rsz,  SS_TOUT);
             _stats._temp_bytes[BysStat::eOUT]+=rsz;
         }
     }
@@ -249,10 +249,10 @@ CALLR  CtxHttp::_get_from_host()
 
 void  CtxHttp::send_exception(const char* desc)
 {
-    if(_cli_sock.isopen() && _cli_sock.is_really_connected())
+    if(_c_socket.isopen() && _c_socket.is_really_connected())
     {
-        _cli_sock.sendall((const u_int8_t*)HTTP_200, strlen(HTTP_200),SS_TOUT);
-        _cli_sock.send(desc, strlen(desc));
+        _c_socket.sendall((const u_int8_t*)HTTP_200, strlen(HTTP_200),SS_TOUT);
+        _c_socket.send(desc, strlen(desc));
     }
 }
 

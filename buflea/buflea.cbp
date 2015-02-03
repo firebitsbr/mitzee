@@ -53,6 +53,7 @@
 		<Unit filename="../../../bin/buflea/install.sh" />
 		<Unit filename="../../../bin/buflea/www/register.php" />
 		<Unit filename="../../../bin/buflea/www/userctl.php" />
+		<Unit filename="../bin/buflea.conf" />
 		<Unit filename="../mcoinclude/config.cpp" />
 		<Unit filename="../mcoinclude/config.h" />
 		<Unit filename="../mcoinclude/consts.h" />
@@ -99,6 +100,8 @@
 		<Unit filename="main.h" />
 		<Unit filename="makecerts.sh" />
 		<Unit filename="readme.txt" />
+		<Unit filename="tasker.cpp" />
+		<Unit filename="tasker.h" />
 		<Unit filename="tcppipe.cpp" />
 		<Unit filename="tcppipe.h" />
 		<Unit filename="threadpool.cpp" />

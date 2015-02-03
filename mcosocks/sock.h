@@ -169,7 +169,18 @@ struct SADDR_46 : public SA_46
         u_int64_t bigintr = ((((u_int64_t)(r.sin_addr.s_addr&m))<<32) | (u_int64_t)r.sin_port);
         return bigint != bigintr;
     }
+    bool isequal(const SADDR_46& r, bool porttoo=false)const
+    {
+        int32_t m = _mask & r._mask;
+        if(!porttoo)
+        {
+             return ((sin_addr.s_addr&m) == (r.sin_addr.s_addr&m));
+        }
+        u_int64_t bigint = ((((u_int64_t)sin_addr.s_addr&m)<<32) | (u_int64_t)sin_port);
+        u_int64_t bigintr = ((((u_int64_t)r.sin_addr.s_addr&m)<<32) | (u_int64_t)r.sin_port);
+        return bigint == bigintr;
 
+    }
     bool operator == (const SADDR_46& r)const
     {
         int32_t m = _mask & r._mask;

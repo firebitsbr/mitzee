@@ -103,14 +103,14 @@ CALLR  CtxDns::_get_hostname()
         }
         _raddr.set_port(_pconf->conport ? _pconf->conport : 80);
         _set_rhost(_raddr);
-        LOGD(_cliip.c_str() << " -r/dns-> "<< _raddr.c_str() );
-        return _host_connect(_hst_sock);
+        LOGD(_cliip.c_str() << " --r/dns--> "<< _raddr.c_str() );
+        return _host_connect(_r_socket);
     }
     else if(!_pconf->redirect.empty())
     {    //fallback
         _set_rhost(_pconf->toaddr, 0, 0);
-        LOGD(_cliip.c_str() << " -r/cfg-> "<< _raddr.c_str() );
-        return _host_connect(_hst_sock);
+        LOGD(_cliip.c_str() << " --r/cfg--> "<< _raddr.c_str() );
+        return _host_connect(_r_socket);
     }
     LOGE("No destination host found in queued hosts, neither in configuration. Connection closed");
     return R_KILL;
@@ -124,7 +124,7 @@ CALLR  CtxDns::_r_is_connected()
 //    _hdr.replace_option(_hdr._nhost,_hdr._nhost_end,"enjoydecor.com");
     GLOGD("C--X-->H\n["<<_hdr.buf() << "]\n");
 
-    if(_hst_sock.sendall((const u_int8_t*)_hdr.buf(), _hdr.bytes(), SS_TOUT)!=0)
+    if(_r_socket.sendall((const u_int8_t*)_hdr.buf(), _hdr.bytes(), SS_TOUT)!=0)
     {
         return R_KILL;
     }

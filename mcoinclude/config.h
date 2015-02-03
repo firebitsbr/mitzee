@@ -229,7 +229,6 @@ template <typename T>inline void fix(T& val, T minv, T maxv)
 #define GLOGI(x) if(PCFG->_blog & 0x1) \
 do{\
     AutoLock __a(&PCFG->_m); \
-    LOG_PIPE << str_time() <<" I: " << x << "\n";\
     std::cout << str_time() <<" I: " << x << "\n";\
 }while(0);
 
@@ -237,14 +236,12 @@ do{\
 #define GLOGW(x) if(PCFG->_blog & 0x2) \
 do{\
     AutoLock __a(&PCFG->_m); \
-    LOG_PIPE << str_time() <<" W: " << x << "\n";\
     std::cout << str_time() <<" W: " << x << "\n";\
 }while(0);
 
 #define GLOGE(x) if(PCFG->_blog & 0x4) \
 do{\
     AutoLock __a(&PCFG->_m); \
-    LOG_PIPE << str_time() <<" E: " << x << "\n";\
     std::cout << str_time() <<" E: " << x << "\n";\
 }while(0);
 
@@ -252,7 +249,6 @@ do{\
 #define GLOGER(x) if(PCFG->_blog & 0x4) \
 do{\
     AutoLock __a(&PCFG->_m); \
-    LOG_PIPE << str_time() <<" E: " << x << "\n";\
     std::cout << str_time() <<" E: " << x << "\r";\
 }while(0);
 
@@ -262,7 +258,6 @@ do{\
 #define GLOGT(x) if(PCFG->_blog & 0x8) \
 do{\
     AutoLock __a(&PCFG->_m); \
-    LOG_PIPE << str_time() <<" T: " << x << "\n";\
     std::cout << str_time() <<" T: " << x << "\n";\
 }while(0);
 
@@ -270,7 +265,6 @@ do{\
 #define GLOGD(x) if(PCFG->_blog & 0x10) \
 do{\
     AutoLock __a(&PCFG->_m); \
-    LOG_PIPE << str_time() <<" D: " << x << "\n";\
     std::cout << str_time() <<" D: " << x << "\n";\
 }while(0);
 
@@ -278,7 +272,6 @@ do{\
 #define GLOGX(x) if(PCFG->_blog & 0x20) \
 do{\
     AutoLock __a(&PCFG->_m); \
-    LOG_PIPE << str_time() <<" X: " << x << "\n";\
     std::cout << str_time() <<" X: " << x << "\n";\
 }while(0);
 
@@ -287,7 +280,6 @@ do{\
 #define GLOGH(x) if(PCFG->_blog & 0x40) \
 do{\
     AutoLock __a(&PCFG->_m); \
-    LOG_PIPE << str_time() <<" H: " << x << "\n";\
     std::cout << str_time() <<" X: " << x << "\n";\
 }while(0);
 
@@ -295,14 +287,14 @@ do{\
 #define GLOGEN(x) if(PCFG->_blog & 0x4) \
 do{\
     AutoLock __a(&PCFG->_m); \
-    cout << str_time() <<" E: " << x << "\n";\
+    std::cout << str_time() <<" E: " << x << "\n";\
 }while(0);
 
 //-----------------------------------------------------------------------------
 #define GLOGIN(x) if(PCFG->_blog & 0x1) \
 do{\
     AutoLock __a(&PCFG->_m); \
-    cout << str_time() <<" I: " << x << "\n";\
+    std::cout << str_time() <<" I: " << x << "\n";\
 }while(0);
 
 
@@ -319,7 +311,7 @@ do{\
 #define GLOGIN(x) if(PCFG->_blog & 0x1) \
 do{\
     AutoLock __a(&PCFG->_m); \
-    cout << str_time() <<" I: " << x << "\n";\
+    std::cout << str_time() <<" I: " << x << "\n";\
 }while(0);
 
 //-----------------------------------------------------------------------------
@@ -340,7 +332,7 @@ do{\
 #define GLOGEN(x) if(PCFG->_blog & 0x4) \
 do{\
     AutoLock __a(&PCFG->_m); \
-    cout << str_time() <<" E: " << x << "\n";\
+    std::cout << str_time() <<" E: " << x << "\n";\
 }while(0);
 
 
