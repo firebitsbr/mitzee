@@ -46,8 +46,8 @@ public:
 protected:
     void _flush(time_t now);
     void _io(Message& m);
-    void _cli_send(const SADDR_46& inaddr, Message& m);
-    void _srv_send(const SADDR_46& inaddr, Message& m);
+    void _from_dns(const SADDR_46& inaddr, Message& m);
+    void _from_client(const SADDR_46& inaddr, Message& m);
     void _cli_send_fromcache(const SADDR_46& inaddr, Message& m);
     void _register_subscriber();
 

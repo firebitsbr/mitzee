@@ -24,13 +24,13 @@
 // redirect 53 to 5353 and open that one instead
 // sudo iptables -t nat -A PREROUTING -p udp --dport 53 -j REDIRECT --to-port 5353
 
-DbAccess*         __db;         //imposed by mcoincludes which is shared with pizu/buflea
+
 bool              __alive=true;
 
 //-------------------------------------------------------------------------------
 int main()
 {
-    Conf            cfg("mariuz.conf");
+    Conf            cfg("miki.conf");
     theapp          app;
     return app.run();
 }

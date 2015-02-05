@@ -34,8 +34,8 @@ void theapp::ControlC (int i)
 }
 
 static std::string dummy;
-
-theapp::theapp():_db(100,100, dummy,dummy,dummy,dummy,dummy,dummy),_gseq(BEGIN_SEQ)
+static int idummy=-1;
+theapp::theapp():_db(100,100, dummy,dummy,dummy,dummy,dummy,dummy,idummy),_gseq(BEGIN_SEQ)
 {
     signal(SIGINT,  theapp::ControlC);
     signal(SIGABRT, theapp::ControlC);
@@ -103,7 +103,7 @@ void theapp::_io(Message& m)
 
         if(__pw->is_dns_addr(fromaddr))
         {
-            _cli_send(fromaddr, m);
+            _from_dns(fromaddr, m);
         }
         else
         {
@@ -113,7 +113,7 @@ void theapp::_io(Message& m)
             }
             else
             {
-                _srv_send(fromaddr, m);
+                _from_client(fromaddr, m);
             }
         }
     }
@@ -144,29 +144,29 @@ void theapp::_flush( time_t now)
             ++exp_ctx;
         }
     }
-
 }
 
 
-void theapp::_cli_send_fromcache(const SADDR_46& inaddr, Message& m)
+void theapp::_cli_send_fromcache(const SADDR_46& cliaddr, Message& m)
 {
     std::string  requestsig = m._mid.str();
     u_int16_t    hdrid =  m._h.id;
 
     m.clear();
-    m.load(requestsig);
+    m.load(requestsig, cliaddr);
     m.set_id(hdrid);
 
-    GLOGD ("C <- D  - - -: " <<  inaddr.c_str() << ":" << inaddr.port() << "/"<< hdrid  << " <- [CACHE], "  << m._sz );
-    _tp.https_notify_proxy(m, 0, inaddr);
+    _tp.https_notify_proxy(m, 0, cliaddr); ///??????
 
-    if(m._sz != _buzy_socket.send(m._buff, m._sz, inaddr))
+    if(m._sz != _buzy_socket.send(m._buff, m._sz, cliaddr))
     {
-        GLOGE("cannot send to client:" << IP2STR(inaddr) << "err:" <<_buzy_socket.error());
+        GLOGE("cannot send to client:" << IP2STR(cliaddr) << "err:" <<_buzy_socket.error());
+        return;
     }
+    GLOGD(cliaddr.c_str() << ":" << cliaddr.port() << ", [" << hdrid << "]<----[DNS-CACHE]");
 }
 
-void theapp::_cli_send(const SADDR_46& inaddr, Message& m)
+void theapp::_from_dns(const SADDR_46& dnsaddr, Message& m)
 {
     SADDR_46                                to_addr;
     u_int16_t                               seq = m._h.id;
@@ -174,7 +174,7 @@ void theapp::_cli_send(const SADDR_46& inaddr, Message& m)
 
     if(exp_ctx == _ctexes.end())
     {
-        GLOGD("sequence << seq << not found from:" << IP2STR(inaddr));
+        GLOGD("sequence << seq << not found from:" << IP2STR(dnsaddr));
         return ;
     }
     const Context& ctx = (*exp_ctx).second;
@@ -182,41 +182,40 @@ void theapp::_cli_send(const SADDR_46& inaddr, Message& m)
     m.set_id(ctx._seq);
     to_addr = ctx._cliip;
 
-    GLOGD("C <- D <- S: " << to_addr.c_str() << ":" << to_addr.sin_port <<"/"<< ctx._seq<<" <- [D] <- "<< IP2STR(inaddr) <<"/"<< seq <<"," << m._sz );
-    if(PCFG->rules.size())
-        m.replace_domains();
-    if( PCFG->_srv.notify==0)
-        _tp.https_notify_proxy(m, 0, inaddr);
+    if(PCFG->rules.size() && m.replace_domains())
+    {
+        _tp.https_notify_proxy(m, 1, to_addr);
+    }
+
     if(m._sz != _buzy_socket.send(m._buff, m._sz, to_addr))
     {
-        GLOGE("cannot send to client:" << IP2STR(inaddr) << "err:" <<_buzy_socket.error());
+        GLOGE("cannot send to client:" << IP2STR(to_addr) << "err:" <<_buzy_socket.error());
     }
     else
     {
+        GLOGD(to_addr.c_str() << ":" << to_addr.port() << ", [" << ctx._seq << "]<----[DNS]<---" << dnsaddr.c_str() << ", [" <<seq<<", ("<<m._sz<<")]");
         if(!PCFG->_srv.cache.empty())
-            m.cache(ctx._msig);
+        {
+            m.cache(ctx._msig, to_addr);
+        }
         _ctexes.erase(exp_ctx);
     }
 }
 
 //-------------------------------------------------------------------------------
-void theapp::_srv_send(const SADDR_46& inaddr, Message& m)
+void theapp::_from_client(const SADDR_46& inaddr, Message& m)
 {
     const char* dns_ip = __pw->get_dns_ip();
     Context     ctx;
 
-    ctx._seq  = m._h.id;
+    ctx._seq    = m._h.id;
     ctx._newseq =  _gseq;
     ctx._errors = 0;
-    ctx._time = time(0);
-    ctx._cliip = inaddr;
-    ctx._msig = m._mid.str();
+    ctx._time   = time(0);
+    ctx._cliip  = inaddr;
+    ctx._msig   = m._mid.str();
     m.set_id(_gseq);
 
-    GLOGD("C -> D -> S: " << inaddr.c_str() << ":" <<  inaddr.port() <<  "/" << ctx._seq << " -> [D] -> " << dns_ip << ":53" << "/" << ctx._newseq  <<"," << m._sz );
-
-    if( PCFG->_srv.notify==1)
-        _tp.https_notify_proxy(m, 1, inaddr);
 
     int errors = __pw->get_dnss_count(); // how many master dns entries we have
     while(--errors>=0)
@@ -231,6 +230,7 @@ void theapp::_srv_send(const SADDR_46& inaddr, Message& m)
         }
         else
         {
+            GLOGD(ctx._cliip.c_str()<<":"<<ctx._cliip.port() << ",["<<ctx._seq << "]--->[DNS]---> " <<  dns_ip << ":53, [" << ctx._newseq <<", ("<< m._sz <<")]");
             _ctexes[_gseq] = ctx;
             break;
         }

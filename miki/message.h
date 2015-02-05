@@ -82,10 +82,10 @@ public:
     bool    parse(size_t len);
     void    replace();
     bool    is_cahced();
-    void    cache(const string& sig);
-    void    load(const string& sig);
+    void    cache(const string& sig, const SADDR_46& clientadd);
+    void    load(const string& sig, const SADDR_46& clientadd);
     void    set_id(u_int16_t id);
-    void    replace_domains();
+    bool    replace_domains();
 private:
     int          decodeName(const u_int8_t * data, const u_int8_t * name, char * dest);
     const char*  getRRTypeName(unsigned short t);

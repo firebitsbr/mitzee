@@ -100,6 +100,7 @@ bool  CtxCtl::_postprocess()
 {
     std::string  response="N/A";
     char* pb = (char*)_hdr.buf();
+    int bytes = _hdr.bytes();
     std::string hostname ="localhost";
 
     if(pb[0])
@@ -109,6 +110,8 @@ bool  CtxCtl::_postprocess()
 
         response="OK";
         GLOGI("--> ACL " << pb );
+
+
         char fc=pb[0];
         if(!::strncmp(pb,"GET",3))
         {
@@ -121,9 +124,16 @@ bool  CtxCtl::_postprocess()
         char* eofl = strchr(pb,' ');
         if(eofl)*eofl=0;
 
+REEVAL:
         switch(fc)
         {
         case '#':
+            if(bytes>2 && pb[1]==',')
+            {
+                pb+=2;
+                fc=pb[0];
+                goto REEVAL;
+            }
             return true;
             break;
         case 'R':
@@ -145,13 +155,23 @@ bool  CtxCtl::_postprocess()
                 // dns server sends the IP that was obtained durring DNS request
                 // we hold this in association with the IP that asked for that IP
                 DnsCommon* pc = reinterpret_cast<DnsCommon*>(pb);
+
                 __dnsssl->queue_host(_cliip, *pc);
+
+                SADDR_46 sad(pc->client);
+                SADDR_46 dad(htonl(pc->domainip));
+                GLOGI("DNS for client:" << sad.c_str()<<"/"<<pc->client << " [ to connect to-> ] "  << dad.c_str() <<
+                ", " << pc->hostname <<
+                " = " << pc->sizee);
+/*
                 // add to session as well.
                 std::string ip("S");
-                ip+=IP2STR(htonl(pc->client));
-                GLOGI("DNS for client:" << ip << " [ to connect to ] "  << IP2STR(pc->domainip));
-                ip+=":0";
+
+
+                GLOGI("DNS for client:" << sad.c_str()<<"/"<<pc->client << " [ to connect to ] "  << dad.c_str() << " = " << pc->sizee);
+                ip+=sad.c_str();
                 __db->instertto(ip);
+*/
                 response="OK";
             }
             return true;

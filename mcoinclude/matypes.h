@@ -25,6 +25,7 @@
 struct DnsCommon
 {
     char        header;     //'D
+    int32_t     sizee;
     int32_t     sequence;   // ++
     time_t      now;        // time
     u_int32_t   client;     // client ip on DNS (this can be internal IP if dns runs on personal net)

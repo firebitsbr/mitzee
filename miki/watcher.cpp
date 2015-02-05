@@ -16,6 +16,7 @@
 
 #include <iostream>
 #include <unistd.h>
+#include <sock.h>
 #include "strutils.h"
 #include "config.h"
 #include "watcher.h"
@@ -37,6 +38,17 @@ void Watcher::thread_main()
 {
     time_t last = 0;
     _reconnow = false;
+
+    std::string         token;
+    std::string         localaddr = sock::GetLocalIP();
+    std::istringstream  iss(localaddr);
+    SADDR_46            local;
+    while(getline(iss, token, ','))
+    {
+        _localaddr = SADDR_46(token.c_str());
+    }
+
+
 
     while(!is_stopped() && __alive)
     {
@@ -110,11 +122,6 @@ bool Watcher::https_notify_proxy( Message& m, int c, const SADDR_46& uip)
         GLOGE("???? cannot notify proxy. address not configured");
         return false; //no notifications
     }
-    if(_try_connect(true)==false)
-    {
-        GLOGE("Connection to proxy is not openned yet");
-        return false;
-    }
 
     bool b = false;
     if(c == 0) //client message
@@ -131,12 +138,19 @@ bool Watcher::https_notify_proxy( Message& m, int c, const SADDR_46& uip)
                 dns.header   = 'D';
                 dns.sequence = ++_seq;
                 dns.now      = time(0);
-                dns.client   = uip.sin_addr.s_addr;
+                dns.client   = uip.ip4();
                 dns.prxip    = PCFG->_srv._prx_addr.ip4();
                 dns.domainip = a.origip.s_addr;
+                dns.sizee    = sizeof(dns);
                 ::strcpy(dns.hostname,a.name);
 
-                GLOGI("[D]->[P]" << "C: " << IP2STR(htonl(dns.client)) << " IP:" << IP2STR(htonl(dns.domainip)) << "->" << IP2STR(dns.prxip));
+                GLOGI("Q:DNS: C:"<<IP2STR(htonl(dns.client))<<"/"<<dns.client<<" ->redir1[" << dns.domainip <<"/" << dns.hostname<< "] --->PRX:"<< PCFG->_srv._prx_addr  <<" = " <<dns.sizee );
+
+                if(_try_connect(true)==false)
+                {
+                    GLOGE("Connection to proxy is not openned yet");
+                    break;
+                }
 
                 AutoLock   __a(&_m);
                 if(_prxsock.send((char*)&dns, sizeof(dns))!=sizeof(dns))
@@ -166,10 +180,17 @@ bool Watcher::https_notify_proxy( Message& m, int c, const SADDR_46& uip)
                 dns.now      = time(0);
                 dns.client   = uip.sin_addr.s_addr;
                 dns.prxip    = PCFG->_srv._prx_addr.ip4();
-                dns.domainip = 0;
+                dns.domainip = _localaddr.ip4();
+                dns.sizee    = sizeof(dns);
                 ::strcpy(dns.hostname, q.name);
 
-                GLOGI("[D]->[P]" << "C: " << IP2STR(htonl(dns.client)) << " IP:" << IP2STR(htonl(dns.domainip)) << "->" << IP2STR(dns.prxip));
+                GLOGI("R:DNS: C:"<<IP2STR(htonl(dns.client))<<"/"<<dns.client<<" ->redir2[" << IP2STR(dns.domainip) << "] ---->PRX:" <<PCFG->_srv._prx_addr <<" = " <<dns.sizee );
+
+                if(_try_connect(true)==false)
+                {
+                    GLOGE("Connection to proxy is not openned yet");
+                    break;
+                }
 
                 AutoLock  __a(&_m);
                 if(_prxsock.send((char*)&dns, sizeof(dns))!=sizeof(dns))
@@ -209,7 +230,7 @@ void   Watcher::_keep_alive()
 
     if(_prxsock.is_really_connected())
     {
-        int bytes = _prxsock.sendall("########",8); // keep connection
+        int bytes = _prxsock.sendall("#,",2); // keep connection
         if(bytes!=0)
         {
             _prxsock.destroy();
@@ -225,13 +246,19 @@ void   Watcher::_keep_alive()
 bool   Watcher::_try_connect(bool doit)
 {
     _prxsock.destroy();
+
     if(_prxsock.raw_connect(PCFG->_srv._prx_addr, 8)==-1)
     {
         GLOGE(": "<< "cannot connect " << PCFG->_srv._prx_addr.c_str() << ":" <<  PCFG->_srv._prx_addr.port() << "\n");
         return false;
     }
     _lastactivity=time(0);
-    GLOGI("Connection established to proxy notification port");
+
+    if( 0==_prxsock.sendall("#,",2) )
+    {    ;GLOGD("Connection to prx OK");}
+    else{
+        ;GLOGD("Connection to prx failed");
+    }
     return true;
 }
 

@@ -312,8 +312,9 @@ bool    Message::_find_in_questions(const char* respname)
 }
 
 
-void Message::replace_domains()
+bool Message::replace_domains()
 {
+    bool replaced=false;
     for(auto a : this->_responses)
     {
         ::memcpy(&a.origip, a.paddr, sizeof(struct in_addr));
@@ -330,12 +331,14 @@ void Message::replace_domains()
 				::memcpy(&a.u.ipv4, a.paddr, sizeof(struct in_addr));
 
                 *a.pttl=0;
+                replaced=true;
             }
         }
         ::memcpy(&a.newip, a.paddr, sizeof(struct in_addr));
         ::memcpy(&a.u.ipv4, a.paddr, sizeof(struct in_addr));
          GLOGX("DOMAIN:" << a.name << " IP: " << IP2STR(htonl(a.newip.s_addr)));
     }
+    return replaced;
 }
 
 
@@ -347,11 +350,13 @@ bool    Message::is_cahced()
     return ::access(where.c_str(),0)==0;
 }
 
-void    Message::cache(const string& sig)
+void    Message::cache(const string& sig, const SADDR_46& clientaddr)
 {
     std::string where = PCFG->_srv.cache;
     where += "/";
     where += sig;
+    where += clientaddr.c_str();
+
     FILE* pf  = fopen(where.c_str(),"wb");
     if(pf)
     {
@@ -361,11 +366,12 @@ void    Message::cache(const string& sig)
 }
 
 
-void    Message::load(const string& sig)
+void    Message::load(const string& sig, const SADDR_46& clientaddr)
 {
     std::string where = PCFG->_srv.cache;
     where += "/";
     where += sig;
+    where += clientaddr;
 
     FILE* pf  = fopen(where.c_str(),"rb");
     if(pf)
