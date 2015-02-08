@@ -192,10 +192,9 @@ void Conf::_assign( kchar* pred, kchar* val, int line)
             _bind(lpred, "index", _lhost.index, val);
             _bind(lpred, "ssl", _lhost.ssl, val);
             _bind(lpred, "maxupload", _lhost.maxupload, val);
-            _bind(lpred, "iptabled",  _lhost.iptabled, val); //the original port that is redirected to listen port.
 
             if(lpred[0]=='}') {
-                size_t pos = _lhost.host.find(':');
+
 
                 if(_lhost.home[0]!='/') {
                     _lhost.home = _marius.runfrom+_lhost.home;
@@ -212,13 +211,24 @@ void Conf::_assign( kchar* pred, kchar* val, int line)
                 if(_lhost.home[_lhost.home.length()-1] == '/')
                     _lhost.home = _lhost.home.substr(0,_lhost.home.length()-1);
 
-                string t = _lhost.host;
-                const char* dt = t.c_str();
-                _lhost.host = t.substr(0,pos);
-                _lhost.port = ::_ttatoi(t.substr(pos+1).c_str());
-                //if(_lhost.iptabled)
-                //    _lhost.port = _lhost.iptabled;
-                _hosts[t] = _lhost;
+                string hostname = _lhost.host;
+                size_t pos = hostname.find(':');
+                _lhost.host = hostname.substr(0,pos);
+                string ports = hostname.substr(pos+1);
+                hostname = hostname.substr(0,pos);
+
+                size_t redi = ports.find(',');
+                if(redi != string::npos)//we have redirected port to port
+                {
+                    _lhost.port     = ::_ttatoi(ports.substr(0,redi).c_str());
+                    _lhost.iptabled = ::_ttatoi(ports.substr(redi+1).c_str());
+                }
+                else
+                {
+                    _lhost.port = ::_ttatoi(ports.c_str());
+                }
+
+                _hosts[hostname] = _lhost;
             }
         }
 

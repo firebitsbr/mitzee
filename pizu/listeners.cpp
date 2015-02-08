@@ -346,7 +346,7 @@ const Conf::Vhost* SrvSock::_vHoost(kchar* name)const
     char    local[256];
     int     port = 80;
 
-    sprintf(lname, "%s", name ? name : "*:80");
+    sprintf(lname, "%s", name ? name : "*");
     char* pd = _ttstrchr(lname,':');
     if(pd) {
         *pd=0;
@@ -361,23 +361,27 @@ const Conf::Vhost* SrvSock::_vHoost(kchar* name)const
     // lname=host port=#
     if(isdigit(lname[0]) || !strcmp(lname,"localhost"))
     {
-        sprintf(local,"*:%d", port);
+        ::strcpy(local,"*");
     }
-    else{
-        sprintf(local,"%s:%d", lname, port);
+    else
+    {
+        ::strcpy(local,lname);
     }
 
     map<string, Conf::Vhost*>::const_iterator it = _vhss.find(local);
-    if(it == _vhss.end())
-    {
-        sprintf(local,"*:%d", port);
-    }
-    it = _vhss.find(local);
-    if(it != _vhss.end())
+
+    if(it != _vhss.end() && ((*it).second->port==port || (*it).second->iptabled==port))
     {
         return (*it).second;
     }
 
+    // no hosts names, get the default
+    ::strcpy(local,"*");
+    it = _vhss.find(local);
+    if(it != _vhss.end() && ((*it).second->port==port || (*it).second->iptabled==port))
+    {
+        return (*it).second;
+    }
 
     throw Mex(501,__FILE__,__LINE__);
     return 0;

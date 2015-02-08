@@ -1,29 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
 	<ActiveTarget name="Debug" />
-	<File name="context.cpp" open="1" top="0" tabpos="18" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="../../../bin/buflea/buflea.conf" open="1" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="12406" topLine="504" />
+			<Cursor1 position="2568" topLine="46" />
 		</Cursor>
 	</File>
-	<File name="contextdns.cpp" open="1" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="tcppipe.h" open="1" top="0" tabpos="12" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="3043" topLine="98" />
+			<Cursor1 position="2010" topLine="26" />
 		</Cursor>
 	</File>
-	<File name="contextctl.cpp" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="tcppipe.cpp" open="1" top="1" tabpos="13" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="2746" topLine="103" />
-		</Cursor>
-	</File>
-	<File name="context.h" open="1" top="0" tabpos="20" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="0" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="dnsthread.cpp" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1603" topLine="39" />
+			<Cursor1 position="1849" topLine="39" />
 		</Cursor>
 	</File>
 	<File name="../mcoinclude/matypes.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -31,19 +21,39 @@
 			<Cursor1 position="1170" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="tcppipe.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="../mcoinclude/sslcrypt.h" open="1" top="0" tabpos="11" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="940" topLine="0" />
+			<Cursor1 position="1570" topLine="24" />
 		</Cursor>
 	</File>
-	<File name="ctxthread.cpp" open="1" top="0" tabpos="21" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="contextctl.cpp" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="2746" topLine="103" />
+		</Cursor>
+	</File>
+	<File name="ctxthread.cpp" open="1" top="0" tabpos="10" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="6634" topLine="204" />
 		</Cursor>
 	</File>
-	<File name="../../../bin/buflea/buflea.conf" open="1" top="0" tabpos="16" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="listeners.cpp" open="1" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="2568" topLine="46" />
+			<Cursor1 position="2223" topLine="65" />
+		</Cursor>
+	</File>
+	<File name="context.h" open="1" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="3858" topLine="117" />
+		</Cursor>
+	</File>
+	<File name="contextdns.cpp" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="3043" topLine="98" />
+		</Cursor>
+	</File>
+	<File name="context.cpp" open="1" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="3258" topLine="109" />
 		</Cursor>
 	</File>
 	<File name="dnsthread.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -51,7 +61,7 @@
 			<Cursor1 position="1480" topLine="18" />
 		</Cursor>
 	</File>
-	<File name="../mcoinclude/minidb.cpp" open="1" top="0" tabpos="13" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="../mcoinclude/minidb.cpp" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="8739" topLine="285" />
 		</Cursor>
@@ -61,9 +71,9 @@
 			<Cursor1 position="0" topLine="59" />
 		</Cursor>
 	</File>
-	<File name="listeners.cpp" open="1" top="0" tabpos="17" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="dnsthread.cpp" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="10660" topLine="348" />
+			<Cursor1 position="1603" topLine="39" />
 		</Cursor>
 	</File>
 </CodeBlocks_layout_file>

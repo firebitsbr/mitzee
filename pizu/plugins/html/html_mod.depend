@@ -77,3 +77,82 @@
 1347996267 source:/home/marius/C++/GOOGLE/webhop/pizu/plugins/html/main.cpp
 	"htmlmod.h"
 
+1378931121 source:/home/marius/CPP/GUGLE/src/mitzee/pizu/plugins/html/htmlmod.cpp
+	<assert.h>
+	<stdio.h>
+	<string>
+	<fcntl.h>
+	<dirent.h>
+	<sys/stat.h>
+	<utime.h>
+	<pthread.h>
+	<limits.h>
+	<strutils.h>
+	<consts.h>
+	"htmlmod.h"
+	<iostream>
+
+1421556360 /home/marius/CPP/GUGLE/src/mitzee/mcoinclude/strutils.h
+	<matypes.h>
+	<stdarg.h>
+	<stdio.h>
+	<ctype.h>
+	<string.h>
+	<fstream>
+	<sstream>
+	<consts.h>
+
+1423157700 /home/marius/CPP/GUGLE/src/mitzee/mcoinclude/matypes.h
+	<stddef.h>
+	<os.h>
+	<sock.h>
+
+1422979486 /home/marius/CPP/GUGLE/src/mitzee/mcoinclude/os.h
+	<errno.h>
+	<unistd.h>
+	<assert.h>
+	<pthread.h>
+	<semaphore.h>
+	<stdio.h>
+	<inttypes.h>
+	<wchar.h>
+
+1422889852 /home/marius/CPP/GUGLE/src/mitzee/mcosocks/sock.h
+	<os.h>
+	<sys/socket.h>
+	<resolv.h>
+	<sys/select.h>
+	<arpa/inet.h>
+	<sys/ioctl.h>
+	<sys/time.h>
+	<netdb.h>
+	<stdlib.h>
+	<string.h>
+	<string>
+	<fstream>
+	<math.h>
+
+1421556360 /home/marius/CPP/GUGLE/src/mitzee/mcoinclude/consts.h
+	<os.h>
+	<matypes.h>
+	<string.h>
+
+1378931121 /home/marius/CPP/GUGLE/src/mitzee/pizu/plugins/html/htmlmod.h
+	<modiface.h>
+	<sys/stat.h>
+	<string>
+	<vector>
+	<map>
+	<set>
+
+1421556360 /home/marius/CPP/GUGLE/src/mitzee/mcoinclude/modiface.h
+	<matypes.h>
+	<iostream>
+	<string.h>
+	<stdio.h>
+	<stddef.h>
+	<sys/time.h>
+
+1378931121 source:/home/marius/CPP/GUGLE/src/mitzee/pizu/plugins/html/main.cpp
+	"htmlmod.h"
+

@@ -632,3 +632,215 @@
 	<iostream>
 	"sqwrap.h"
 
+1378931121 source:/home/marius/CPP/GUGLE/src/mitzee/pizu/plugins/sq/globalfoos.cpp
+	<fcntl.h>
+	<sys/stat.h>
+	<string>
+	<fstream>
+	<streambuf>
+	<strutils.h>
+	"sqmod.h"
+
+1421556360 /home/marius/CPP/GUGLE/src/mitzee/mcoinclude/strutils.h
+	<matypes.h>
+	<stdarg.h>
+	<stdio.h>
+	<ctype.h>
+	<string.h>
+	<fstream>
+	<sstream>
+	<consts.h>
+
+1423157700 /home/marius/CPP/GUGLE/src/mitzee/mcoinclude/matypes.h
+	<stddef.h>
+	<os.h>
+	<sock.h>
+
+1422979486 /home/marius/CPP/GUGLE/src/mitzee/mcoinclude/os.h
+	<errno.h>
+	<unistd.h>
+	<assert.h>
+	<pthread.h>
+	<semaphore.h>
+	<stdio.h>
+	<inttypes.h>
+	<wchar.h>
+
+1422889852 /home/marius/CPP/GUGLE/src/mitzee/mcosocks/sock.h
+	<os.h>
+	<sys/socket.h>
+	<resolv.h>
+	<sys/select.h>
+	<arpa/inet.h>
+	<sys/ioctl.h>
+	<sys/time.h>
+	<netdb.h>
+	<stdlib.h>
+	<string.h>
+	<string>
+	<fstream>
+	<math.h>
+
+1421556360 /home/marius/CPP/GUGLE/src/mitzee/mcoinclude/consts.h
+	<os.h>
+	<matypes.h>
+	<string.h>
+
+1378931121 /home/marius/CPP/GUGLE/src/mitzee/pizu/plugins/sq/sqmod.h
+	<matypes.h>
+	<modiface.h>
+	<string>
+	<vector>
+	<map>
+	<set>
+	"sqwrap.h"
+
+1421556360 /home/marius/CPP/GUGLE/src/mitzee/mcoinclude/modiface.h
+	<matypes.h>
+	<iostream>
+	<string.h>
+	<stdio.h>
+	<stddef.h>
+	<sys/time.h>
+
+1378931121 /home/marius/CPP/GUGLE/src/mitzee/pizu/plugins/sq/sqwrap.h
+	<string>
+	<stdio.h>
+	<squirrel.h>
+	<sqstdio.h>
+	<sqstdaux.h>
+	<sqstdblob.h>
+	<sqstdmath.h>
+	<sqstdsystem.h>
+	<sqstdstring.h>
+	<sqrat.h>
+	<os.h>
+
+1378931121 /home/marius/CPP/GUGLE/src/mitzee/pizu/plugins/sq/sq/include/squirrel.h
+
+1378931121 /home/marius/CPP/GUGLE/src/mitzee/pizu/plugins/sq/sq/include/sqstdio.h
+
+1378931121 /home/marius/CPP/GUGLE/src/mitzee/pizu/plugins/sq/sq/include/sqstdaux.h
+
+1378931121 /home/marius/CPP/GUGLE/src/mitzee/pizu/plugins/sq/sq/include/sqstdblob.h
+
+1378931121 /home/marius/CPP/GUGLE/src/mitzee/pizu/plugins/sq/sq/include/sqstdmath.h
+
+1378931121 /home/marius/CPP/GUGLE/src/mitzee/pizu/plugins/sq/sq/include/sqstdsystem.h
+
+1378931121 /home/marius/CPP/GUGLE/src/mitzee/pizu/plugins/sq/sq/include/sqstdstring.h
+
+1378931121 /home/marius/CPP/GUGLE/src/mitzee/pizu/plugins/sq/sq/sqrat/include/sqrat.h
+	<squirrel.h>
+	"sqrat/sqratTable.h"
+	"sqrat/sqratClass.h"
+	"sqrat/sqratFunction.h"
+	"sqrat/sqratConst.h"
+	"sqrat/sqratUtil.h"
+	"sqrat/sqratScript.h"
+	"sqrat/sqratArray.h"
+
+1378931121 /home/marius/CPP/GUGLE/src/mitzee/pizu/plugins/sq/sq/sqrat/include/sqrat/sqratTable.h
+	<squirrel.h>
+	<string.h>
+	"sqratObject.h"
+	"sqratFunction.h"
+	"sqratGlobalMethods.h"
+
+1378931121 /home/marius/CPP/GUGLE/src/mitzee/pizu/plugins/sq/sq/sqrat/include/sqrat/sqratObject.h
+	<squirrel.h>
+	<string.h>
+	"sqratTypes.h"
+	"sqratOverloadMethods.h"
+	"sqratUtil.h"
+
+1378931121 /home/marius/CPP/GUGLE/src/mitzee/pizu/plugins/sq/sq/sqrat/include/sqrat/sqratTypes.h
+	<squirrel.h>
+	<string>
+	"sqratClassType.h"
+
+1378931121 /home/marius/CPP/GUGLE/src/mitzee/pizu/plugins/sq/sq/sqrat/include/sqrat/sqratClassType.h
+	<squirrel.h>
+	<map>
+
+1378931121 /home/marius/CPP/GUGLE/src/mitzee/pizu/plugins/sq/sq/sqrat/include/sqrat/sqratOverloadMethods.h
+	<squirrel.h>
+	<sqstdaux.h>
+	<sstream>
+	"sqratTypes.h"
+	"sqratUtil.h"
+
+1378931121 /home/marius/CPP/GUGLE/src/mitzee/pizu/plugins/sq/sq/sqrat/include/sqrat/sqratUtil.h
+	<squirrel.h>
+	<string.h>
+	"sqratTypes.h"
+
+1378931121 /home/marius/CPP/GUGLE/src/mitzee/pizu/plugins/sq/sq/sqrat/include/sqrat/sqratFunction.h
+	<squirrel.h>
+	"sqratObject.h"
+
+1378931121 /home/marius/CPP/GUGLE/src/mitzee/pizu/plugins/sq/sq/sqrat/include/sqrat/sqratGlobalMethods.h
+	<squirrel.h>
+	"sqratTypes.h"
+
+1378931121 /home/marius/CPP/GUGLE/src/mitzee/pizu/plugins/sq/sq/sqrat/include/sqrat/sqratClass.h
+	<squirrel.h>
+	<string.h>
+	"sqratObject.h"
+	"sqratClassType.h"
+	"sqratMemberMethods.h"
+	"sqratAllocator.h"
+
+1378931121 /home/marius/CPP/GUGLE/src/mitzee/pizu/plugins/sq/sq/sqrat/include/sqrat/sqratMemberMethods.h
+	<squirrel.h>
+	"sqratTypes.h"
+
+1378931121 /home/marius/CPP/GUGLE/src/mitzee/pizu/plugins/sq/sq/sqrat/include/sqrat/sqratAllocator.h
+	<squirrel.h>
+	<string.h>
+	"sqratObject.h"
+
+1378931121 /home/marius/CPP/GUGLE/src/mitzee/pizu/plugins/sq/sq/sqrat/include/sqrat/sqratConst.h
+	<squirrel.h>
+	<string.h>
+	"sqratObject.h"
+
+1378931121 /home/marius/CPP/GUGLE/src/mitzee/pizu/plugins/sq/sq/sqrat/include/sqrat/sqratScript.h
+	<squirrel.h>
+	<sqstdio.h>
+	<string.h>
+	"sqratObject.h"
+
+1378931121 /home/marius/CPP/GUGLE/src/mitzee/pizu/plugins/sq/sq/sqrat/include/sqrat/sqratArray.h
+	<squirrel.h>
+	<string.h>
+	"sqratObject.h"
+	"sqratFunction.h"
+	"sqratGlobalMethods.h"
+
+1378931121 source:/home/marius/CPP/GUGLE/src/mitzee/pizu/plugins/sq/main.cpp
+	"sqmod.h"
+
+1378931121 source:/home/marius/CPP/GUGLE/src/mitzee/pizu/plugins/sq/sqmod.cpp
+	<matypes.h>
+	<assert.h>
+	<fcntl.h>
+	<dirent.h>
+	<sys/stat.h>
+	<utime.h>
+	<pthread.h>
+	<limits.h>
+	<dlfcn.h>
+	<strutils.h>
+	"globalfoos.h"
+	"sqmod.h"
+
+1378931121 /home/marius/CPP/GUGLE/src/mitzee/pizu/plugins/sq/globalfoos.h
+	"sqmod.h"
+
+1378931121 source:/home/marius/CPP/GUGLE/src/mitzee/pizu/plugins/sq/sqwrap.cpp
+	<assert.h>
+	<stdarg.h>
+	<iostream>
+	"sqwrap.h"
+
