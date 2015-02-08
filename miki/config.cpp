@@ -41,7 +41,7 @@ Conf::~Conf()
 {
     PCFG=0;
     PCFG=0;
-    system(_srv.postcomand.c_str()); //make sure this is in visudo
+//    system(_srv.postcomand.c_str()); //make sure this is in visudo
 }
 
 //-----------------------------------------------------------------------------

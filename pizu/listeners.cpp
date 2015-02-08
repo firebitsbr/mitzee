@@ -136,8 +136,8 @@ again:
 
         map<string, Conf::Vhost*>::iterator vhss = (*it2)->_vhss.begin();
         for(; vhss != (*it2)->_vhss.end(); ++vhss) {
-            printf("\t\t\t -host_conf:\t%s:%zd SSL=",vhss->second->host.c_str(),
-                   vhss->second->port);
+            printf("\t\t\t -host_conf:\t%s:%zd(%d) SSL=",vhss->second->host.c_str(),
+                   vhss->second->port, vhss->second->iptabled);
             if((*vhss).second->ssl) {
                 printf("on");
                 if(initSsl()) {
@@ -357,6 +357,7 @@ const Conf::Vhost* SrvSock::_vHoost(kchar* name)const
         }
     }
 
+
     // lname=host port=#
     if(isdigit(lname[0]) || !strcmp(lname,"localhost"))
     {
@@ -376,6 +377,8 @@ const Conf::Vhost* SrvSock::_vHoost(kchar* name)const
     {
         return (*it).second;
     }
+
+
     throw Mex(501,__FILE__,__LINE__);
     return 0;
 }

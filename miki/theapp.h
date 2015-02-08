@@ -49,7 +49,7 @@ protected:
     void _from_dns(const SADDR_46& inaddr, Message& m);
     void _from_client(const SADDR_46& inaddr, Message& m);
     void _cli_send_fromcache(const SADDR_46& inaddr, Message& m);
-    void _register_subscriber();
+
 
 private:
     std::map<u_int16_t, Context>  _ctexes;

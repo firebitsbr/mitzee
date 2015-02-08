@@ -192,6 +192,7 @@ void Conf::_assign( kchar* pred, kchar* val, int line)
             _bind(lpred, "index", _lhost.index, val);
             _bind(lpred, "ssl", _lhost.ssl, val);
             _bind(lpred, "maxupload", _lhost.maxupload, val);
+            _bind(lpred, "iptabled",  _lhost.iptabled, val); //the original port that is redirected to listen port.
 
             if(lpred[0]=='}') {
                 size_t pos = _lhost.host.find(':');
@@ -215,6 +216,8 @@ void Conf::_assign( kchar* pred, kchar* val, int line)
                 const char* dt = t.c_str();
                 _lhost.host = t.substr(0,pos);
                 _lhost.port = ::_ttatoi(t.substr(pos+1).c_str());
+                //if(_lhost.iptabled)
+                //    _lhost.port = _lhost.iptabled;
                 _hosts[t] = _lhost;
             }
         }

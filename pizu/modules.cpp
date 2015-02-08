@@ -34,6 +34,7 @@ Modules::Modules():_imods(0)
     if(0 == h)
         h = dlopen("pizu-plugins/libhtml_modd.so", RTLD_NOW);   //debug version
     if(0 == h){
+        cout << "cannot load libhtml_mod(d).so plugin\n";
         return;
     }
     cout << "Loading module:\t\tplugins/libhtml_mod.so \n";

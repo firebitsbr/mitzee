@@ -138,7 +138,7 @@ public:
 
     struct Vhost
     {
-        Vhost():port(80),maxupload(2000),order(1),ssl(false),runmode(0){
+        Vhost():port(80),maxupload(2000),order(1),ssl(false),runmode(0),iptabled(0){
 
         }
         size_t        port;
@@ -146,7 +146,7 @@ public:
         int           order;
         int           ssl;
         int           runmode;
-
+        int           iptabled;
         string        host;
         string        proxy;
         string        home;

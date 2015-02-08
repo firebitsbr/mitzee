@@ -42,7 +42,7 @@ public:
     virtual ~DnsHtps();
 
     bool    deque_host(const SADDR_46& ipcli, const uint64_t sigbuff, DnsCommon& dest);
-    void    queue_host(const SADDR_46& ipcli, DnsCommon& dest);
+    void    queue_host(DnsCommon& dest);
     void    update_host(const SADDR_46& ipcli, const uint64_t sig);
 
 private:

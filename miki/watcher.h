@@ -73,7 +73,9 @@ public:
 private:
     void    _keep_alive();
     bool   _try_connect(bool doit);
+    void   _register_subscriber();
 private:
+
     SADDR_46                    _localaddr;
     std::map<SADDR_46,time_t>   _users;
     std::set<SADDR_46>          _blocked;

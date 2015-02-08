@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1421794180 source:/home/marius/CPP/GUGLE/src/mitzee/miki/config.cpp
+1423350483 source:/home/marius/CPP/GUGLE/src/mitzee/miki/config.cpp
 	<assert.h>
 	<iostream>
 	<stdarg.h>
@@ -34,7 +34,7 @@
 	<inttypes.h>
 	<wchar.h>
 
-1421775226 /home/marius/CPP/GUGLE/src/mitzee/miki/config.h
+1423350009 /home/marius/CPP/GUGLE/src/mitzee/miki/config.h
 	"os.h"
 	<sys/types.h>
 	<sys/stat.h>
@@ -48,6 +48,7 @@
 	<vector>
 	<stdlib.h>
 	<string.h>
+	<strutils.h>
 
 1421556360 /home/marius/CPP/GUGLE/src/mitzee/mcoinclude/strutils.h
 	<matypes.h>
@@ -76,7 +77,7 @@
 	"watcher.h"
 	<minidb.h>
 
-1423076002 /home/marius/CPP/GUGLE/src/mitzee/miki/theapp.h
+1423351660 /home/marius/CPP/GUGLE/src/mitzee/miki/theapp.h
 	<fcntl.h>
 	<iostream>
 	<signal.h>
@@ -96,7 +97,7 @@
 	<iostream>
 	<sock.h>
 
-1423161118 /home/marius/CPP/GUGLE/src/mitzee/miki/watcher.h
+1423352066 /home/marius/CPP/GUGLE/src/mitzee/miki/watcher.h
 	<string>
 	<set>
 	<map>
@@ -155,14 +156,14 @@
 	"config.h"
 	"theapp.h"
 
-1423162910 source:/home/marius/CPP/GUGLE/src/mitzee/miki/theapp.cpp
+1423352080 source:/home/marius/CPP/GUGLE/src/mitzee/miki/theapp.cpp
 	"theapp.h"
 
-1421727382 source:/home/marius/CPP/GUGLE/src/mitzee/miki/udpsock.cpp
+1423349957 source:/home/marius/CPP/GUGLE/src/mitzee/miki/udpsock.cpp
 	"udpsock.h"
 	"config.h"
 
-1423163166 source:/home/marius/CPP/GUGLE/src/mitzee/miki/watcher.cpp
+1423352450 source:/home/marius/CPP/GUGLE/src/mitzee/miki/watcher.cpp
 	<iostream>
 	<unistd.h>
 	<sock.h>

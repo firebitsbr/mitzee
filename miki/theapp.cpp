@@ -19,7 +19,7 @@
 #define      BEGIN_SEQ                100
 Watcher*     theapp::__pw           = 0;
 u_int32_t    theapp::__dns_tout     = 5; // 5 seconds
-int          theapp::__sessionprx   = 600; // 5 seconds
+int          theapp::__sessionprx   = 600; // 600 seconds
 int          theapp::__gerrors      = 0;
 static int   DNS_DEFPORT            = 53;
 extern bool __alive;
@@ -58,7 +58,7 @@ int theapp::run()
     time_t          ses=0;
     Message         m;
 
-    _register_subscriber();                                  // delete unrespoded queries
+                              // delete unrespoded queries
     _tp.start_thread();
     sleep(2);
 
@@ -78,11 +78,6 @@ int theapp::run()
             {
                 now = tick;
                 _flush(now);                                  // delete unrespoded queries
-            }
-            if(tick - ses > __sessionprx)
-            {
-                ses = tick;
-                _register_subscriber();                                  // delete unrespoded queries
             }
             usleep(0xFFF);
         }
@@ -239,8 +234,3 @@ void theapp::_from_client(const SADDR_46& inaddr, Message& m)
         _gseq = BEGIN_SEQ;
 }
 
-
-void theapp::_register_subscriber()
-{
-
-}

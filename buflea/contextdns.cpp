@@ -63,7 +63,7 @@ CALLR  CtxDns::_create_ctx()
 //-----------------------------------------------------------------------------
 int  CtxDns::_s_send_reply(u_int8_t code, const char* info)
 {
-     Ctx::_s_send_reply( code, info);
+      _rec_some();
      return 1;
 }
 

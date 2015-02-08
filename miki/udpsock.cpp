@@ -37,6 +37,7 @@ bool udpsock::ensure()
         if(create(PCFG->_srv.port, 0, eth_iface)>0 && bind()>0)
         {
             set_blocking(0);
+            GLOGI("UDP waiting on::" <<PCFG->_srv.addr <<":"<<PCFG->_srv.port)
             return true;
         }
         sleep(1);

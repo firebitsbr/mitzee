@@ -47,8 +47,7 @@ DnsHtps::~DnsHtps()
 {
 }
 
-
-void    DnsHtps::queue_host(const SADDR_46& ipcli, DnsCommon& dest)
+void    DnsHtps::queue_host(DnsCommon& dest)
 {
     if(_clients.size() > (size_t)_maxrecs)
         do_cleanup();
@@ -56,11 +55,25 @@ void    DnsHtps::queue_host(const SADDR_46& ipcli, DnsCommon& dest)
     AutoLock __a(&_m);
 
     dest.now       = time(0);
-    dest.clientpub = ipcli.ip4();
-    std::map<uint64_t, DnsCommon>   el; el[0]=dest;
-    SADDR_46                        ca(ipcli.ip4());   // htonl(dest.client));
+
+    std::map<uint64_t, DnsCommon>   el;
+    el[0] = dest;
+
+    SADDR_46  ca(dest.client);   // htonl(dest.client));
     _clients[ca] = el;
-    GLOGD("DNS: Storing host <- [" << ca.c_str() <<  "]=" << dest.hostname << "] ");
+
+#ifdef DEBUG
+    for(auto client : _clients)
+    {
+        GLOGD("DNS_FORWARD: CLIENT:" << client.first.c_str());
+        for(auto route : client.second)
+        {
+            GLOGD("ROUTE:" << route.first << " -> CLIIP:" << IP2STR(route.second.client) << ", domainip: "<< IP2STR(route.second.domainip) << ", " << route.second.hostname)
+        }
+    }
+
+
+#endif
 }
 
 void    DnsHtps::update_host(const SADDR_46& ipcli, const uint64_t buff)

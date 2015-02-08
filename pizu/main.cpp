@@ -77,7 +77,7 @@ int main(int nargs, char * vargs[])
     __modules = &m; //as well
 
     if(!m.is_not_empty()) {
-        std::cout << "Cannot load modules. At least libhtml_mod.so should be build. Is this file present in pizu-plugins folder? \n";
+        std::cout << "Cannot load modules. At least libhtml_mod.so should be build. \n";
         return -1;
     }
 

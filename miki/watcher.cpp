@@ -39,16 +39,7 @@ void Watcher::thread_main()
     time_t last = 0;
     _reconnow = false;
 
-    std::string         token;
-    std::string         localaddr = sock::GetLocalIP();
-    std::istringstream  iss(localaddr);
-    SADDR_46            local;
-    while(getline(iss, token, ','))
-    {
-        _localaddr = SADDR_46(token.c_str());
-    }
-
-
+    _register_subscriber();
 
     while(!is_stopped() && __alive)
     {
@@ -63,6 +54,7 @@ void Watcher::thread_main()
             PCFG->check_log_size();
             last = now;
             _reconnow=false;
+
         }
         if(!_reconnow)
             sleep(1);
@@ -178,7 +170,7 @@ bool Watcher::https_notify_proxy( Message& m, int c, const SADDR_46& uip)
                 dns.header   = 'D';
                 dns.sequence = ++_seq;
                 dns.now      = time(0);
-                dns.client   = uip.sin_addr.s_addr;
+                dns.client   = htonl(uip.sin_addr.s_addr);
                 dns.prxip    = PCFG->_srv._prx_addr.ip4();
                 dns.domainip = _localaddr.ip4();
                 dns.sizee    = sizeof(dns);
@@ -234,36 +226,61 @@ void   Watcher::_keep_alive()
         if(bytes!=0)
         {
             _prxsock.destroy();
-            GLOGE(": "<< "destroyng connect " << PCFG->_srv._prx_addr.c_str() << ":" <<  PCFG->_srv._prx_addr.port() << "\n");
+            GLOGE(": "<< "destroing connect " << PCFG->_srv._prx_addr.c_str() << ":" <<  PCFG->_srv._prx_addr.port() << "\n");
         }
+        return;
     }
-    else
-    {
-        GLOGW("proxy socket is not connected");
-    }
+    _try_connect(0);
+
 }
 
 bool   Watcher::_try_connect(bool doit)
 {
     _prxsock.destroy();
-
+        bio_unblock(&_prxsock,1);
     if(_prxsock.raw_connect(PCFG->_srv._prx_addr, 8)==-1)
     {
         GLOGE(": "<< "cannot connect " << PCFG->_srv._prx_addr.c_str() << ":" <<  PCFG->_srv._prx_addr.port() << "\n");
         return false;
     }
-    _lastactivity=time(0);
 
-    if( 0==_prxsock.sendall("#,",2) )
-    {    ;GLOGD("Connection to prx OK");}
-    else{
-        ;GLOGD("Connection to prx failed");
+    if( _prxsock.is_really_connected())
+    {
+        _lastactivity=time(0);
+        return true;
     }
-    return true;
+    return false;
 }
 
+void   Watcher::_register_subscriber()
+{
+    std::vector<std::string>    localips;
+    std::string                 token;
+    std::string                 localaddr = sock::GetLocalIP();
+    std::istringstream          iss(localaddr);
+    SADDR_46                    local;
+
+    while(getline(iss, token, ','))
+    {
+        localips.push_back(token);
+        _localaddr = SADDR_46(token.c_str());
+    }
 
 
 
+    if(_try_connect(true))
+    {
+        std::string query;
+        for(auto ip : localips)
+        {
+            query+="S";
+            query+=ip;
+            query+=",";
+        }
+        _prxsock.sendall(query.c_str(), query.length());
+        GLOGD(query);
+    }
+
+}
 
 

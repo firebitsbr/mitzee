@@ -30,6 +30,7 @@
 #include <vector>
 #include <stdlib.h>
 #include <string.h>
+#include <strutils.h>
 
 
 //-----------------------------------------------------------------------------

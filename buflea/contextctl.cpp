@@ -156,14 +156,16 @@ REEVAL:
                 // we hold this in association with the IP that asked for that IP
                 DnsCommon* pc = reinterpret_cast<DnsCommon*>(pb);
 
-                __dnsssl->queue_host(_cliip, *pc);
-
                 SADDR_46 sad(pc->client);
-                SADDR_46 dad(htonl(pc->domainip));
+                SADDR_46 dad(pc->domainip);
+
                 GLOGI("DNS for client:" << sad.c_str()<<"/"<<pc->client << " [ to connect to-> ] "  << dad.c_str() <<
                 ", " << pc->hostname <<
-                " = " << pc->sizee);
+                " = " << pc->sizee << "\n");
+
+                __dnsssl->queue_host(*pc);
 /*
+
                 // add to session as well.
                 std::string ip("S");
 
