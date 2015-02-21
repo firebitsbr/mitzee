@@ -147,7 +147,7 @@ REEVAL:
         case 'h':
         case 'S':
         case 's':
-            __task->schedule(tasker::eREDNS_REDIRECTS);
+            __task->schedule(tasker::eREDNS_REDIRECTS,"");
             __db->instertto(string(pb));
             break;
         case 'D': // Raw SEND   <__packed__ DnsCommon>

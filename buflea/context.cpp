@@ -27,6 +27,7 @@
 #include "ctxthread.h"
 #include "listeners.h"
 #include "minidb.h"
+#include "tasker.h"
 
 //-----------------------------------------------------------------------------
 #define LOCAL_SZ 8912
@@ -418,17 +419,20 @@ bool Ctx::_is_access_blocked(const SADDR_46& addr, const char* host, const char*
             {
                 string msg = "Host:_"; msg += host; msg += "_is_blocked_by_proxy_host_rules";
                 return _go_redirect(msg.c_str());
-                //return _deny_dest_host("\n-HOST-blocked\n");
             }
         }
         else
         {
+            if(!__db->check_hostaddr(addr))
+            {
+                __task->schedule(tasker::eDNS_REVERSE, addr.c_str());
+                return false;//allow for now thill the name is added to the reverse dns
+            }
             bool b = __db->is_host_allowed(addr);
             if((hrule==0 && b) ||  (hrule==1 && !b))
             {
                 string msg = "Host:_"; msg += addr.c_str(); msg += "_is_blocked_by_proxy_host_rules";
                 return _go_redirect(msg.c_str());
-                //return _deny_dest_host("\n-HOST-blocked\n");
             }
         }
     }

@@ -1141,7 +1141,7 @@
 	<matypes.h>
 	<string.h>
 
-1423157700 /home/marius/CPP/GUGLE/src/mitzee/mcoinclude/matypes.h
+1423506371 /home/marius/CPP/GUGLE/src/mitzee/mcoinclude/matypes.h
 	<stddef.h>
 	<os.h>
 	<sock.h>
@@ -1156,13 +1156,13 @@
 	<sstream>
 	<consts.h>
 
-1422984352 source:/home/marius/CPP/GUGLE/src/mitzee/mcoinclude/minidb.cpp
+1423518120 source:/home/marius/CPP/GUGLE/src/mitzee/mcoinclude/minidb.cpp
 	<iostream>
 	<sock.h>
 	<minidb.h>
 	<config.h>
 
-1422976763 /home/marius/CPP/GUGLE/src/mitzee/mcoinclude/minidb.h
+1423518043 /home/marius/CPP/GUGLE/src/mitzee/mcoinclude/minidb.h
 	<os.h>
 	<sock.h>
 	<strutils.h>
@@ -1187,7 +1187,7 @@
 1422902110 /home/marius/CPP/GUGLE/src/mitzee/buflea/configprx.h
 	<config.h>
 
-1422987485 source:/home/marius/CPP/GUGLE/src/mitzee/buflea/context.cpp
+1423518237 source:/home/marius/CPP/GUGLE/src/mitzee/buflea/context.cpp
 	<assert.h>
 	<iostream>
 	<sstream>
@@ -1201,6 +1201,7 @@
 	"ctxthread.h"
 	"listeners.h"
 	"minidb.h"
+	"tasker.h"
 
 1422978666 /home/marius/CPP/GUGLE/src/mitzee/buflea/main.h
 	<dlfcn.h>
@@ -1318,7 +1319,7 @@
 1422572434 /home/marius/CPP/GUGLE/src/mitzee/buflea/context5.h
 	"context.h"
 
-1423350321 source:/home/marius/CPP/GUGLE/src/mitzee/buflea/contextctl.cpp
+1423510614 source:/home/marius/CPP/GUGLE/src/mitzee/buflea/contextctl.cpp
 	<assert.h>
 	<iostream>
 	<sstream>
@@ -1567,10 +1568,13 @@
 	<sslcrypt.h>
 	<config.h>
 
-1422979129 /home/marius/CPP/GUGLE/src/mitzee/buflea/tasker.h
+1423510703 /home/marius/CPP/GUGLE/src/mitzee/buflea/tasker.h
 	<os.h>
+	<string>
+	<deque>
 
-1422983275 source:/home/marius/CPP/GUGLE/src/mitzee/buflea/tasker.cpp
+1423516856 source:/home/marius/CPP/GUGLE/src/mitzee/buflea/tasker.cpp
+	<minidb.h>
 	"tasker.h"
 	"configprx.h"
 

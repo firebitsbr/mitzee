@@ -1,3 +1,5 @@
+
+#include <minidb.h>
 #include "tasker.h"
 #include "configprx.h"
 
@@ -18,10 +20,14 @@ tasker::~tasker()
     __task=0;
 }
 
-void    tasker::schedule(E_TASKS et, time_t t)
+void    tasker::schedule(E_TASKS et, const std::string& data, time_t t)
 {
-    _when=t; // todo
-    _dotask=et;
+    TaskQueue::Task ts;
+
+    ts._when = t;
+    ts._what = et;
+    ts._data = data;
+    _queue.push(ts);
 }
 
 void tasker::thread_main()
@@ -30,21 +36,24 @@ void tasker::thread_main()
     while(!_bstop && __alive)
     {
         sleep(2);
-        if(_dotask!=eNA)
+        TaskQueue::Task t;
+
+        if(_queue.pop(t))
         {
-            AutoLock __a(&_m);
-
-
-            switch(_dotask)
+            switch(t._what)
             {
                 case eREDNS_REDIRECTS:
-                    GLOGD("refreshing domains configured on redirect so wont overwelm one IP if the domain has more than one IP");
                     GCFG->refresh_domains();
+                    break;
+                case eDNS_QUERY:
+
+                    break;
+                case eDNS_REVERSE:
+                    __db->dnsgetname(SADDR_46(t._data.c_str()),true);
                     break;
                 default:
                     break;
             }
-            _dotask=eNA;
         }
     }
     --__alivethrds;

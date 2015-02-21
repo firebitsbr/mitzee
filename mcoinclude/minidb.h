@@ -236,9 +236,9 @@ public:
     bool        is_client_allowed(const SADDR_46& ip);
     bool        is_host_allowed(const char* pip);
     bool        is_host_allowed(const SADDR_46& ip);
-
+    bool        check_hostaddr(const SADDR_46& ip);
     const       SADDR_46&   dnsgetip(const char* hname);
-    const       string& dnsgetname(const SADDR_46& ip46);
+    const       string& dnsgetname(const SADDR_46& ip46, bool addit);
 
     bool        is_admin(const SADDR_46& ip)const;  // allowed allways
     bool        is_subscribed(const SADDR_46& ip)const;  // allowed allways

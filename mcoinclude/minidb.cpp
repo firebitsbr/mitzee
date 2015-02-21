@@ -136,11 +136,16 @@ const SADDR_46& DbAccess::dnsgetip(const char* hname)
 
 //-----------------------------------------------------------------------------
 // local dns database to avoid dns calls
-const string& DbAccess::dnsgetname(const SADDR_46& ip46)
+const string& DbAccess::dnsgetname(const SADDR_46& ip46, bool addit)
 {
-    AutoLock   r(&_mqueue);
+    static  std::string     saticstring="*";
+    AutoLock                r(&_mqueue);
 
     StorItem<string>* pip = _reverse_dns.find_tac(ip46);
+    if(addit==false && pip==0){
+        return saticstring;
+    }
+
     if(pip)
     {
         pip->t = _now;
@@ -148,24 +153,11 @@ const string& DbAccess::dnsgetname(const SADDR_46& ip46)
         return pip->data;
     }
 
-    char name[196];
+    char name[196]={0};
     char* pname=name;
     if(sock::dnsgetnameinfo(ip46, name))
     {
-        //hold on to xxx.zzz
-        pname+=strlen(name)-1;
-        int dots=0;
-        while(pname>name)
-        {
-            if(*pname=='.' && ++dots==2)
-            {
-                pname++;
-                break;
-            };
-            --pname;
-        }
-
-        StorItem<string> s = {_now, pname};
+        StorItem<string> s = {_now, name};
         _reverse_dns.add_ta(ip46, s);
     }
     else
@@ -238,9 +230,16 @@ bool    DbAccess::is_host_allowed(const char* pip)
 }
 
 //-----------------------------------------------------------------------------
+bool    DbAccess::check_hostaddr(const SADDR_46& ip)
+{
+    return !(DbAccess::dnsgetname(ip,false)=="*");
+}
+
+
+//-----------------------------------------------------------------------------
 bool    DbAccess::is_host_allowed(const SADDR_46& ip)
 {
-    const string& dname =  DbAccess::dnsgetname(ip);
+    const string& dname =  DbAccess::dnsgetname(ip,false);
     auto const &  ipt = _dest_ips.find(dname);
     return ipt != _dest_ips.end();
 }
@@ -330,7 +329,7 @@ void DbAccess::instertto(const string& data, bool permanent)
                 {
                     if(isdigit(token[1]))
                     {
-                        const string& dn =  dnsgetname(sin);
+                        const string& dn =  dnsgetname(sin,true);
                         _dest_ips.insert(dn);
                     }
                     else
@@ -341,7 +340,7 @@ void DbAccess::instertto(const string& data, bool permanent)
                 {
                     if(isdigit(token[1]))
                     {
-                        const string& dn =  dnsgetname(sin);
+                        const string& dn =  dnsgetname(sin, true);
                         _dest_ips.insert(dn);
                     }
                     else
@@ -471,7 +470,7 @@ void DbAccess::_load()
             }
             else
             {
-                const string& dname =  DbAccess::dnsgetname(SADDR_46(line.c_str(),0));
+                const string& dname =  DbAccess::dnsgetname(SADDR_46(line.c_str(),0),true);
                 GLOGI("Removed remote host:" << dname);
                 _dest_ips.insert(dname);
             }

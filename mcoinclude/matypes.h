@@ -27,7 +27,7 @@ struct DnsCommon
     char        header;     //'D
     int32_t     sizee;
     int32_t     sequence;   // ++
-    time_t      now;        // time
+    int32_t     now;        // time
     u_int32_t   client;     // client ip on DNS (this can be internal IP if dns runs on personal net)
     u_int32_t   clientpub;  // client ip on PROXY
     u_int32_t   prxip;      // prx that is new

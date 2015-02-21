@@ -116,7 +116,7 @@ bool Watcher::https_notify_proxy( Message& m, int c, const SADDR_46& uip)
     }
 
     bool b = false;
-    if(c == 0) //client message
+    if(1) //response message
     {
         for(auto & it : m._responses)
         {
@@ -132,11 +132,11 @@ bool Watcher::https_notify_proxy( Message& m, int c, const SADDR_46& uip)
                 dns.now      = time(0);
                 dns.client   = uip.ip4();
                 dns.prxip    = PCFG->_srv._prx_addr.ip4();
-                dns.domainip = a.origip.s_addr;
+                dns.domainip = htonl(a.origip.s_addr);
                 dns.sizee    = sizeof(dns);
                 ::strcpy(dns.hostname,a.name);
 
-                GLOGI("Q:DNS: C:"<<IP2STR(htonl(dns.client))<<"/"<<dns.client<<" ->redir1[" << dns.domainip <<"/" << dns.hostname<< "] --->PRX:"<< PCFG->_srv._prx_addr  <<" = " <<dns.sizee );
+                GLOGI("Q:DNS: C:"<<IP2STR(htonl(dns.client))<<"/"<<dns.client<<" ->redir1[" << IP2STR(dns.domainip) <<"/" << dns.hostname<< "] --->PRX:"<< PCFG->_srv._prx_addr  <<" = " <<dns.sizee );
 
                 if(_try_connect(true)==false)
                 {
@@ -176,7 +176,7 @@ bool Watcher::https_notify_proxy( Message& m, int c, const SADDR_46& uip)
                 dns.sizee    = sizeof(dns);
                 ::strcpy(dns.hostname, q.name);
 
-                GLOGI("R:DNS: C:"<<IP2STR(htonl(dns.client))<<"/"<<dns.client<<" ->redir2[" << IP2STR(dns.domainip) << "] ---->PRX:" <<PCFG->_srv._prx_addr <<" = " <<dns.sizee );
+                GLOGI("R:DNS: C:"<<IP2STR(dns.client)<<"/"<<dns.client<<" ->redir2[" << IP2STR(dns.domainip) << "] ---->PRX:" <<PCFG->_srv._prx_addr <<" = " <<dns.sizee );
 
                 if(_try_connect(true)==false)
                 {
@@ -225,8 +225,8 @@ void   Watcher::_keep_alive()
         int bytes = _prxsock.sendall("#,",2); // keep connection
         if(bytes!=0)
         {
-            _prxsock.destroy();
             GLOGE(": "<< "destroing connect " << PCFG->_srv._prx_addr.c_str() << ":" <<  PCFG->_srv._prx_addr.port() << "\n");
+            _try_connect(0);
         }
         return;
     }

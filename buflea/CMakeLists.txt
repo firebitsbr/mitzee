@@ -49,6 +49,7 @@ ADD_EXECUTABLE(buflea configprx.cpp
                     threadpool.cpp
                     tinyclasses.cpp
                     httphdr.cpp
+                    tasker.cpp
                     ../mcoinclude/sslcrypt.cpp
                     ../mcoinclude/config.cpp
                     ../mcoinclude/minidb.cpp )

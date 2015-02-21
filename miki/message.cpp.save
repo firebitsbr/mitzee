@@ -197,9 +197,6 @@ void  Message::_decode_answer(const char*& pdata, u_int16_t cnt, std::vector<Ans
             a.rdlength == sizeof(struct in_addr))
         {
 			::memcpy(&a.origip, pdata, sizeof(struct in_addr));
-
-			GLOGI("saving original IP:" << inet_ntoa(a.origip));
-
 			::memcpy(&a.u.ipv4, pdata, sizeof(struct in_addr));
             a.paddr = (uint8_t*)pdata;            // ptr in buffer where the addr we replace is located
             //_spoof
@@ -227,7 +224,7 @@ void  Message::_decode_answer(const char*& pdata, u_int16_t cnt, std::vector<Ans
 
         if ((char*)pdata - (char*)_buff > _sz)
         {
-            GLOGE("error. invalid length buffer:  out sz" << (char*)pdata - (char*)_buff  << " sz " <<_sz);
+            printf("error. invalid length buffer: %ld out of %d\n",(char*)pdata - (char*)_buff ,_sz);
             break;
         }
         GLOGX("\n");
@@ -338,18 +335,17 @@ bool Message::replace_domains()
                 {
                     ::memcpy(a.paddr, &r.ip, sizeof(struct in_addr));
                     ::memcpy(&a.u.ipv4, a.paddr, sizeof(struct in_addr));
-                }
                 else
                 {    GLOGE("a.paddr is 0");}
+				
+
                 *a.pttl=0;
                 replaced=true;
             }
         }
         if(a.paddr)
-        {
             ::memcpy(&a.newip, a.paddr, sizeof(struct in_addr));
-            ::memcpy(&a.u.ipv4, a.paddr, sizeof(struct in_addr));
-        }
+        ::memcpy(&a.u.ipv4, a.paddr, sizeof(struct in_addr));
          GLOGX("DOMAIN:" << a.name << " IP: " << IP2STR(htonl(a.newip.s_addr)));
     }
     return replaced;
