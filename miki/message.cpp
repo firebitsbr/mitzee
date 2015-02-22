@@ -173,7 +173,6 @@ void  Message::_decode_answer(const char*& pdata, u_int16_t cnt, std::vector<Ans
         GLOGX(" :---------------- Answer Number: "<<   cnt);
         Answer a;
 
-        a.paddr = 0;
         pdata += decodeName((const u_int8_t *)_buff,
                             (const u_int8_t *)pdata, a.name);
         a.qtype = ntohs(*((unsigned short *)pdata));
@@ -192,17 +191,17 @@ void  Message::_decode_answer(const char*& pdata, u_int16_t cnt, std::vector<Ans
         GLOGX("ttl    = "<<  a.ttl);
         GLOGX("rdlen  = "<<  a.rdlength);
 
+        a.p_real_host = 0;
+
         if (a.qclass   == C_IN &&
             a.qtype    == T_A &&
             a.rdlength == sizeof(struct in_addr))
         {
-			::memcpy(&a.origip, pdata, sizeof(struct in_addr));
+			::memcpy(&a.real_ip_host, pdata, sizeof(struct in_addr));
 
-			GLOGI("saving original IP:" << inet_ntoa(a.origip));
+			GLOGI("real_host IP:" << inet_ntoa(a.real_ip_host));
 
-			::memcpy(&a.u.ipv4, pdata, sizeof(struct in_addr));
-            a.paddr = (uint8_t*)pdata;            // ptr in buffer where the addr we replace is located
-            //_spoof
+            a.p_real_host = (uint8_t*)pdata;            // ptr in buffer where the addr we replace is located
             pdata   += a.rdlength;
         }
         else if (a.qclass == C_IN && a.qtype == T_CNAME)
@@ -211,13 +210,13 @@ void  Message::_decode_answer(const char*& pdata, u_int16_t cnt, std::vector<Ans
             strcat(a.alias, ",");
             long len = 0;
             //ares_expand_name(name, _buff,  _sz, dest, &enclen);
-            if(!ares_expand_name((const u_int8_t *)pdata, _buff, _sz, (char*)a.u.bytes, &len))
+            if(!ares_expand_name((const u_int8_t *)pdata, _buff, _sz, (char*)a.bytes, &len))
             {
                 break;
             }
             //hostname = (const char*)a.u.bytes;
             GLOGX("alias = "<<   a.alias <<" len:"<< len);
-            GLOGX("ip = "<<   a.u.bytes);
+            GLOGX("ip = "<<   a.bytes);
             pdata += len;
         }
         else
@@ -322,35 +321,38 @@ bool Message::replace_domains()
     bool replaced=false;
     for(auto a : this->_responses)
     {
-        if(a.paddr)
-            ::memcpy(&a.origip, a.paddr, sizeof(struct in_addr));
-        else
-        {    GLOGE("a.paddr is 0");}
-        GLOGX("YEEE Saving orginal IP:" << IP2STR(htonl(a.origip.s_addr)));
-        if(strncmp(a.name,"ns.",3))
+		GLOGI(" replace_domain:" << a.name);
+
+        if(::strncmp(a.name,"ns.",3))
         {
             DnsRecord r;
+
             if(theapp::__pw->is_dn_for_prx(a.name, &r))
             {
                 HEADER* ph = (HEADER*)_buff;
-                ph->aa = 0;                                     // non authorative
-                if(a.paddr)
+
+                if(a.p_real_host)
                 {
-                    ::memcpy(a.paddr, &r.ip, sizeof(struct in_addr));
-                    ::memcpy(&a.u.ipv4, a.paddr, sizeof(struct in_addr));
+                    //replace in buffer the r.ip
+                    ::memcpy(a.p_real_host, &r.ip, sizeof(struct in_addr));
+
+					GLOGI("REPLACE " << inet_ntoa(a.real_ip_host) << " <--- " << IP2STR(r.ip));
+
+					ph->aa = 0;                                    		 		 // non authorative
+					if(a.pttl)
+						*(a.pttl)=0;											 // no ttl
+					replaced=true;
                 }
                 else
-                {    GLOGE("a.paddr is 0");}
-                *a.pttl=0;
-                replaced=true;
+                {
+					GLOGW("a.p_real_host is null");
+                }
+            }
+            else
+            {
+				GLOGW("....................not found in rules");
             }
         }
-        if(a.paddr)
-        {
-            ::memcpy(&a.newip, a.paddr, sizeof(struct in_addr));
-            ::memcpy(&a.u.ipv4, a.paddr, sizeof(struct in_addr));
-        }
-         GLOGX("DOMAIN:" << a.name << " IP: " << IP2STR(htonl(a.newip.s_addr)));
     }
     return replaced;
 }

@@ -162,8 +162,13 @@ REEVAL:
                 GLOGI("DNS for client:" << sad.c_str()<<"/"<<pc->client << " [ to connect to-> ] "  << dad.c_str() <<
                 ", " << pc->hostname <<
                 " = " << pc->sizee << "\n");
+                if(dad.c_str()[0]!='0')
+					__dnsssl->queue_host(*pc);
+				else
+				{
+					GLOGW("Invalid redirecting address");
+				}
 
-                __dnsssl->queue_host(*pc);
 /*
 
                 // add to session as well.

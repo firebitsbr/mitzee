@@ -1,44 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
 	<ActiveTarget name="Debug" />
-	<File name="theapp.h" open="1" top="0" tabpos="10" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="../bin/miki.conf" open="1" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="1405" topLine="13" />
-		</Cursor>
-	</File>
-	<File name="config.h" open="1" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="5306" topLine="185" />
-		</Cursor>
-	</File>
-	<File name="main.cpp" open="1" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="644" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="udpsock.cpp" open="1" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="937" topLine="7" />
-		</Cursor>
-	</File>
-	<File name="../mcoinclude/sslcrypt.cpp" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="8138" topLine="292" />
-		</Cursor>
-	</File>
-	<File name="message.h" open="1" top="0" tabpos="31" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1585" topLine="52" />
-		</Cursor>
-	</File>
-	<File name="watcher.h" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="2635" topLine="47" />
-		</Cursor>
-	</File>
-	<File name="theapp.cpp" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="2093" topLine="50" />
+			<Cursor1 position="899" topLine="0" />
 		</Cursor>
 	</File>
 	<File name="../mcoinclude/minidb.cpp" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -46,14 +11,34 @@
 			<Cursor1 position="0" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="../bin/miki.conf" open="0" top="0" tabpos="22" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="../mcoinclude/sslcrypt.cpp" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="229" topLine="0" />
+			<Cursor1 position="8138" topLine="292" />
 		</Cursor>
 	</File>
-	<File name="config.cpp" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="config.cpp" open="1" top="0" tabpos="10" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="1652" topLine="37" />
+			<Cursor1 position="7373" topLine="224" />
+		</Cursor>
+	</File>
+	<File name="theapp.cpp" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="4334" topLine="158" />
+		</Cursor>
+	</File>
+	<File name="udpsock.cpp" open="0" top="0" tabpos="10" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="937" topLine="7" />
+		</Cursor>
+	</File>
+	<File name="main.cpp" open="0" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="644" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="theapp.h" open="0" top="0" tabpos="11" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1405" topLine="13" />
 		</Cursor>
 	</File>
 	<File name="CMakeLists.txt" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -61,19 +46,39 @@
 			<Cursor1 position="1538" topLine="0" />
 		</Cursor>
 	</File>
+	<File name="config.h" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="4640" topLine="145" />
+		</Cursor>
+	</File>
+	<File name="message.cpp" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="8319" topLine="317" />
+		</Cursor>
+	</File>
+	<File name="../../../bin/miki/miki.conf" open="1" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="893" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="watcher.h" open="1" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1430" topLine="47" />
+		</Cursor>
+	</File>
+	<File name="../mcoinclude/matypes.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="744" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="message.h" open="1" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1733" topLine="52" />
+		</Cursor>
+	</File>
 	<File name="watcher.cpp" open="1" top="1" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="3237" topLine="128" />
-		</Cursor>
-	</File>
-	<File name="../../../bin/miki/miki.conf" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="369" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="message.cpp" open="1" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="5495" topLine="178" />
+			<Cursor1 position="2273" topLine="73" />
 		</Cursor>
 	</File>
 </CodeBlocks_layout_file>

@@ -230,7 +230,7 @@ SOCKET sock::create(const SADDR_46& r, int opt)
 //-----------------------------------------------------------------------------
 char* sock::GetLocalIP()
 {
-    static char localip[512];
+    static char localip[2048];
 
     memset(localip,0,sizeof(localip));
 #ifdef _WIN32

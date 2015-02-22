@@ -97,11 +97,21 @@ bool Watcher::is_dn_for_prx(const char* dname, DnsRecord* rec)
     std::map<std::string,SADDR_46>::const_iterator rule = PCFG->rules.find(dname);
     if(rule != PCFG->rules.end())
     {
-        //    GLOGD("domain: " << dname << " replaced with: " << rule->second.c_str()  << "/" << IP2STR(rule->second));
         rec->ip = htonl(rule->second.ip4());
-//        std::cout << "MASQ: " << dname << " -> " << IP2STR(htonl(rec->ip)) << "\n";
         return true;
     }
+
+
+	for(const auto& w : PCFG->rules)
+	{
+		if(::strstr(dname, w.first.c_str()))
+		{
+			rec->ip = htonl(w.second.ip4());
+			return true;
+		}
+	}
+
+
     return false;
 
 }
@@ -116,11 +126,13 @@ bool Watcher::https_notify_proxy( Message& m, int c, const SADDR_46& uip)
     }
 
     bool b = false;
-    if(1) //response message
+    if(PCFG->_srv.onresponse) //response message
     {
         for(auto & it : m._responses)
         {
             const Message::Answer& a  = it;
+
+            GLOGI("searching: " << a.name);
             auto dn = PCFG->rules.find(a.name);
 
             if(dn != PCFG->rules.end())
@@ -132,7 +144,7 @@ bool Watcher::https_notify_proxy( Message& m, int c, const SADDR_46& uip)
                 dns.now      = time(0);
                 dns.client   = uip.ip4();
                 dns.prxip    = PCFG->_srv._prx_addr.ip4();
-                dns.domainip = htonl(a.origip.s_addr);
+                dns.domainip = htonl(a.real_ip_host.s_addr);
                 dns.sizee    = sizeof(dns);
                 ::strcpy(dns.hostname,a.name);
 
@@ -194,6 +206,10 @@ bool Watcher::https_notify_proxy( Message& m, int c, const SADDR_46& uip)
                 b = true;           //one name is OK
                 break;
             }
+            else
+            {
+				GLOGI(q.name << "not found in rules");
+            }
         }
     }
     return b;
@@ -254,18 +270,27 @@ bool   Watcher::_try_connect(bool doit)
 
 void   Watcher::_register_subscriber()
 {
-    std::vector<std::string>    localips;
-    std::string                 token;
-    std::string                 localaddr = sock::GetLocalIP();
-    std::istringstream          iss(localaddr);
-    SADDR_46                    local;
+	std::vector<std::string>    localips;
 
-    while(getline(iss, token, ','))
-    {
-        localips.push_back(token);
-        _localaddr = SADDR_46(token.c_str());
-    }
+	if(!PCFG->_srv.localip.empty())
+	{
+		_localaddr = SADDR_46(PCFG->_srv.localip.c_str());
+		localips.push_back(PCFG->_srv.localip);
+	}
+	else
+	{
 
+		std::string                 token;
+		std::string                 localaddr = sock::GetLocalIP();
+		std::istringstream          iss(localaddr);
+		SADDR_46                    local;
+
+		while(getline(iss, token, ','))
+		{
+			localips.push_back(token);
+			_localaddr = SADDR_46(token.c_str());
+		}
+	}
 
 
     if(_try_connect(true))

@@ -67,16 +67,12 @@ public:
         u_int32_t   ttl;
         u_int16_t   rdlength;
 
-        in_addr     origip;
+        in_addr     real_ip_host;
         in_addr     newip;
 
-        uint8_t*    paddr; // ptr in buffer
+        uint8_t*    p_real_host; // ptr in buffer
         uint32_t*   pttl;    // ptr in buffer
-
-        union {
-            u_int32_t   ipv4;
-            u_int8_t    bytes[128];
-        }u;
+		u_int8_t	bytes[160];
     };
     void    clear();
     bool    parse(size_t len);

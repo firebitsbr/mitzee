@@ -172,6 +172,8 @@ void Conf::_assign( const char* pred, const char* val, int line)
             BIND(_srv,cache);
             BIND(_srv,nextdnss);
             BIND(_srv,notify);
+            BIND(_srv,localip);
+            BIND(_srv,onresponse);
 
             if(lpred[0]=='}')
             {
@@ -242,7 +244,7 @@ void Conf::_assign( const char* pred, const char* val, int line)
                 std::map<std::string,SADDR_46>::const_iterator b = rules.begin();
                 for(; b!= rules.end(); ++b)
                 {
-                    GLOGX("rule: " << b->first << "=" << b->second.c_str());
+                    GLOGI("rule: " << b->first << "=" << b->second.c_str());
                 }
             }
             else

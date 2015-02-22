@@ -151,7 +151,7 @@ public:
 
     struct Srv
     {
-        Srv():order(1),port(8888),threads(1),timeout(16),notify(1) {};
+        Srv():order(1),port(8888),threads(1),timeout(16),notify(1),onresponse(0) {};
         int             order;  //1 allow-deny  0 deny-allow
         int             port;
         int             threads;
@@ -165,8 +165,10 @@ public:
         std::string     proxyip;
         std::string     slog;
         std::string     cache;
+        std::string     localip;
         SADDR_46        _prx_addr;
         int             notify;  //s or c
+        int				onresponse;
     } _srv;
 
     std::map<std::string,SADDR_46> rules;
