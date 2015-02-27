@@ -1,0 +1,1 @@
+/usr/bin/c++       CMakeFiles/ooohshell.dir/main.o CMakeFiles/ooohshell.dir/argspars.o CMakeFiles/ooohshell.dir/clicontext.o CMakeFiles/ooohshell.dir/tcppipe.o CMakeFiles/ooohshell.dir/ttyptmdev.o  -o bin/ooohshell  -L/home/marius/CPP/GUGLE/src/mitzee/oohshell/../lib -rdynamic -lpthread -ldl ../lib/libmcosock.a 

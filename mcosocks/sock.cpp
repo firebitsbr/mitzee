@@ -675,7 +675,7 @@ tcp_srv_sock::tcp_srv_sock() {}
 
 tcp_srv_sock::~tcp_srv_sock() {}
 //-----------------------------------------------------------------------------
-SOCKET tcp_srv_sock::create(int port, int opt, const char* )
+SOCKET tcp_srv_sock::create(int port, int opt, const char* iface)
 {
     _error = 0;
     ::memset(&_local_sin,0,sizeof(_local_sin));
@@ -687,8 +687,13 @@ SOCKET tcp_srv_sock::create(int port, int opt, const char* )
         _error = errno;
         return (SOCKET)-1;
     }
+    struct sockaddr_in some;
+     // store IP in antelope
     _local_sin.sin_family		= AF_INET;
-    _local_sin.sin_addr.s_addr	= htonl(INADDR_ANY);
+    if(iface)
+        inet_aton(iface, &_local_sin.sin_addr);
+    else
+        _local_sin.sin_addr.s_addr	= htonl(INADDR_ANY);
     _local_sin.sin_port		    = htons(n_port = port);
     if(::bind(_thesock,(struct sockaddr*)&_local_sin,_local_sin.rsz()) < 0)
     {
@@ -738,12 +743,17 @@ SOCKET tcp_srv_sock::create(const SADDR_46& r, int opt)
 SOCKET tcp_srv_sock::accept(tcp_cli_sock& cliSock)
 {
     _error = 0;
+
+    ::memset(&cliSock._remote_sin,0,sizeof(cliSock._remote_sin));
+
     socklen_t clilen = (socklen_t)sizeof(cliSock._remote_sin);
+
     cliSock._thesock = ::accept(_thesock,
                                 (struct sockaddr*)&cliSock._remote_sin,
                                 &clilen);
-    if((int)cliSock._thesock < 0)
+    if((int)cliSock._thesock <=0 )
     {
+        printf("accept: %d %s\n", errno, strerror(errno));
         _error = errno;
     }
     if(_buffers[0] && _buffers[1])
@@ -752,13 +762,12 @@ SOCKET tcp_srv_sock::accept(tcp_cli_sock& cliSock)
         set_option(SO_RCVBUF,_buffers[1]);
     }
 
-    //cout << "new cli sock: " << cliSock._thesock << "\n";
     return cliSock._thesock;
 }
 
 
 //-----------------------------------------------------------------------------
-SOCKET tcp_cli_sock::create(int , int opt, const char* )
+SOCKET tcp_cli_sock::create(int , int opt, const char* iface)
 {
     _hostent = 0;
     assert(_thesock<=0);
@@ -819,7 +828,7 @@ int tcp_cli_sock::try_connect(const char* sip, int port)
         {
             _connecting = 1;
         }
-        return -1;
+        return 1;
     }
     _connecting = 0;
     return 0; //connected

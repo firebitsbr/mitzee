@@ -1,0 +1,129 @@
+# depslib dependency file v1.0
+1425051850 source:/home/marius/CPP/GUGLE/src/oohshell/argspars.cpp
+	"main.h"
+	"argspars.h"
+
+1425072040 /home/marius/CPP/GUGLE/src/oohshell/main.h
+	<sys/types.h>
+	<sys/wait.h>
+	<iostream>
+	<set>
+	<procinst.h>
+
+1425071369 /home/marius/CPP/GUGLE/src/mcoinclude/procinst.h
+	<signal.h>
+	<iostream>
+	<string>
+	<sys/types.h>
+	<sys/stat.h>
+	<errno.h>
+	<termios.h>
+	<unistd.h>
+	<fcntl.h>
+	<sys/file.h>
+	<strutils.h>
+
+1425063162 /home/marius/CPP/GUGLE/src/mcoinclude/strutils.h
+	<matypes.h>
+	<stdarg.h>
+	<stdio.h>
+	<ctype.h>
+	<string.h>
+	<fstream>
+	<sstream>
+	<consts.h>
+
+1423506371 /home/marius/CPP/GUGLE/src/mcoinclude/matypes.h
+	<stddef.h>
+	<os.h>
+	<sock.h>
+
+1424967718 /home/marius/CPP/GUGLE/src/mcoinclude/os.h
+	<errno.h>
+	<unistd.h>
+	<assert.h>
+	<pthread.h>
+	<semaphore.h>
+	<stdio.h>
+	<inttypes.h>
+	<wchar.h>
+
+1424991460 /home/marius/CPP/GUGLE/src/mcosocks/sock.h
+	<os.h>
+	<sys/socket.h>
+	<resolv.h>
+	<sys/select.h>
+	<arpa/inet.h>
+	<sys/ioctl.h>
+	<sys/time.h>
+	<netdb.h>
+	<stdlib.h>
+	<string.h>
+	<string>
+	<fstream>
+	<math.h>
+
+1421556360 /home/marius/CPP/GUGLE/src/mcoinclude/consts.h
+	<os.h>
+	<matypes.h>
+	<string.h>
+
+1424991509 /home/marius/CPP/GUGLE/src/oohshell/argspars.h
+
+1425071906 source:/home/marius/CPP/GUGLE/src/oohshell/clicontext.cpp
+	<iostream>
+	<signal.h>
+	"clicontext.h"
+	"main.h"
+
+1425057777 /home/marius/CPP/GUGLE/src/oohshell/clicontext.h
+	<os.h>
+	<sock.h>
+	<iostream>
+	"ttyptmdev.h"
+	"main.h"
+
+1425063151 /home/marius/CPP/GUGLE/src/oohshell/ttyptmdev.h
+	<string>
+	"main.h"
+
+1424991509 source:/home/marius/CPP/GUGLE/src/oohshell/tcppipe.cpp
+	"tcppipe.h"
+
+1425051850 /home/marius/CPP/GUGLE/src/oohshell/tcppipe.h
+	"main.h"
+
+1425072024 source:/home/marius/CPP/GUGLE/src/oohshell/ttyptmdev.cpp
+	<os.h>
+	<sys/types.h>
+	<sys/stat.h>
+	<sys/ioctl.h>
+	<fcntl.h>
+	<stropts.h>
+	<iostream>
+	<stdlib.h>
+	<fcntl.h>
+	<errno.h>
+	<string.h>
+	<unistd.h>
+	<stdio.h>
+	<termios.h>
+	"ttyptmdev.h"
+
+1425071426 source:/home/marius/CPP/GUGLE/src/oohshell/main.cpp
+	<iostream>
+	<os.h>
+	<sock.h>
+	<signal.h>
+	<consts.h>
+	<fcntl.h>
+	<stdio.h>
+	<termios.h>
+	<vector>
+	<sys/types.h>
+	<sys/wait.h>
+	"ttyptmdev.h"
+	"clicontext.h"
+	"argspars.h"
+	"main.h"
+

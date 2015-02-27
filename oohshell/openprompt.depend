@@ -1,0 +1,141 @@
+# depslib dependency file v1.0
+1425056189 source:/home/marius/CPP/GUGLE/src/openprompt/main.cpp
+	<iostream>
+	<os.h>
+	<sock.h>
+	<signal.h>
+	<consts.h>
+	<fcntl.h>
+	<stdio.h>
+	<termios.h>
+	<vector>
+	<sys/types.h>
+	<sys/wait.h>
+	"ttyptmdev.h"
+	"clicontext.h"
+	"argspars.h"
+
+1424967718 /home/marius/CPP/GUGLE/src/mcoinclude/os.h
+	<errno.h>
+	<unistd.h>
+	<assert.h>
+	<pthread.h>
+	<semaphore.h>
+	<stdio.h>
+	<inttypes.h>
+	<wchar.h>
+
+1424991460 /home/marius/CPP/GUGLE/src/mcosocks/sock.h
+	<os.h>
+	<sys/socket.h>
+	<resolv.h>
+	<sys/select.h>
+	<arpa/inet.h>
+	<sys/ioctl.h>
+	<sys/time.h>
+	<netdb.h>
+	<stdlib.h>
+	<string.h>
+	<string>
+	<fstream>
+	<math.h>
+
+1424977012 /home/marius/CPP/GUGLE/src/openprompt/ttyio.h
+	<string>
+
+1424982887 source:/home/marius/CPP/GUGLE/src/openprompt/ttyio.cpp
+	<os.h>
+	<sys/types.h>
+	<sys/stat.h>
+	<sys/ioctl.h>
+	<iostream>
+	<stdlib.h>
+	<fcntl.h>
+	<errno.h>
+	<string.h>
+	<unistd.h>
+	<stdio.h>
+	<termios.h>
+	"ttyio.h"
+
+1421556360 /home/marius/CPP/GUGLE/src/mcoinclude/consts.h
+	<os.h>
+	<matypes.h>
+	<string.h>
+
+1423506371 /home/marius/CPP/GUGLE/src/mcoinclude/matypes.h
+	<stddef.h>
+	<os.h>
+	<sock.h>
+
+1425058617 source:/home/marius/CPP/GUGLE/src/openprompt/clicontext.cpp
+	<iostream>
+	<signal.h>
+	"clicontext.h"
+	"main.h"
+
+1425057777 /home/marius/CPP/GUGLE/src/openprompt/clicontext.h
+	<os.h>
+	<sock.h>
+	<iostream>
+	"ttyptmdev.h"
+	"main.h"
+
+1424995186 /home/marius/CPP/GUGLE/src/openprompt/ttyptmdev.h
+	<string>
+	"main.h"
+
+1425053786 /home/marius/CPP/GUGLE/src/openprompt/main.h
+	<vector>
+	<procinst.h>
+
+1425051122 /home/marius/CPP/GUGLE/src/mcoinclude/procinst.h
+	<signal.h>
+	<iostream>
+	<string>
+	<sys/types.h>
+	<sys/stat.h>
+	<errno.h>
+	<termios.h>
+	<unistd.h>
+	<fcntl.h>
+	<sys/file.h>
+	<strutils.h>
+
+1425051791 source:/home/marius/CPP/GUGLE/src/openprompt/ttyptmdev.cpp
+	<os.h>
+	<sys/types.h>
+	<sys/stat.h>
+	<sys/ioctl.h>
+	<iostream>
+	<stdlib.h>
+	<fcntl.h>
+	<errno.h>
+	<string.h>
+	<unistd.h>
+	<stdio.h>
+	<termios.h>
+	"ttyptmdev.h"
+
+1425051850 source:/home/marius/CPP/GUGLE/src/openprompt/argspars.cpp
+	"main.h"
+	"argspars.h"
+
+1424991509 /home/marius/CPP/GUGLE/src/openprompt/argspars.h
+
+1424991509 source:/home/marius/CPP/GUGLE/src/openprompt/tcppipe.cpp
+	"tcppipe.h"
+
+1425051850 /home/marius/CPP/GUGLE/src/openprompt/tcppipe.h
+	"main.h"
+
+1425057954 /home/marius/CPP/GUGLE/src/mcoinclude/strutils.h
+	<matypes.h>
+	<stdarg.h>
+	<stdio.h>
+	<ctype.h>
+	<string.h>
+	<fstream>
+	<sstream>
+	<consts.h>
+

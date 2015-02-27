@@ -63,6 +63,7 @@
 		<Unit filename="../mcoinclude/minidb.h" />
 		<Unit filename="../mcoinclude/modiface.h" />
 		<Unit filename="../mcoinclude/os.h" />
+		<Unit filename="../mcoinclude/procinst.h" />
 		<Unit filename="../mcoinclude/sslcrypt.cpp" />
 		<Unit filename="../mcoinclude/sslcrypt.h" />
 		<Unit filename="../mcoinclude/strutils.h" />

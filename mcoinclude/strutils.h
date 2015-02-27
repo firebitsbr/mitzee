@@ -270,6 +270,19 @@ inline void  str_trimall(char* p, char c)
     *d=0;
 }
 
+inline const char* rstrchr(const char* str, char occ)
+{
+    const char *result = 0;
+    for (;;) {
+        const char *p = strchr(str, occ);
+        if (p == NULL)
+            break;
+        result = p;
+        str = p + 1;
+    }
+    return result;
+}
+
 inline kchar* str_lrtim(char* p)
 {
     kchar* orig=p;
@@ -288,6 +301,18 @@ inline kchar* str_lrtim(char* p)
     }
     return p;
 }
+
+inline char* str_trimo_cc(char* str,  const char* occ)
+{
+    char* pstart = str;
+    int l = ::strlen(occ);
+    while((pstart = ::strstr(str,occ)))
+    {
+        ::strcpy(pstart, pstart+l);
+    }
+    return str;
+}
+
 
 
 inline int str_cmp(kchar* s1, kchar* s2)

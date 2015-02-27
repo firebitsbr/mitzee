@@ -1,5 +1,5 @@
 /**
-# Copyright (C) 2007-2014 Chincisan Octavian-Marius(mariuschincisan@gmail.com) - coinscode.com - N/A
+# Copyright (C) 2007-2015 s(mariuschincisan@gmail.com) - coinscode.com - N/A
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
