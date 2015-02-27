@@ -1,0 +1,14 @@
+like telnet server,
+to be used on secure environment where no need to put ssh or dropbear
+just run it on a linux machind which has /dev/pts (ubuntu 12 and up)
+
+Use a telnet client to connect to the shell.
+
+compile with USE_THREAD in main.h becuase looks like without it
+zobies are around.
+
+work in progress...
+
+
+Marius C Feb 27 2015
+
