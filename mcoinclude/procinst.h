@@ -35,14 +35,14 @@ class procinst
 {
 public:
 
-    procinst( int sigsend, int sigsign, CBSIG foo, int to=5):_alive(true),
+    procinst( int sigsend, int sigsign, CBSIG foo, int to=2):_alive(true),
                                         _timout(to),
                                         _owner(false),
                                         _sigend(sigsend),
                                         _sigign(sigsign),
                                         _foo(foo)
     {
-        std::cout << "procinst " << getpid() <<","<< getppid() << " STARTING \r\n";
+        //std::cout << "procinst " << getpid() <<","<< getppid() << " STARTING \r\n";
     }
     ~procinst()
     {
@@ -50,13 +50,13 @@ public:
         if(_owner)
             ::unlink(_lockfile.c_str());
         _alive=false;
-        std::cout << "procinst " << getppid() <<" ---> "<< getpid() << " EXITING \r\n";
+        //std::cout << "procinst " << getppid() <<" ---> "<< getpid() << " EXITING \r\n";
     }
 
     int kill()
     {
         _alive=false;
-        printf ("stopping...\n");
+//        printf ("stopping...\n");
         std::string sys="touch "; sys+=_quitfile;
         system(sys.c_str());
         sleep(_timout);
@@ -71,8 +71,9 @@ public:
         }
         return _alive;
     }
-    int instance(int nargs, char * vargs[], bool single, bool d)
+    int instance(int nargs, char * vargs[], const char* nameadd,  bool single, bool d)
     {
+        char locname[256] = {0};
         const char* pappname = ::rstrchr(vargs[0],'/');
 
         if(pappname==0)
@@ -80,9 +81,11 @@ public:
         else
             pappname++;
 
+        ::sprintf(locname, "%s%s", pappname, nameadd);
+
         _lockfile = getuid() == 0 ? "/var/run/" : "/tmp/";
-        _lockfile += pappname;
-        _quitfile = "/tmp/"; _quitfile+=pappname; _quitfile+=".stop";
+        _lockfile += locname;
+        _quitfile = "/tmp/"; _quitfile+=locname; _quitfile+=".stop";
 
         if(single)
         {
@@ -120,7 +123,7 @@ protected:
 
         if(rc == 0)
         {
-            std::cout << "Locking file" << _lockfile << "\n";
+            //std::cout << "Locking file" << _lockfile << "\n";
             _owner=true; // is it required !?!
             return 0;
         }

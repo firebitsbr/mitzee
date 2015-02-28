@@ -254,7 +254,7 @@ bool   Watcher::_try_connect(bool doit)
 {
     _prxsock.destroy();
         bio_unblock(&_prxsock,1);
-    if(_prxsock.raw_connect(PCFG->_srv._prx_addr, 8)==-1)
+    if(_prxsock.raw_connect(PCFG->_srv._prx_addr, 8)==0)
     {
         GLOGE(": "<< "cannot connect " << PCFG->_srv._prx_addr.c_str() << ":" <<  PCFG->_srv._prx_addr.port() << "\n");
         return false;
@@ -293,7 +293,7 @@ void   Watcher::_register_subscriber()
 	}
 
 
-    if(_try_connect(true))
+    if(_try_connect(true)>0)
     {
         std::string query;
         for(auto ip : localips)

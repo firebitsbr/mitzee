@@ -42,14 +42,7 @@ ttyio::ttyio():_master(0),_slave(0),_bashid(0)
 
 ttyio::~ttyio()
 {
-    if(_master){
-        write("exit\r\n",6);
-        usleep(500000);
-        ::close(_master);
-    }
-    if(_slave)
-        ::close(_slave);
-    _PS.killit(_bashid);
+    closems();
 }
 
 
@@ -71,12 +64,19 @@ int ttyio::grant(uid_t u, gid_t g, mode_t mode)
 }
 
 
-void ttyio::close()
+void ttyio::closems()
 {
-    std::cout  << " closing master: " << _master << "\n";
-    ::close(_master);
-    ::close(_slave);
-    ::sleep(1);
+    if(_master){
+        write("exit\r\n",6);
+        usleep(500000);
+        ::close(_master);
+        __pwrap.killit(_bashid);
+        std::cout << getpid()<<"<--------------~ttyi() closing master \n";
+    }
+    if(_slave){
+        std::cout << getpid() << "<--------------~ttyi() closing slave \n";
+        ::close(_slave);
+    }
     _master=_slave=0;
 }
 
@@ -109,7 +109,7 @@ int ttyio::opendev()
 
     _s=::ptsname(_master);
 
-    _bashid = _PS.forkit();
+    _bashid = __pwrap.forkit();
     if(_bashid==0) //we are in child
     {
         _childproc();
@@ -137,7 +137,7 @@ void ttyio::_childproc()
 	::system ("stty sane");
 	::execl ("/bin/bash", "bash", (char *) 0);
 	std:: cout << "  /bin/bash\n";
-	_PS.exitproc(0,"/bin/bash exiting");
+	__pwrap.exitproc(0,"/bin/bash exiting");
 
 }
 

@@ -37,6 +37,7 @@ public:
 #ifdef USE_THREAD
         return OsThread::start_thread();
 #else
+        //call direct, we fork a nre process.
         thread_main();
 #endif
         return 0;

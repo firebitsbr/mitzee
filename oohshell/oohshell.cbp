@@ -11,7 +11,7 @@
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters="-s*:2223" />
+				<Option parameters="-c127.0.0.1:2222" />
 				<Compiler>
 					<Add option="-g" />
 					<Add directory="oohshell" />
@@ -42,10 +42,7 @@
 			<Add library="../lib/libmcosock.a" />
 			<Add library="pthread" />
 		</Linker>
-		<Unit filename="../mitzee/mcoinclude/os.h" />
-		<Unit filename="../mitzee/mcoinclude/procinst.h" />
-		<Unit filename="../mitzee/mcoinclude/strutils.h" />
-		<Unit filename="../mitzee/mcosocks/sock.h" />
+		<Unit filename="../mcoinclude/procinst.h" />
 		<Unit filename="CMakeLists.txt" />
 		<Unit filename="argspars.cpp" />
 		<Unit filename="argspars.h" />

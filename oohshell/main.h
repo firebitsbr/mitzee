@@ -23,25 +23,25 @@
 #include <set>
 #include <procinst.h>
 
-#define USE_THREAD
+//#define USE_THREAD
 
-extern procinst              _I;
+extern procinst              __appinstance;
 
-class processses
+class procwrapper
 {
 public:
-    processses()
+    procwrapper()
     {
 
         _thispid=getpid();
         _thisppid=getppid();
-        std::cout<<"processses{ " << _thisppid << " : " << _thispid << "\n";
+        //std::cout<<"procwrapper{ P:" << _thisppid << " -> " << _thispid << "\n";
 
     }
 
-    ~processses()
+    ~procwrapper()
     {
-        std::cout<<"~processses}" << _thisppid << " : " << _thispid << "\n";
+        //std::cout<<"~procwrapper} P:" << _thisppid << " -> " << _thispid << "\n";
     }
 
     pid_t   forkit()
@@ -54,42 +54,27 @@ public:
         }
         else if(p>0) //in parent
         {
-            std::cout<<"PARENT PROC: " << _thispid << "----yields--->" << p << "\n";
+            //std::cout<<"PARENT PROC: " << _thispid << "----yields--->" << p << "\n";
         }
         else
         {
             _thispid=getpid();
             _thisppid=getppid();
-            std::cout<<"CHILD PROC from: " << _thisppid << "----yiel--->" << _thispid << "\n";
+            //std::cout<<"CHILD PROC from: " << _thisppid << "----yiel--->" << _thispid << "\n";
         }
         return p;
     }
 
     void killit(pid_t pid)
     {
-        /*
-        kill(pid, SIGTERM);
-
-        bool died = false;
-        for (int loop; !died && loop < 5 ; ++loop)
-        {
-            int status;
-            pid_t id;
-            sleep(1);
-            if (waitpid(pid, &status, WNOHANG) == pid) died = true;
-            {
-                if (!died) kill(pid, SIGKILL);
-            }
-        }
-        */
         int rv;
         wait(&rv);
-        std::cout<<" KILLIT WAIT( "<< pid << ")\n";
+        //std::cout<<" KILLIT WAIT( "<< pid << ")\n";
     }
 
     void exitproc(int code, const char* msg)
     {
-        std::cout<<"EXITING PROCESS: "<< msg << ": " << _thispid << "\n";
+        //std::cout<<"EXITING PROCESS: "<< msg << ": " << _thispid << "\n";
         exit(code);
     }
 
@@ -98,7 +83,7 @@ public:
 };
 
 
-extern processses _PS;
+extern procwrapper __pwrap;
 
 
 #endif //_MAIN_H

@@ -791,6 +791,7 @@ SOCKET tcp_cli_sock::create(const SADDR_46& r, int opt)
 }
 
 
+//as send -1 continue, 0 closed -cannot 1 ok
 
 int tcp_cli_sock::try_connect(const char* sip, int port)
 {
@@ -806,9 +807,9 @@ int tcp_cli_sock::try_connect(const char* sip, int port)
     }
     if(!_hostent)
     {
-        return -1;
+        return 0;
     }
-    _connecting = 1;
+    _connecting = 0;
     _error      = 0;
     ::memcpy((char*)&(locSin.sin_addr), _hostent->h_addr, _hostent->h_length);
     _thesock = ::socket(AF_INET, SOCK_STREAM, 0);
@@ -816,7 +817,7 @@ int tcp_cli_sock::try_connect(const char* sip, int port)
     {
         _connecting = 0;
         _error = errno;
-        return -1;
+        return 0;
     }
     _remote_sin.sin_family		= AF_INET;
     _remote_sin.sin_addr.s_addr	= locSin.sin_addr.s_addr;
@@ -826,12 +827,12 @@ int tcp_cli_sock::try_connect(const char* sip, int port)
         _error = errno;
         if(_error==EINPROGRESS || _error == WOULDBLOCK)
         {
-            _connecting = 1;
+            _connecting = 1; //in progress
         }
-        return 1;
+        return -1; //in progress
     }
     _connecting = 0;
-    return 0; //connected
+    return _thesock;
 }
 
 /*
@@ -854,6 +855,8 @@ int tcp_cli_sock::raw_connect(u_int32_t ip4,  int port)
     return raw_connect(sadr);
 }
 
+
+// 0 no connection, >0 OK, -1 in progress
 int tcp_cli_sock::raw_connect(const SADDR_46&  saddr, int tout)
 {
     _error   = 0;
@@ -865,7 +868,7 @@ int tcp_cli_sock::raw_connect(const SADDR_46&  saddr, int tout)
     if((int)_thesock < 0)
     {
         _error = errno;
-        return _error;
+        return 0; //closed
     }
     if(_buffers[0] && _buffers[1])
     {
@@ -897,7 +900,7 @@ int tcp_cli_sock::raw_connect(const SADDR_46&  saddr, int tout)
                     {
                         if(FD_ISSET(_thesock, &fdWr))
                         {
-                            return 0;   // no error
+                            return _thesock;   // no error
                         }
                     }
                     usleep(0xFFF);
@@ -905,11 +908,11 @@ int tcp_cli_sock::raw_connect(const SADDR_46&  saddr, int tout)
                 }
             }
             _connecting=1;
-            return 0;
+            return -1;
         }
-        return -1;//error
+        return 0;//error
     }
-    return 0; //connected
+    return _thesock; //connected
 }
 
 void      tcp_cli_sock::raw_sethost(const SADDR_46& uip4)
@@ -927,7 +930,7 @@ int     tcp_cli_sock::raw_connect_sin()
     if((int)_thesock < 0)
     {
         _error = errno;
-        return _error;
+        return 0;
     }
     if(_buffers[0] && _buffers[1])
     {
@@ -944,11 +947,11 @@ int     tcp_cli_sock::raw_connect_sin()
         if(_error==EINPROGRESS || _error == WOULDBLOCK)
         {
             _connecting = 1;
-            return 0;
+            return -1;
         }
-        return -1;
+        return 0;
     }
-    return 0;
+    return _thesock;
 }
 
 //-----------------------------------------------------------------------------
@@ -956,7 +959,6 @@ int tcp_cli_sock::i4connect(const SADDR_46&  addr, CancelCB cbCall, void* pUser)
 {
     int             err;
     fd_set          fdWr;
-
 
     if((int)_thesock != (int)-1)
     {
@@ -968,7 +970,7 @@ int tcp_cli_sock::i4connect(const SADDR_46&  addr, CancelCB cbCall, void* pUser)
     if((int)_thesock < 0)
     {
         _error = errno;
-        return _error;
+        return 0;
     }
     _remote_sin = addr;
 
@@ -1004,7 +1006,7 @@ int tcp_cli_sock::i4connect(const SADDR_46&  addr, CancelCB cbCall, void* pUser)
                 if(FD_ISSET(_thesock, &fdWr))
                 {
                     _connecting = 0;
-                    return 0;   // no error
+                    return _thesock;   // no error
                 }
             }
             usleep(10000);
@@ -1014,10 +1016,10 @@ int tcp_cli_sock::i4connect(const SADDR_46&  addr, CancelCB cbCall, void* pUser)
     if(err==-1)
     {
         destroy();
-        return -1;
+        return 0;
     }
     _connecting = 0;
-    return 0;
+    return _thesock;
 }
 
 //-----------------------------------------------------------------------------
@@ -1040,7 +1042,7 @@ int tcp_cli_sock::s4connect(const char* sip, int port, CancelCB cbCall, void* pU
     if((int)_thesock < 0)
     {
         _error = errno;
-        return _error;
+        return 0;
     }
     if(0==_hostent)
         _hostent = ::gethostbyname(sip);
@@ -1062,10 +1064,9 @@ int tcp_cli_sock::s4connect(const char* sip, int port, CancelCB cbCall, void* pU
     if(_error == EINPROGRESS || _error == WOULDBLOCK)
     {
         _connecting = 1;
-
         if(pUser==(void*)-1)
         {
-            return 0;
+            return -1;
         }
 
         int nfds = (int)_thesock+1;
@@ -1082,7 +1083,7 @@ int tcp_cli_sock::s4connect(const char* sip, int port, CancelCB cbCall, void* pU
                 if(FD_ISSET(_thesock, &fdWr))
                 {
                     _connecting = 0;
-                    return 0;   // no error
+                    return _thesock;   // no error
                 }
             }
             usleep(10000);
@@ -1093,10 +1094,10 @@ int tcp_cli_sock::s4connect(const char* sip, int port, CancelCB cbCall, void* pU
     {
         _connecting = 0;
         destroy();
-        return -1;
+        return 0;
     }
     _connecting = 0;
-    return 0;
+    return _thesock;
 }
 
 //-----------------------------------------------------------------------------
@@ -1116,7 +1117,7 @@ int tcp_cli_sock::connect(const char* sip, int port, CancelCB cbCall, void* pUse
     }
     _connecting = 0;
     _error = errno;
-    return -1;
+    return 0;
 }
 
 

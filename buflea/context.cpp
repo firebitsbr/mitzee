@@ -711,7 +711,7 @@ CALLR  Ctx::_host_connect(TcpPipe& rock)
     assert(rs.sin_family==AF_INET);
     assert(rs.sin_port!=0);
     assert(rs.sin_addr.s_addr!=0);
-    if(-1 == rock.raw_connect_sin())
+    if(0 == rock.raw_connect_sin())
     {
         char err[32];
         sprintf(err,"tcp-error: %d",rock.error());

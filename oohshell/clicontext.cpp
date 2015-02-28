@@ -33,8 +33,7 @@ clicontext::~clicontext()
 {
     std::cout << THIS << "~clicontext()}\n";
     _c.destroy();
-    _t.close();
-
+    _t.closems();
 }
 
 void clicontext::thread_main()
@@ -67,7 +66,7 @@ void clicontext::thread_main()
 
     _t.write("\r\n", 2);
 
-    while(_I.alive() && !broken)
+    while(__appinstance.alive() && !broken)
     {
         FD_ZERO(&rd);
         FD_SET(_c.socket(), &rd);

@@ -32,7 +32,7 @@ public:
     void reopen();
     int write(const char* intbuff, int chars);
     int grant(uid_t u, gid_t g, mode_t mode);
-    void close();
+    void closems();
     int master(){return _master;}
     int slave(){return _slave;}
 private:
