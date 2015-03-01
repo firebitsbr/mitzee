@@ -68,11 +68,12 @@ int main(int n, char* v[])
     }
     bool d=false;
     bool cc=false;
-    char  addon[3]={0};
+    char  addon[3]= {0};
     std::string params;
 
     // zombie reaper
-    if (signal(SIGCHLD, SIG_IGN) == SIG_ERR) {
+    if (signal(SIGCHLD, SIG_IGN) == SIG_ERR)
+    {
         perror(0);
         exit(1);
     }
@@ -144,6 +145,7 @@ int client(const char* param)
     struct termios  ttyold,ttynew; //supress local echo
     tcp_cli_sock    c;
     char            loco[128];
+    int             cinfd=0;
 
     ::strcpy(loco,param+2);
     const char* piface = ::strtok(loco,":");
@@ -154,14 +156,25 @@ int client(const char* param)
         int     ndfs;
         fd_set  rd;
         timeval tv = {0,16384};
+        char buff[512];
 
         ::tcgetattr(0, &ttyold);
         ::memcpy(&ttynew,&ttyold,sizeof(ttyold));
 
         ttynew.c_iflag = 0;
         ttynew.c_oflag = 0;
-        ttynew.c_lflag &= ~ICANON;
-        ttynew.c_lflag &= ~ECHO;
+        // ttynew.c_lflag &= ~ICANON;
+        //  ttynew.c_lflag &= ~ECHO;
+
+
+        ttynew.c_iflag &= ~(IGNBRK | BRKINT | PARMRK | ISTRIP
+                            | INLCR | IGNCR | ICRNL | IXON);
+        ttynew.c_oflag &= ~OPOST;
+        ttynew.c_lflag &= ~(ECHO | ECHONL | ICANON | ISIG | IEXTEN);
+        ttynew.c_cflag &= ~(CSIZE | PARENB);
+        ttynew.c_cflag |= CS8|ECHONL;
+
+
         //ttynew.c_lflag |=INLCR;
 
         ttynew.c_cc[VMIN] = 1;
@@ -170,12 +183,13 @@ int client(const char* param)
 
         sleep(1);
 
-        c.sendall("\r\n",2);
+
 
         while(__appinstance.alive())
         {
             FD_ZERO(&rd);
             FD_SET(c.socket(), &rd);
+            FD_SET(cinfd, &rd);
             ndfs =c.socket()+1;
             tv.tv_sec = 0;
             tv.tv_usec = 0x1FFFF;
@@ -184,9 +198,22 @@ int client(const char* param)
                 break;
             if(is>0)
             {
+
+                if(FD_ISSET(cinfd, &rd))
+                {
+                    int bytes = read(cinfd,buff,sizeof(buff)-1);
+                    if(bytes>0)
+                        buff[bytes]=0;
+                    int by = c.sendall(buff,bytes);
+                    if(buff[0]==0x3)
+                        break;
+                    if(0!=by)
+                        break;
+                    FD_CLR(cinfd, &rd);
+                }
+
                 if(FD_ISSET(c.socket(), &rd))
                 {
-                    char buff[512];
                     int bytes = c.receive(buff,512);
                     if(bytes==0)
                     {
@@ -198,36 +225,20 @@ int client(const char* param)
                     {
 
                         buff[bytes]=0;
-                        std::cout << buff;
+                        if(buff[0]=='\n')
+                            printf("\r");
+                        printf(buff);
+                        fflush(stdout);
                     }
                     FD_CLR(c.socket(), &rd);
                 }
-            }
-            if(kbhit())
-            {
-                char chi[32] = {0};
-                int len=1;
-                chi[0] = (char)getchar();
-                if(chi[0]=='0x3' || chi[0]=='0x4')
-                {
-                    std::cout << "BYE\r\n";
-                }
-                if(chi[0]=='\r' )
-                {
-                    chi[1]='\n';
-                    ++len;
-                    std::cout << chi;
-                }
-                int by = c.sendall(chi,len);
-                if(0!=by)
-                    break;
             }
         }
         c.destroy();
         ::tcsetattr(0, TCSANOW, &ttyold);
     }
-
-     std::cout << "cannot connect \n";
+    else
+        std::cout << "cannot connect:" << errno <<"\n";
     __appinstance.kill();
     return 0;
 }
@@ -296,7 +307,7 @@ int server(const char* param)
                             s.destroy();
                             std::cout << getppid() << "->" << getppid() << " we are in new process\n";
 #else
-                            std::cout << "USE THREAD:  start thread \n";
+                        std::cout << "USE THREAD:  start thread \n";
 #endif
 
                             clicontext *pt = new clicontext(sfd);

@@ -828,8 +828,9 @@ int tcp_cli_sock::try_connect(const char* sip, int port)
         if(_error==EINPROGRESS || _error == WOULDBLOCK)
         {
             _connecting = 1; //in progress
+            return -1; //in progress
         }
-        return -1; //in progress
+        return 0;
     }
     _connecting = 0;
     return _thesock;
