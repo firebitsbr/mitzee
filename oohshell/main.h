@@ -23,7 +23,7 @@
 #include <set>
 #include <procinst.h>
 
-//#define USE_THREAD
+#define USE_THREAD
 
 extern procinst              __appinstance;
 

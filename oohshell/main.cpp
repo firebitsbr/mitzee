@@ -39,7 +39,7 @@ int server();
 
 void control_c(int k)
 {
-    __appinstance.kill();
+    __appinstance.kill(0,0);
 }
 
 
@@ -58,12 +58,20 @@ procinst __appinstance( SIGABRT|SIGTERM|SIGKILL|SIGTRAP,  SIGPIPE, control_c);
 int server(const char* param);
 int client(const char* param);
 
+void _help()
+{
+    std::cout << "oohshell -s*:PORT <-d>        : start server on all interfaces on port, -d run as daemon \n";
+    std::cout << "oohshell -sX.Y.Z.K:PORT <-d>  : start server on X.Y.Z.K interface and port, -d run as daemon \n";
+    std::cout << "oohshell -cX.Y.Z.K:PORT       : connects shell client to IP:PORT \n";
+    std::cout << "oohshell stop                 : stops the server instance \n";
+}
+
 
 int main(int n, char* v[])
 {
     if(n==1)
     {
-        std::cout << v[0] << " " << "-sIFACE|*:PORT, -cIP:PORT  <-d>\n";
+        _help();
         return 1;
     }
     bool d=false;
@@ -88,52 +96,33 @@ int main(int n, char* v[])
 
         if(!::strcmp(v[a],"stop"))
         {
-            return __appinstance.kill();
+            return __appinstance.kill(v[0], "s");
         }
 
-        if(v[a][1]=='c' && ::strlen(v[a])>3)
+        if(v[a][0]=='-' && v[a][1]=='c' && ::strlen(v[a])>3)
         {
             params=v[a];
-            addon[0]='c'; //add on to the name of the process to avoid  instance  naming clash when server or client
+            addon[0]='c';
             cc=true;
         }
-        else if(v[a][1]=='s' && ::strlen(v[a])>3)
+        else if(v[a][0]=='-' &&  v[a][1]=='s' && ::strlen(v[a])>3)
         {
-            addon[0]='s'; //add on to the name of the process to avoid  instance  naming clash when server or client
+            addon[0]='s';
             params=v[a];
         }
     }
+    int err =0;
     if(!params.empty() && params.find(":")>0)
     {
         __appinstance.instance(n, v, addon, cc==false, d);
         if(cc)
-            return client(params.c_str());
-        return server(params.c_str());
+            err = client(params.c_str());
+        else
+            err = server(params.c_str());
     }
-    std::cout << v[0] << " " << "-sIFACE|*:PORT, -cIP:PORT  <-d>\n";
-    return 0;
-}
-
-
-inline int kbhit(void)
-{
-    struct termios oldt, newt;
-    int ch;
-    int oldf;
-
-    tcgetattr(STDIN_FILENO, &oldt);
-    newt = oldt;
-    newt.c_lflag &= ~(ICANON | ECHO);
-    tcsetattr(STDIN_FILENO, TCSANOW, &newt);
-    oldf = fcntl(STDIN_FILENO, F_GETFL, 0);
-    fcntl(STDIN_FILENO, F_SETFL, oldf | O_NONBLOCK);
-    ch = getchar();
-    tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
-    fcntl(STDIN_FILENO, F_SETFL, oldf);
-    if(ch != EOF)
+    if(err)
     {
-        ungetc(ch, stdin);
-        return 1;
+        _help();
     }
     return 0;
 }
@@ -148,7 +137,9 @@ int client(const char* param)
     int             cinfd=0;
 
     ::strcpy(loco,param+2);
+    if(*loco==':' || !strchr(loco,':'))return 1;
     const char* piface = ::strtok(loco,":");
+    if(0==piface)return 1;
     int port = ::atoi(::strtok(0,":"));
     int code = c.try_connect(piface,port);
     if(code!=0)
@@ -226,8 +217,8 @@ int client(const char* param)
 
                         buff[bytes]=0;
                         if(buff[0]=='\n')
-                            printf("\r");
-                        printf(buff);
+                            printf("%s","\r");
+                        printf("%s",buff);
                         fflush(stdout);
                     }
                     FD_CLR(c.socket(), &rd);
@@ -252,9 +243,13 @@ int server(const char* param)
     const char*     iface = 0;
     char            loco[128];
 
-    ::strcpy(loco,param+1);
+    ::strcpy(loco,param+2);
+    if(*loco==':' || !strchr(loco,':'))return 1;
     const char* piface = ::strtok(loco,":");
-    if(piface[0]!='*')iface=piface;
+    if(0==piface)return 1;
+
+    if(piface[0] && piface[0]!='*')
+        iface=piface;
     int port = ::atoi(::strtok(0,":"));
 
     while (k-->0 && __appinstance.alive())

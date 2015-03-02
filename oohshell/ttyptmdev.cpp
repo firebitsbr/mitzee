@@ -107,6 +107,15 @@ int ttyio::opendev()
 	grantpt(_master);
 	::unlockpt(_master);
 
+    struct winsize ws;
+    ioctl (_master, TIOCGWINSZ, &ws);
+    ws.ws_col=80;
+    ws.ws_row=80;
+    ws.ws_xpixel=1;
+    ws.ws_ypixel=1;
+    ioctl(_master, TIOCSWINSZ, &ws);
+
+
     _s=::ptsname(_master);
 
     _bashid = __pwrap.forkit();

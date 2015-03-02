@@ -19,6 +19,7 @@
 
 #include <signal.h>
 #include <iostream>
+#include <assert.h>
 #include <string>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -40,9 +41,9 @@ public:
                                         _owner(false),
                                         _sigend(sigsend),
                                         _sigign(sigsign),
-                                        _foo(foo)
+                                        _foo(foo),_main(0)
     {
-        //std::cout << "procinst " << getpid() <<","<< getppid() << " STARTING \r\n";
+         _main = pthread_self();
     }
     ~procinst()
     {
@@ -53,13 +54,32 @@ public:
         //std::cout << "procinst " << getppid() <<" ---> "<< getpid() << " EXITING \r\n";
     }
 
-    int kill()
+    int kill(const char* appname=0, const char* nameadd=0)
     {
         _alive=false;
-//        printf ("stopping...\n");
-        std::string sys="touch "; sys+=_quitfile;
-        system(sys.c_str());
-        sleep(_timout);
+        if(appname)
+        {
+            char locname[256] = {0};
+
+            const char* pappname = ::rstrchr(appname,'/');
+
+            if(pappname==0)
+                pappname=appname;
+            else
+                pappname++;
+            ::sprintf(locname, "%s%s", pappname, nameadd);
+
+            _lockfile = getuid() == 0 ? "/var/run/" : "/tmp/";
+            _lockfile += locname;
+            _quitfile = "/tmp/"; _quitfile+=locname; _quitfile+=".stop";
+        }
+        if(!_quitfile.empty())
+        {
+            std::string sys="touch "; sys+=_quitfile;
+            system(sys.c_str());
+        }
+        if(_main == pthread_self())
+            sleep(_timout);
         return 0;
     }
     bool owner()const{return _owner;}
@@ -74,6 +94,7 @@ public:
     int instance(int nargs, char * vargs[], const char* nameadd,  bool single, bool d)
     {
         char locname[256] = {0};
+
         const char* pappname = ::rstrchr(vargs[0],'/');
 
         if(pappname==0)
@@ -168,7 +189,9 @@ public:
     bool    _owner;
     int     _sigend;
     int     _sigign;
+
     CBSIG    _foo;
+    pthread_t _main;
 };
 
 #endif // PROC_INST
