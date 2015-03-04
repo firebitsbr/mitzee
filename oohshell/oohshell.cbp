@@ -11,7 +11,7 @@
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters="-s*:22223" />
+				<Option parameters="-g127.0.0.1:2222 /home/marius/movie.mpg /home/marius/yyyy.mpg " />
 				<Compiler>
 					<Add option="-g" />
 					<Add directory="oohshell" />
@@ -42,10 +42,15 @@
 			<Add library="../lib/libmcosock.a" />
 			<Add library="pthread" />
 		</Linker>
+		<Unit filename="../mcoinclude/os.h" />
 		<Unit filename="../mcoinclude/procinst.h" />
+		<Unit filename="../mcoinclude/strutils.h" />
+		<Unit filename="../mcosocks/sock.cpp" />
 		<Unit filename="CMakeLists.txt" />
 		<Unit filename="clicontext.cpp" />
 		<Unit filename="clicontext.h" />
+		<Unit filename="ftcontext.cpp" />
+		<Unit filename="ftcontext.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="main.h" />
 		<Unit filename="tcppipe.cpp" />

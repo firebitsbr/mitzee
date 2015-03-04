@@ -224,5 +224,8 @@ int clicontext::forkproc()
     return -1;
 }
 
+int clicontext::_process_byte(u_int8_t shotbyte, int putget)
+{
+}
 
 

@@ -36,10 +36,11 @@ inline int noting(int c)
 
 //’ to ‘int* (*)(int)’|
 
-inline char* str_up2chr(char*& p, char peos, pFNic tou=0)
+inline char* str_up2chr(char* p, char peos,  int& len, pFNic tou=0)
 {
     register char* pp = p;
     register char eos = peos;
+
     while(*p && *p!=eos)
     {
         if(tou)
@@ -47,11 +48,12 @@ inline char* str_up2chr(char*& p, char peos, pFNic tou=0)
             *p = (char)tou((int)*p);
         }
         ++(p);
+        ++len;
     };
     if(*p!=0)   //!eos
     {
         *p=0;
-        ++(p);
+        ++len;
     }
     return pp;
 }

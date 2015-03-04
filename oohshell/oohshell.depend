@@ -152,7 +152,7 @@
 	<sys/file.h>
 	<strutils.h>
 
-1425063162 /home/marius/CPP/GUGLE/src/mitzee/mcoinclude/strutils.h
+1425494631 /home/marius/CPP/GUGLE/src/mitzee/mcoinclude/strutils.h
 	<matypes.h>
 	<stdarg.h>
 	<stdio.h>
@@ -199,7 +199,7 @@
 
 1425317347 /home/marius/CPP/GUGLE/src/mitzee/oohshell/argspars.h
 
-1425159703 source:/home/marius/CPP/GUGLE/src/mitzee/oohshell/clicontext.cpp
+1425491213 source:/home/marius/CPP/GUGLE/src/mitzee/oohshell/clicontext.cpp
 	<iostream>
 	<signal.h>
 	"clicontext.h"
@@ -216,7 +216,7 @@
 	<string>
 	"main.h"
 
-1425318202 source:/home/marius/CPP/GUGLE/src/mitzee/oohshell/main.cpp
+1425506062 source:/home/marius/CPP/GUGLE/src/mitzee/oohshell/main.cpp
 	<iostream>
 	<os.h>
 	<sock.h>
@@ -230,6 +230,7 @@
 	<sys/wait.h>
 	"ttyptmdev.h"
 	"clicontext.h"
+	"ftcontext.h"
 	"argspars.h"
 	"main.h"
 
@@ -255,4 +256,30 @@
 	<stdio.h>
 	<termios.h>
 	"ttyptmdev.h"
+
+1425506716 source:/home/marius/CPP/GUGLE/src/mitzee/oohshell/ftcontext.cpp
+	<iostream>
+	<signal.h>
+	"ftcontext.h"
+	"main.h"
+
+1425506998 /home/marius/CPP/GUGLE/src/mitzee/oohshell/ftcontext.h
+	<os.h>
+	<sock.h>
+	<iostream>
+	"ttyptmdev.h"
+	"main.h"
+
+1425490949 source:/home/marius/CPP/GUGLE/src/mitzee/oohshell/ftreanf.cpp
+
+1425242393 source:/home/marius/CPP/GUGLE/src/mitzee/mcosocks/sock.cpp
+	<assert.h>
+	<fcntl.h>
+	<errno.h>
+	<unistd.h>
+	<stdlib.h>
+	<iostream>
+	<time.h>
+	"sock.h"
+	<ifaddrs.h>
 
