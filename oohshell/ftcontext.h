@@ -26,7 +26,7 @@
 class ftcontext : public OsThread
 {
 public:
-    ftcontext(int  sfd);
+    ftcontext(tcp_cli_sock&  sfd);
     virtual ~ftcontext();
     void thread_main();
     int  thread_main(char pg, const string& f1,  const string& f2);
@@ -46,11 +46,11 @@ private:
     void _client_pg(char* loco, int cap);
     void _server_pg(char* loco, int cap);
     void _thread_main();
-
+    const char* _sarrow();
 private:
     tcp_cli_sock    _c;
-    std::string     _f1;
-    std::string     _f2;
+    std::string     _localf;
+    std::string     _remf;
     char            _pg;
     int             _err;
     FILE*           _pf;
@@ -61,6 +61,9 @@ private:
     char            _temp[128];
     fd_set           _rd;
     fd_set           _wr;
+    time_t           _now;
+    char             _arrow[8];
+    char             _carr;
 };
 
 #endif // TTYPTMDEV_H

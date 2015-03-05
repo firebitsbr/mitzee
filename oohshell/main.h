@@ -20,12 +20,13 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <iostream>
-#include <set>
 #include <procinst.h>
+#include <iostream>
+#include <sstream>
 
 #define USE_THREAD
 
-extern procinst              __appinstance;
+extern procinst              Inst;
 
 class procwrapper
 {
@@ -35,13 +36,10 @@ public:
 
         _thispid=getpid();
         _thisppid=getppid();
-        //std::cout<<"procwrapper{ P:" << _thisppid << " -> " << _thispid << "\n";
-
     }
 
     ~procwrapper()
     {
-        //std::cout<<"~procwrapper} P:" << _thisppid << " -> " << _thispid << "\n";
     }
 
     pid_t   forkit()
@@ -54,13 +52,11 @@ public:
         }
         else if(p>0) //in parent
         {
-            //std::cout<<"PARENT PROC: " << _thispid << "----yields--->" << p << "\n";
         }
         else
         {
             _thispid=getpid();
             _thisppid=getppid();
-            //std::cout<<"CHILD PROC from: " << _thisppid << "----yiel--->" << _thispid << "\n";
         }
         return p;
     }
@@ -69,12 +65,10 @@ public:
     {
         int rv;
         wait(&rv);
-        //std::cout<<" KILLIT WAIT( "<< pid << ")\n";
     }
 
     void exitproc(int code, const char* msg)
     {
-        //std::cout<<"EXITING PROCESS: "<< msg << ": " << _thispid << "\n";
         exit(code);
     }
 
@@ -83,7 +77,27 @@ public:
 };
 
 
-extern procwrapper __pwrap;
+class custerr
+{
+    std::stringstream   _stream;
+public:
+    custerr(){}
+    custerr(const custerr& e)
+    {
+        _stream << e._stream.str();
+    }
+    std::stringstream& stream(){return _stream;}
+    const char* str(){
+        return _stream.str().c_str();
+    }
+};
+
+#define THROW(x) do{custerr erro;\
+    erro.stream() << __FUNCTION__ << ":"<< strerror(errno) << "(" << errno << ")/" << x << "\n";   \
+    throw erro;}while(0);
+
+
+extern procwrapper Proco;
 
 
 #endif //_MAIN_H

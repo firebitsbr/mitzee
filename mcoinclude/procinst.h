@@ -54,6 +54,17 @@ public:
         //std::cout << "procinst " << getppid() <<" ---> "<< getpid() << " EXITING \r\n";
     }
 
+    void reap_zobies()
+    {
+        if (signal(SIGCHLD, SIG_IGN) == SIG_ERR)
+        {
+            perror(0);
+            exit(1);
+        }
+    }
+
+
+
     int kill(const char* appname=0, const char* nameadd=0)
     {
         _alive=false;

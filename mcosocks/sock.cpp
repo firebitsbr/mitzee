@@ -745,9 +745,7 @@ SOCKET tcp_srv_sock::accept(tcp_cli_sock& cliSock)
     _error = 0;
 
     ::memset(&cliSock._remote_sin,0,sizeof(cliSock._remote_sin));
-
     socklen_t clilen = (socklen_t)sizeof(cliSock._remote_sin);
-
     cliSock._thesock = ::accept(_thesock,
                                 (struct sockaddr*)&cliSock._remote_sin,
                                 &clilen);

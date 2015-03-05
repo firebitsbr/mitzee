@@ -26,14 +26,16 @@ clicontext::clicontext(int  sfd)
 {
     _c.attach(sfd);
     _c.set_blocking(0);
-    std::cout << THIS << "clicontext(){\n";
+    std::cout << THIS << "CTX  {\n";
 }
 
 clicontext::~clicontext()
 {
-    std::cout << THIS << "~clicontext()}\n";
+
     _c.destroy();
     _t.closems();
+
+    std::cout << THIS << "CTX  }\n";
 }
 
 void clicontext::thread_main()
@@ -48,8 +50,6 @@ void clicontext::thread_main()
     string  hostn = "local";
     bool    enabled=false;
     char    eol[3];
-    bool    command_mode=false;
-    int     putget=0;
     const char* hn = getenv("HOSTNAME");
     if(hn)
         hostn=hn;
@@ -68,7 +68,7 @@ void clicontext::thread_main()
 
     _t.write("\r\n", 2);
 
-    while(__appinstance.alive() && !broken)
+    while(Inst.alive() && !broken)
     {
         FD_ZERO(&rd);
         FD_SET(_c.socket(), &rd);
